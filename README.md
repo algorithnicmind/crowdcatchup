@@ -46,7 +46,7 @@ Navigate to **`http://localhost:3000`** (or your specified localhost port).
 
 ## 📚 Enterprise Technical Documentation Suite (`docs/`)
 
-Our comprehensive engineering specifications, architectural diagrams, data flows, and operational manuals are arranged sequentially inside the [`docs/`](./docs) directory:
+Our comprehensive engineering specifications, architectural diagrams, data flows, testing strategies, and AI developer protocols are arranged sequentially inside the [`docs/`](./docs) directory:
 
 | Seq | Document Specification | Target Audience & Contents Summary |
 | :---: | :--- | :--- |
@@ -57,6 +57,9 @@ Our comprehensive engineering specifications, architectural diagrams, data flows
 | **05** | **[Data Flow Diagrams Document (DFD)](./docs/05_DFD.md)** | **Data Architecture:** Level 0 Context Diagram, Level 1 Module Data Pathways, and Level 2 closed-loop Sequence Charts for Scenario Countermeasure Execution and Citizen SOS alerting. |
 | **06** | **[UI Specs & Wireframe Mapping](./docs/06_UI_WIRE_FRAMES.md)** | **UX / UI Design:** Cyber-Tactical dark mode psychology (reducing control-room eye fatigue), semantic color designations, master interface ASCII grids, and smartphone emulator tab wireframes. |
 | **07** | **[Production Deployment Playbook](./docs/07_DEPLOYMENT_AND_OPS.md)** | **Operations & DevOps:** Hybrid Edge Computing specs, cellular blackout mitigation via **Offline Bluetooth & Wi-Fi Direct Mesh Node Hopping**, and disaster recovery False Alarm SLAs. |
+| **08** | **[API & Event Bus Schema](./docs/08_API_AND_EVENTS_SCHEMA.md)** | **Backend Contracts:** Definitive schema payloads (`TelemetryFrame`, `InterventionCommand`, `SosIncidentReport`), Edge WebSocket streams, and BLE advertisement UDP parsing. |
+| **09** | **[Testing, QA & Chaos Strategy](./docs/09_TESTING_AND_QA_STRATEGY.md)** | **Quality & Resilience:** Unit math validation, defensive Edge Case matrix ($N=0$, audio block, spam protection), and Chaos Playbooks (Cellular Blackout & SOS flooding). |
+| **10** | **[AI Agent Coding Instructions](./docs/10_AI_AGENT_INSTRUCTIONS.md)** | **AI Developer Rules:** Zero-Build boundary enforcement, loop decoupling rules, explicit operating procedures for extending venues/languages, and calm messaging anti-panic protocols. |
 | **00** | **[Documentation Portal Index](./docs/README.md)** | **Executive Index:** Central table of contents within the `docs/` folder. |
 
 ---
@@ -67,7 +70,7 @@ Our comprehensive engineering specifications, architectural diagrams, data flows
 crowdcatchup/
 ├── index.html                   # Master interface viewport structure
 ├── README.md                    # Project overview & quick start (This File)
-├── docs/                        # Enterprise technical documentation suite (01_PRD to 07_OPS)
+├── docs/                        # Enterprise technical documentation suite (01_PRD to 10_AI_AGENT)
 ├── styles/
 │   ├── main.css                 # Dark-mode cyber-tactical design system & variables
 │   ├── dashboard.css            # Command telemetry dials & interactive advisory queues
