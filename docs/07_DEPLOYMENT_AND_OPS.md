@@ -24,8 +24,8 @@ graph TB
         API[FastAPI Instances / ECS]
         AI[AI Inference Workers / EC2 GPU]
         
-        DB[(PostgreSQL / RDS)]
-        CACHE[(Redis / ElastiCache)]
+        DB[(Supabase / PostgreSQL)]
+        CACHE[(Upstash / Redis)]
     end
 
     subgraph INGESTION["Data Sources"]
@@ -45,9 +45,10 @@ graph TB
 
 ### 1.1 Server Specifications
 * **Frontend (Next.js):** Deployed via Vercel or AWS Amplify for global edge caching of static assets.
-* **Backend API (FastAPI):** Deployed on AWS ECS (Elastic Container Service) with auto-scaling based on active WebSocket connections.
-* **AI Inference:** Deployed on GPU-accelerated EC2 instances (e.g., `g4dn.xlarge`) to run YOLO and BoT-SORT object tracking at 30+ FPS.
-* **Database:** AWS RDS PostgreSQL with PostGIS enabled for spatial queries.
+* **Backend API (FastAPI):** Deployed on AWS ECS (Elastic Container Service) or Render with auto-scaling based on active WebSocket connections.
+* **AI Inference:** Deployed on GPU-accelerated EC2 instances (e.g., `g4dn.xlarge`) to run YOLOv8 and BoT-SORT object tracking at 30+ FPS.
+* **Database:** Supabase (Managed PostgreSQL) with PostGIS enabled for spatial queries and instant API generation.
+* **State Cache:** Upstash (Serverless Redis) for managing live WebSocket connections and high-frequency risk telemetry updates.
 
 ---
 

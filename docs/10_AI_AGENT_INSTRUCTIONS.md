@@ -16,9 +16,9 @@ When generating new features, refactoring components, or writing production test
 
 ### 2.1 Rule 1: Monorepo Boundary Enforcement
 CrowdShield is a strict Next.js and FastAPI monorepo.
-* **Frontend UI Code:** Must strictly go into `/apps/web/`. Use Next.js App Router, Tailwind CSS, and `shadcn/ui`. Do not use vanilla CSS or raw HTML canvas for core layouts.
-* **Backend API Code:** Must strictly go into `/apps/api/`. Use FastAPI, Pydantic for validation, and SQLAlchemy for PostgreSQL.
-* **AI Pipelines:** CV (YOLO/BoT-SORT) and Machine Learning (XGBoost) logic must go into the `/ai/` directory.
+* **Frontend UI Code:** Must strictly go into `/apps/web/`. Use Next.js App Router, Tailwind CSS, and `shadcn/ui`. For state management, strictly use `Zustand`. Use `Leaflet` for all map rendering. Do not use vanilla CSS or raw HTML canvas for core layouts.
+* **Backend API Code:** Must strictly go into `/apps/api/`. Use FastAPI, Pydantic for validation, and Supabase for PostgreSQL connectivity.
+* **AI Pipelines:** CV (YOLOv8/BoT-SORT) and Machine Learning (XGBoost) logic must go into the `/ai/` directory.
 
 ### 2.2 Rule 2: Single PWA Principle
 * **Do NOT create separate web apps** for Authority, Police, and Citizen. 

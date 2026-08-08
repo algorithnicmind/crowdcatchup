@@ -12,13 +12,14 @@ CrowdShield is engineered as a highly scalable, decoupled Monorepo architecture 
 ### 1.1 Core Frontend Technologies (PWA)
 * **Application Foundation:** Next.js (React) operating as a unified Progressive Web App (PWA). 
 * **Language & Styling:** TypeScript for strict type safety. Tailwind CSS and `shadcn/ui` for rapid, accessible, and responsive component design.
-* **Map Engine:** Mapbox GL JS or Leaflet integration for rendering live geospatial crowd telemetry.
+* **State Management:** Zustand for lightweight, fast state management across the application.
+* **Map Engine:** Leaflet (via `react-leaflet`) for rendering live geospatial crowd telemetry without API key dependencies.
 * **Offline Resilience:** Service Workers and IndexedDB are utilized to cache venue maps, emergency instructions, and offline reporting schemas when cellular networks fail.
 
 ### 1.2 Core Backend Technologies (API & Data Hub)
 * **API Gateway:** FastAPI (Python) provides high-performance asynchronous REST endpoints and WebSocket connections.
-* **Database (Persistent):** PostgreSQL + PostGIS extension for storing event configurations, venue polygons, gate coordinates, and historical analytics.
-* **Cache & State (Live):** Redis manages ultra-low latency, ephemeral state data such as live risk scores, active WebSocket connections, and real-time police locations.
+* **Database (Persistent):** Supabase (Managed PostgreSQL) for storing event configurations, venue polygons, gate coordinates, and historical analytics quickly.
+* **Cache & State (Live):** Upstash (Serverless Redis) manages ultra-low latency, ephemeral state data such as live risk scores, active WebSocket connections, and real-time police locations.
 
 ### 1.3 AI & Computer Vision Pipeline
 * **Perception Layer:** OpenCV and YOLO for high-speed person detection, coupled with ByteTrack or BoT-SORT for maintaining identity tracking across frames.

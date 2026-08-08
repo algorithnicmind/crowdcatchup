@@ -2,8 +2,8 @@
 **TechNova Challenge 2026 — Problem Statement 1 Solution**
 
 ![Version](https://img.shields.io/badge/Version-2.0.0--PROD-00F2FE?style=for-the-badge&logo=shield&logoColor=black)
-![Stack](https://img.shields.io/badge/Stack-Next.js_%7C_FastAPI_%7C_PostgreSQL-10B981?style=for-the-badge&logo=react&logoColor=white)
-![AI](https://img.shields.io/badge/AI-OpenCV_%7C_YOLO_%7C_XGBoost-F59E0B?style=for-the-badge)
+![Stack](https://img.shields.io/badge/Stack-Next.js_%7C_FastAPI_%7C_Supabase-10B981?style=for-the-badge&logo=react&logoColor=white)
+![AI](https://img.shields.io/badge/AI-OpenCV_%7C_YOLOv8_%7C_XGBoost-F59E0B?style=for-the-badge)
 
 **CrowdShield** is an advanced AI-powered early warning public safety platform built to eliminate crowd crushes and stampedes across massive Indian gatherings—such as the Maha Kumbh Mela, stadium sports finals, and regional music festivals. 
 
@@ -19,7 +19,7 @@ Instead of four disjointed apps, CrowdShield is **one unified Progressive Web Ap
    * 🛡️ **Police/Security:** Mobile task navigation directly to critical risk zones.
    * 👤 **Citizen:** Public safety view, safe routes, and multilingual alerts (no panic-inducing metrics).
    * 🧑‍💼 **Event Owner:** Venue setup, gate configuration, and analytics.
-3. **Universal Map Engine:** A dynamic central map (Mapbox/Leaflet) that serves as the core UI, overlaying density heatmaps, active incidents, and safe routes in real-time via WebSockets.
+3. **Universal Map Engine:** A dynamic central map (powered by **Leaflet**) that serves as the core UI, overlaying density heatmaps, active incidents, and safe routes in real-time via WebSockets.
 4. **Data Hub & Feedback Loop:** Accepts inputs from live RTSP feeds, MP4 uploads, or Digital Twin simulations, feeding them into a standard data pipeline: `Collect → Analyze → Predict → Recommend → Act → Verify`.
 5. **Offline & Edge Resilience:** The Next.js PWA uses Service Workers and IndexedDB to cache venue maps and critical emergency instructions, ensuring operation during cellular network saturation.
 6. **GenAI Integration:** Synthesizes complex AI metrics into readable incident summaries and multilingual public announcements.

@@ -38,8 +38,8 @@ graph TB
         C1[Auth & RBAC Middleware]
         C2[WebSocket Manager]
         C3[Notification Service]
-        DB[(PostgreSQL + PostGIS)]
-        CACHE[(Redis)]
+        DB[(Supabase PostgreSQL)]
+        CACHE[(Upstash Redis)]
     end
 
     subgraph PWA["4. Unified Next.js PWA"]
@@ -47,7 +47,7 @@ graph TB
         D2[Police Task Mobile UI]
         D3[Citizen Safe Routes UI]
         D4[Admin Venue Config UI]
-        M[Universal Mapbox/Leaflet Engine]
+        M[Leaflet Map Engine]
     end
 
     A1 & A2 & A3 -->|Raw Data| B1
@@ -74,12 +74,12 @@ graph TB
 
 | Module Name | Core Responsibility & Architectural Role |
 | :--- | :--- |
-| **1. Frontend PWA** | Next.js application handling role-based routing (`/authority`, `/police`, `/citizen`). Implements Service Workers for offline map caching. |
+| **1. Frontend PWA** | Next.js application handling role-based routing (`/authority`, `/police`, `/citizen`). Implements Zustand for state and Service Workers for offline map caching. |
 | **2. Auth & RBAC** | FastAPI middleware verifying JWTs. Ensures a Citizen cannot trigger interventions and a Police officer cannot alter venue configurations. |
-| **3. Event Management** | Hierarchical PostgreSQL schema defining an Event $\rightarrow$ Venue $\rightarrow$ Zones $\rightarrow$ Gates $\rightarrow$ Exits $\rightarrow$ Cameras. |
-| **4. Map Engine** | Central UI component (Mapbox/Leaflet) rendering dynamic layers: zone heatmaps, gate statuses, police locations, and citizen safe routes. |
+| **3. Event Management** | Hierarchical Supabase PostgreSQL schema defining an Event $\rightarrow$ Venue $\rightarrow$ Zones $\rightarrow$ Gates $\rightarrow$ Exits $\rightarrow$ Cameras. |
+| **4. Map Engine** | Central UI component (Leaflet via react-leaflet) rendering dynamic layers: zone heatmaps, gate statuses, police locations, and citizen safe routes. |
 | **5. Data Hub** | Ingests varied formats (RTSP, MP4, JSON) and normalizes them into a standard `TelemetryFrame` payload for the AI pipeline. |
-| **6. CV Pipeline** | Python-based OpenCV/YOLO script that converts raw video frames into mathematical metadata (people count, $X/Y$ coordinates, movement direction) without storing PII. |
+| **6. CV Pipeline** | Python-based OpenCV/YOLOv8 script that converts raw video frames into mathematical metadata (people count, $X/Y$ coordinates, movement direction) without storing PII. |
 | **7. Analytics Engine** | Calculates localized density ($people/m^2$), average speed, and flow conflicts from the CV metadata. |
 | **8. Risk Prediction** | XGBoost model utilizing time-series memory (e.g., density gradients over 5 minutes) to forecast congestion bottlenecks *before* they happen. |
 | **9. Recommendation Engine** | Rule-based decision tree that takes a high Risk Score and suggests concrete interventions (e.g., "Open Gate G4", "Deploy 6 Police"). |
