@@ -1,96 +1,104 @@
 # 🛡️ CrowdShield: AI-Powered Early Warning System for Preventing Crowd Stampedes
 **TechNova Challenge 2026 — Problem Statement 1 Solution**
 
-![Version](https://img.shields.io/badge/Version-1.0.0--PROD-00F2FE?style=for-the-badge&logo=shield&logoColor=black)
-![Stack](https://img.shields.io/badge/Stack-ES6%20Modules_%7C_Vanilla_CSS_%7C_Canvas-10B981?style=for-the-badge&logo=javascript&logoColor=white)
-![Languages](https://img.shields.io/badge/Multilingual-English_%7C_Hindi_%7C_Marathi_%7C_Tamil-F59E0B?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-2.0.0--PROD-00F2FE?style=for-the-badge&logo=shield&logoColor=black)
+![Stack](https://img.shields.io/badge/Stack-Next.js_%7C_FastAPI_%7C_PostgreSQL-10B981?style=for-the-badge&logo=react&logoColor=white)
+![AI](https://img.shields.io/badge/AI-OpenCV_%7C_YOLO_%7C_XGBoost-F59E0B?style=for-the-badge)
 
-**CrowdShield** is an advanced AI-powered early warning public safety platform built to eliminate crowd crushes and stampedes across massive Indian gatherings—such as the Maha Kumbh Mela, stadium sports finals, and regional music festivals. By replacing reactive CCTV video playback with **predictive density forecasting** and **1-click intelligent countermeasures**, CrowdShield alerts authorities and citizens **minutes before** dangerous compression occurs.
+**CrowdShield** is an advanced AI-powered early warning public safety platform built to eliminate crowd crushes and stampedes across massive Indian gatherings—such as the Maha Kumbh Mela, stadium sports finals, and regional music festivals. 
+
+Instead of four disjointed apps, CrowdShield is **one unified Progressive Web App (PWA)** powered by a central **AI Data Hub**. It ingests live CCTV, datasets, and simulations to predict congestion risks and push role-based, real-time alerts to Authorities, Police, Citizens, and Event Owners.
 
 ---
 
 ## 🌟 Core Features & Innovations
 
-1. **AI Predictive Risk Engine:** Continuously analyzes simulated optical flow and wireless MAC probe metrics. Automatically flags critical density thresholds ($d \ge 4.0\text{ p/m}^2$) and movement speed stalls ($< 0.5\text{ m/s}$).
-2. **Interactive Digital Twin Simulation:** Rendered using zero-dependency HTML5 Canvas. Features real-time fluid particle physics across three Indian venue presets (*Kumbh Ghat Sector 4*, *Metro Sports Stadium*, and *Open Amphitheatre*) with dynamic heatmaps and velocity vectors.
-3. **Intelligent Countermeasure Decisions:** Converts complicated sensor math into simple executive action buttons:
-   * 🚪 *Open Emergency Gate 4 & Reroute Flow* (Dynamically modifies running arena simulation!)
-   * 👮 *Deploy Rapid Action Force (+40 Units)* to break compression waves.
-4. **Citizen Companion Smartphone Emulator:** A side-by-side interactive simulated mobile interface demonstrating:
-   * Instantaneous multilingual switching across **English, Hindi (हिंदी), Marathi (मराठी), and Tamil (தமிழ்)**.
-   * Offline-resilient push broadcast warnings simulating Bluetooth Low Energy (BLE) peer-to-peer mesh routing.
-   * Personalized Green Safe Route navigation maps.
-   * Crowdsourced SOS emergency reporter that drops visual alarm beacons directly onto the Command Room map.
-5. **Completed Bonus Capabilities 🚀:**
-   * 🎙️ **Shield-AI Voice Copilot:** Hands-free Web Speech API vocal querying and audio synthesis response (*"What is the bottleneck status at Gate 2?"*).
-   * ✨ **GenAI SITREP Engine:** Automatically synthesizes real-time metrics into professional executive disaster briefings formatted for print/PDF distribution to District Administration.
+1. **AI Predictive Risk Engine:** Processes computer vision metrics (density, speed, flow conflict) and uses XGBoost to predict congestion risks in 5, 10, and 15-minute future windows.
+2. **Unified PWA with Role-Based Access Control (RBAC):** A single application that provides four unique experiences based on user login:
+   * 👮 **Authority (Command Center):** Full map overview, AI predictions, and intervention approval.
+   * 🛡️ **Police/Security:** Mobile task navigation directly to critical risk zones.
+   * 👤 **Citizen:** Public safety view, safe routes, and multilingual alerts (no panic-inducing metrics).
+   * 🧑‍💼 **Event Owner:** Venue setup, gate configuration, and analytics.
+3. **Universal Map Engine:** A dynamic central map (Mapbox/Leaflet) that serves as the core UI, overlaying density heatmaps, active incidents, and safe routes in real-time via WebSockets.
+4. **Data Hub & Feedback Loop:** Accepts inputs from live RTSP feeds, MP4 uploads, or Digital Twin simulations, feeding them into a standard data pipeline: `Collect → Analyze → Predict → Recommend → Act → Verify`.
+5. **Offline & Edge Resilience:** The Next.js PWA uses Service Workers and IndexedDB to cache venue maps and critical emergency instructions, ensuring operation during cellular network saturation.
+6. **GenAI Integration:** Synthesizes complex AI metrics into readable incident summaries and multilingual public announcements.
 
 ---
 
 ## 🚀 Quick Start & Live Demonstration Guide
 
-Because CrowdShield leverages modular ES6 imports (`<script type="module">`), modern browser security standards require serving the application via local HTTP rather than launching file pathways directly.
+CrowdShield is a modern monorepo consisting of a Next.js frontend and a FastAPI backend.
 
-### Step 1: Start a Local Web Server
-In your terminal inside this project repository folder, run:
-
+### Step 1: Start the FastAPI Backend
+Navigate to the API directory, install dependencies, and start the server:
 ```bash
-npx -y serve .
+cd apps/api
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
 ```
-*(Alternatively, you can use `python -m http.server 8000` or launch via the VS Code / Cursor Live Server extension).*
 
-### Step 2: Open Dashboard in Browser
-Navigate to **`http://localhost:3000`** (or your specified localhost port).
+### Step 2: Start the Next.js PWA
+In a new terminal window, navigate to the Web directory:
+```bash
+cd apps/web
+npm install
+npm run dev
+```
+
+### Step 3: Open the Platform
+Navigate to **`http://localhost:3000`** in your browser. Log in with different test accounts to experience the Authority, Police, and Citizen dashboards.
 
 ---
 
 ## 📚 Enterprise Technical Documentation Suite (`docs/`)
 
-Our comprehensive engineering specifications, architectural diagrams, data flows, testing strategies, and AI developer protocols are arranged sequentially inside the [`docs/`](./docs) directory:
+Our comprehensive engineering specifications, architectural diagrams, data flows, and AI developer protocols are arranged sequentially inside the [`docs/`](./docs) directory:
 
 | Seq | Document Specification | Target Audience & Contents Summary |
 | :---: | :--- | :--- |
-| **01** | **[Product Requirements Document (PRD)](./docs/01_PRD.md)** | **Product Strategy:** Problem Background, User Personas (Magistrate, Police Responder, Citizen), Feature Matrix (FR-01 to FR-10), and Success KPIs. |
-| **02** | **[Technical Requirements Document (TRD)](./docs/02_TRD.md)** | **Engineering Foundation:** Mathematical physics ($d \ge 4.5\text{ p/m}^2$, momentum dropouts), Canvas 60fps budget limits, Web Speech API, and compact ($256\text{-byte}$) Mesh Alert schemas. |
-| **03** | **[High-Level Design Document (HLD)](./docs/03_HLD.md)** | **System Architecture:** Three-ring system topology, comprehensive **Mermaid Component Graph**, and closed-loop mitigation workflows. |
-| **04** | **[Low-Level Design Document (LLD)](./docs/04_LLD.md)** | **Code & Algorithms:** Modular Class Diagrams, single-pass $O(N)$ Spatial Grid Heatmap rendering pseudocode, multilingual translation resolver, and System Safety State Machine. |
-| **05** | **[Data Flow Diagrams Document (DFD)](./docs/05_DFD.md)** | **Data Architecture:** Level 0 Context Diagram, Level 1 Module Data Pathways, and Level 2 closed-loop Sequence Charts for Scenario Countermeasure Execution and Citizen SOS alerting. |
-| **06** | **[UI Specs & Wireframe Mapping](./docs/06_UI_WIRE_FRAMES.md)** | **UX / UI Design:** Cyber-Tactical dark mode psychology (reducing control-room eye fatigue), semantic color designations, master interface ASCII grids, and smartphone emulator tab wireframes. |
-| **07** | **[Production Deployment Playbook](./docs/07_DEPLOYMENT_AND_OPS.md)** | **Operations & DevOps:** Hybrid Edge Computing specs, cellular blackout mitigation via **Offline Bluetooth & Wi-Fi Direct Mesh Node Hopping**, and disaster recovery False Alarm SLAs. |
-| **08** | **[API & Event Bus Schema](./docs/08_API_AND_EVENTS_SCHEMA.md)** | **Backend Contracts:** Definitive schema payloads (`TelemetryFrame`, `InterventionCommand`, `SosIncidentReport`), Edge WebSocket streams, and BLE advertisement UDP parsing. |
-| **09** | **[Testing, QA & Chaos Strategy](./docs/09_TESTING_AND_QA_STRATEGY.md)** | **Quality & Resilience:** Unit math validation, defensive Edge Case matrix ($N=0$, audio block, spam protection), and Chaos Playbooks (Cellular Blackout & SOS flooding). |
-| **10** | **[AI Agent Coding Instructions](./docs/10_AI_AGENT_INSTRUCTIONS.md)** | **AI Developer Rules:** Zero-Build boundary enforcement, loop decoupling rules, explicit operating procedures for extending venues/languages, and calm messaging anti-panic protocols. |
-| **00** | **[Documentation Portal Index](./docs/README.md)** | **Executive Index:** Central table of contents within the `docs/` folder. |
+| **01** | **[Product Requirements Document (PRD)](./docs/01_PRD.md)** | Product Strategy, User Personas (Authority, Police, Citizen, Admin), and Success KPIs. |
+| **02** | **[Technical Requirements Document (TRD)](./docs/02_TRD.md)** | Engineering Stack (Next.js, FastAPI, PostgreSQL) and core AI prediction thresholds. |
+| **03** | **[High-Level Design Document (HLD)](./docs/03_HLD.md)** | The 10 Major Modules, System Topology, and real-time WebSocket architecture. |
+| **04** | **[Low-Level Design Document (LLD)](./docs/04_LLD.md)** | Computer Vision pipelines, ML prediction features, and RBAC mechanisms. |
+| **05** | **[Data Flow Diagrams Document (DFD)](./docs/05_DFD.md)** | Level 0/1/2 diagrams for data ingestion, AI processing, and recommendation feedback loops. |
+| **06** | **[UI Specs & Wireframe Mapping](./docs/06_UI_WIRE_FRAMES.md)** | Central map UI, role-based dashboard wireframes, and responsive PWA layouts. |
+| **07** | **[Production Deployment Playbook](./docs/07_DEPLOYMENT_AND_OPS.md)** | AWS deployment, caching, and offline PWA service worker strategies. |
+| **08** | **[API & Event Bus Schema](./docs/08_API_AND_EVENTS_SCHEMA.md)** | JSON schemas for standardizing CCTV, Simulation, and Dataset inputs. |
+| **09** | **[Testing, QA & Chaos Strategy](./docs/09_TESTING_AND_QA_STRATEGY.md)** | Playwright (Frontend), Pytest (Backend), Locust (Load), and ML evaluation metrics. |
+| **10** | **[AI Agent Coding Instructions](./docs/10_AI_AGENT_INSTRUCTIONS.md)** | Monorepo conventions, boundaries, and LLM automation rules. |
+| **00** | **[Documentation Portal Index](./docs/README.md)** | Central table of contents within the `docs/` folder. |
 
 ---
 
-## 📂 Repository Architecture
+## 📂 Repository Architecture (Monorepo)
 
 ```
-crowdcatchup/
-├── index.html                   # Master interface viewport structure
-├── README.md                    # Project overview & quick start (This File)
-├── docs/                        # Enterprise technical documentation suite (01_PRD to 10_AI_AGENT)
-├── styles/
-│   ├── main.css                 # Dark-mode cyber-tactical design system & variables
-│   ├── dashboard.css            # Command telemetry dials & interactive advisory queues
-│   └── mobile-emulator.css      # Embedded citizen companion smartphone hardware frame
-└── src/
-    ├── main.js                  # Platform orchestrator & event bus bootstrap
-    ├── data/
-    │   └── translations.js      # Multilingual dictionaries (EN, HI, MR, TA)
-    ├── simulation/
-    │   ├── venuePresets.js      # Map topologies (Kumbh Mela, Cricket Stadium, Amphitheatre)
-    │   └── digitalTwinEngine.js   # Canvas fluid physics & dynamic spatial heatmap renderer
-    ├── ai/
-    │   ├── riskPredictionEngine.js # Density threshold evaluation & UI gauge synchronizer
-    │   └── recommendationSystem.js # Rule-based actionable countermeasure synthesis engine
-    └── modules/
-        ├── voiceAssistant.js    # Web Speech API conversational copilot ("Shield-AI")
-        ├── genAiSummary.js      # Generative AI emergency SITREP briefing creator
-        └── mobileAppController.js # Citizen app tab routing, alerts, navigation & SOS reports
+crowdshield/
+├── apps/
+│   ├── web/                 # Next.js PWA (Frontend UI & Role Routing)
+│   └── api/                 # FastAPI (Backend, WebSockets, DB interaction)
+├── ai/
+│   ├── detection/           # OpenCV/YOLO vision pipeline
+│   ├── tracking/            # BoT-SORT and optical flow
+│   ├── analytics/           # Density, speed, and flow math
+│   ├── prediction/          # XGBoost risk modeling
+│   └── recommendation/      # Decision engine for actions
+├── simulation/
+│   └── digital-twin/        # Scenario generation for testing
+├── packages/
+│   ├── types/               # Shared TypeScript definitions
+│   └── config/              # Shared lint/build configs
+├── data/
+│   ├── raw/                 # Input video/datasets
+│   └── processed/           # Feature stores
+├── docs/                    # Technical documentation (01_PRD to 10_AI_AGENT)
+├── README.md                # Project overview (This File)
+└── package.json             # Root workspace definitions
 ```
 
 ---
 
-*Designed and engineered for maximum public safety and zero hardware dependency during the TechNova Challenge 2026.*
+*Designed and engineered for maximum public safety during the TechNova Challenge 2026.*

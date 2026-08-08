@@ -1,66 +1,90 @@
 # Production Deployment & Operational Playbook (OPS)
 **Project Name:** CrowdShield: AI-Powered Early Warning System for Preventing Crowd Stampedes  
-**Document Type:** Edge Deployment Architecture, Mesh Protocol & Reliability Specification  
-**Document Version:** 1.0 (Production Release)  
+**Document Type:** Cloud/Edge Deployment Architecture & Offline PWA Specification  
+**Document Version:** 2.0 (Monorepo/PWA Architecture Release)  
 
 ---
 
-## 1. Production Edge Deployment Topology
-Unlike conventional web web apps that depend on continuous multi-gigabit cloud connections, public assembly venues (such as religious ghat melas or remote rural stadiums) frequently face network infrastructure deficits. CrowdShield operates under a **Hardware-Independent Hybrid Edge Topology**:
+## 1. Production Deployment Topology
+
+CrowdShield utilizes a **Hybrid Cloud-to-Edge Deployment Architecture**. The heavy AI calculations are centralized on the backend (FastAPI + GPU compute), while the frontend is distributed as a lightweight Next.js Progressive Web App (PWA) to citizens and authorities.
 
 ```mermaid
 graph TB
-    subgraph FIELD["On-Site Venue Perimeter"]
-        CAM[Existing Municipal CCTV Cameras] -->|RTSP Video Feed| EDGE[Edge Computing Gateway Box / Municipal Laptop]
-        WIFI[Public MAC Probe Detectors] -->|Count Stream| EDGE
+    subgraph EDGE_DEVICES["Edge (End Users)"]
+        AUTH[Authority Desktop PWA]
+        POL[Police Mobile PWA]
+        CIT[Citizen Mobile PWA]
     end
 
-    subgraph CONTROL["Local Command Room & Operations"]
-        EDGE -->|Local HTTP / WebSockets| DASH[CrowdShield Web Dashboard (No Internet Req)]
-        OFFICER[District Police Magistrate] <-->|Interactive Controls| DASH
+    subgraph AWS_CLOUD["AWS Cloud Infrastructure"]
+        CF[CloudFront CDN]
+        ALB[Application Load Balancer]
+        
+        API[FastAPI Instances / ECS]
+        AI[AI Inference Workers / EC2 GPU]
+        
+        DB[(PostgreSQL / RDS)]
+        CACHE[(Redis / ElastiCache)]
     end
 
-    subgraph MESH["Citizen Ad-Hoc Mesh Network (Offline Tolerant)"]
-        DASH -->|Radio Transmitter / BLE Gateway| NODE1[Pilgrim Smartphone 1]
-        NODE1 -->|P2P Wi-Fi Direct Relay| NODE2[Pilgrim Smartphone 2]
-        NODE2 -->|P2P Bluetooth Relay| NODE3[Pilgrim Smartphone N]
+    subgraph INGESTION["Data Sources"]
+        CCTV[Venue CCTV / RTSP]
     end
+
+    AUTH & POL & CIT <-->|HTTPS / WebSockets| CF
+    CF <--> ALB
+    ALB <--> API
+    
+    CCTV -->|Stream| AI
+    AI -->|Meta| API
+    
+    API <--> DB
+    API <--> CACHE
 ```
 
-### 1.1 Edge Hardware Minimum Specifications
-To guarantee seamless deployment without dedicated cloud datacenter costs, local command-room execution hardware requires only standard commodity specifications:
-* **Processor:** Any modern Quad-Core CPU (Intel i3/i5 or AMD Ryzen 3+, ARM Cortex-A72+ on embedded edge hubs).
-* **Memory:** Minimum 4GB RAM (Core web application footprint sits under $<250\text{MB}$ in active browser DOM).
-* **Storage:** Zero high-capacity database requirement; logs rotate inside lightweight circular ring buffers (`RiskPredictionEngine.historyLog`).
+### 1.1 Server Specifications
+* **Frontend (Next.js):** Deployed via Vercel or AWS Amplify for global edge caching of static assets.
+* **Backend API (FastAPI):** Deployed on AWS ECS (Elastic Container Service) with auto-scaling based on active WebSocket connections.
+* **AI Inference:** Deployed on GPU-accelerated EC2 instances (e.g., `g4dn.xlarge`) to run YOLO and BoT-SORT object tracking at 30+ FPS.
+* **Database:** AWS RDS PostgreSQL with PostGIS enabled for spatial queries.
 
 ---
 
-## 2. Offline Mesh Networking Architecture
+## 2. PWA Offline Networking Architecture
 
-### 2.1 Cellular Blackout Mitigation
-During crowd convergences exceeding $50,000$ simultaneous attendees per square kilometer, cellular towers experience severe random-access memory channel collisions, rendering standard SMS and internet push notifications useless.
+### 2.1 Cellular Blackout Mitigation (Service Workers)
+During crowd convergences exceeding $50,000$ attendees, cellular towers experience severe packet saturation. 
 
-CrowdShield bypasses infrastructure dependency using **Mobile Peer-to-Peer (P2P) Ad-Hoc Mesh Relay**:
-1. **Gateway Injection:** The Control Room dashboard emits a localized broadcast packet ($256\text{ bytes}$) via peripheral low-energy transmitters (or Wi-Fi access point beacon frames).
-2. **Multi-Hop Relay:** Citizen companion smartphones running the CrowdShield mobile app automatically re-transmit verified alert payloads to adjacent devices within a $30\text{-meter}$ radius via **Bluetooth Low Energy (BLE) Advertisements** and **Wi-Fi Direct P2P Group Communications**.
-3. **Loop Suppression:** Each transmitted broadcast packet contains a deterministic hash ID (`id: "em_8041"`). Once a citizen's device ingests and displays a packet, it discards duplicates, preventing infinite transmission loops and battery consumption.
+CrowdShield mitigates this by functioning as an **Offline-First PWA**:
+1. **Pre-Caching:** When a citizen installs the CrowdShield PWA before arriving at the venue, the Service Worker (`sw.js`) caches the HTML shell, CSS, JavaScript, and the vector map tiles of the venue.
+2. **IndexedDB State:** The application downloads the structural safe routes and emergency protocols into the browser's IndexedDB.
+3. **Offline Mode:** If the connection drops to `0kbps`, the app immediately transitions to Offline Mode. The map remains fully interactive. 
+4. **Re-sync:** The app continues attempting background syncs. The moment a user catches a weak Wi-Fi or cellular signal, the PWA pulls the latest 256-byte JSON risk payload and updates the map.
 
 ---
 
 ## 3. Reliability & Fallback Protocols (Disaster Recovery)
 
-### 3.1 Sensor Degradation & Partial Camera Failure
-In the event that an incoming CCTV optical stream drops offline or wireless probe detectors encounter interference:
-* **Degraded Graceful Operation:** The AI Risk Prediction Engine switches from multi-sensor fusion to single-source extrapolation.
-* **Manual Override & Visual Simulation Tracking:** Control room officers can utilize the interactive Digital Twin scenario triggers (`digitalTwinEngine.triggerScenario`) to manually inject observed field conditions into the analytical loop, ensuring continued real-time decision advisories and citizen warning distribution.
+### 3.1 Sensor Degradation & Camera Failure
+If an incoming CCTV optical stream drops offline:
+* The Data Hub marks the camera as `DISCONNECTED`.
+* The XGBoost Risk Model automatically falls back to predicting based on historical time-series data for that specific zone, decaying its confidence score over time.
+* If a camera is down for > 5 minutes, an alert is pushed to the Authority dashboard to manually deploy Police to establish visual confirmation.
 
-### 3.2 False Alarm Suppression SLA (Service Level Agreement)
-To prevent warning-induced panic (where an over-eager automatic alarm incites a stampede):
-* **No Single-Point Alarm Triggering:** Automated high-priority citizen evacuation broadcast pushes are programmatically disabled unless **both** physical criteria are concurrently breached: Local density $d \ge 4.0\text{ p/m}^2$ **AND** average walking speed falls below $0.5\text{ m/s}$ for more than $3.0\text{ seconds}$.
-* **Authority Interception Windows:** All emergency recommendations undergo an instant 5-second officer validation window within the Intelligent Recommendation Queue before automated public broadcast activation.
+### 3.2 False Alarm Suppression (Human-in-the-Loop)
+To prevent warning-induced panic:
+* **No Auto-Triggering:** AI never automatically broadcasts alerts to citizens. 
+* **Validation:** All critical AI recommendations (e.g., "Open Gate 4") must be manually clicked and approved by the Authority role.
+* Once `APPROVED`, the FastAPI backend executes the push notifications to the Citizen and Police PWAs simultaneously via WebSockets.
 
 ---
 
-## 4. Maintenance & Continuous Quality Assurance
-* **Modular Localization Auditing:** Regional translation files ([translations.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/data/translations.js)) can be patched independently of core simulation physics, allowing municipal authorities to easily introduce additional languages (e.g., Bengali, Telugu, Gujarati) simply by appending JSON key-value pairs without re-compiling executable bundles.
-* **Automated Regression Playbooks:** Pre-event testing requires running local HTTP simulation suites via `npx serve .` and verifying simulated high-density stress test scenarios (`Gate 2 Blockage` and `Stage Rush`) to guarantee zero Javascript console exceptions prior to event gate opening.
+## 4. CI/CD & Deployment Pipeline
+Because CrowdShield is a Monorepo, the deployment pipeline is highly structured:
+1. **GitHub Actions:** Triggered on merge to `main`.
+2. **Matrix Build:** 
+   * Runs `pytest` on `/apps/api`
+   * Runs `playwright` E2E tests on `/apps/web`
+3. **Containerization:** Builds Docker images for FastAPI and AI workers.
+4. **Deployment:** Pushes images to AWS ECR and updates the ECS cluster. Vercel automatically deploys the Next.js `/apps/web` application.

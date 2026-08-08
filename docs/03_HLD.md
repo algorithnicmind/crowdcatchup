@@ -1,84 +1,101 @@
 # High-Level Design Document (HLD)
 **Project Name:** CrowdShield: AI-Powered Early Warning System for Preventing Crowd Stampedes  
 **Document Type:** System Architecture & High-Level Design Specification  
-**Document Version:** 1.0 (Production Release)  
+**Document Version:** 2.0 (Monorepo/PWA Architecture Release)  
 
 ---
 
 ## 1. System Architectural Overview
-CrowdShield is architected as an interconnected, event-driven reactive platform. It decouples complex physical crowd dynamics modeling from user presentation by segmenting the application into three decoupled operational rings:
-1. **The Sensor & Simulation Ring:** Ingests external state metrics (simulated via `DigitalTwinEngine` or edge optical-flow/wireless probe cameras).
-2. **The Predictive AI & Decision Ring:** Analyzes spatial anomalies, predicts stampede likelihood windows, and composes real-time interactive advisories.
-3. **The Executive & Citizen Presentation Ring:** Renders the control room analytical viewports, voice copilot interface, and multilingual companion smartphone application.
+CrowdShield is architected as an interconnected, event-driven reactive platform. It centralizes data ingestion, scales AI processing on the backend, and distributes actionable intelligence to four distinct user roles via a unified Progressive Web App (PWA).
+
+The architecture is divided into three primary layers:
+1. **The Ingestion & AI Layer:** Processes live CCTV, datasets, and simulations through computer vision and ML risk models.
+2. **The API & Services Layer (FastAPI):** Manages routing, RBAC, WebSockets, and database persistence.
+3. **The Presentation Layer (Next.js PWA):** Renders the central interactive map and role-specific dashboards.
 
 ---
 
 ## 2. Component Architecture Diagram
-The following diagram illustrates the structural boundaries and data exchange pathways across the platform modules:
 
 ```mermaid
 graph TB
-    subgraph SENSOR_LAYER["1. Sensor & Simulation Ring (Low Hardware Dependency)"]
-        A1[CCTV Video Streams: Optical Flow]
-        A2[Anonymized Wi-Fi / Bluetooth MAC Probes]
-        A3[Digital Twin Physics Engine Canvas]
+    subgraph INGESTION["1. Data Hub (Ingestion Layer)"]
+        A1[CCTV / RTSP Feeds]
+        A2[Simulation Data]
+        A3[Dataset / MP4 Uploads]
+        A4[Citizen Reports]
     end
 
-    subgraph CORE_AI["2. Predictive AI & Recommendation Engine"]
-        B1[Risk Prediction Analytics Engine]
-        B2[Intelligent Intervention Advisory Queue]
-        B3[GenAI SITREP Executive Synthesizer]
-        B4[Shield-AI Voice Copilot Processor]
+    subgraph AI_PIPELINE["2. AI & Analytics Engine"]
+        B1[CV Pipeline: YOLO + BoT-SORT]
+        B2[Crowd Analytics: Density & Flow]
+        B3[Risk Prediction: XGBoost]
+        B4[Decision Engine: Action Recommendations]
+        B5[GenAI: Incident Summarization]
     end
 
-    subgraph PRESENTATION["3. Executive Command & Citizen Mobile Suite"]
-        C1[Command Room Control Dashboard & Heatmap]
-        C2[Executive Print / PDF Emergency SITREPs]
-        C3[Companion Citizen Smartphone Emulator]
-        C4[Offline Peer-to-Peer Bluetooth Mesh Network]
+    subgraph BACKEND["3. API Gateway & State (FastAPI)"]
+        C1[Auth & RBAC Middleware]
+        C2[WebSocket Manager]
+        C3[Notification Service]
+        DB[(PostgreSQL + PostGIS)]
+        CACHE[(Redis)]
     end
 
-    A1 -->|Aggregated Motion Vectors| B1
-    A2 -->|Spatial Density Counting| B1
-    A3 -->|Real-Time Particle Telemetry| B1
+    subgraph PWA["4. Unified Next.js PWA"]
+        D1[Authority Command Center]
+        D2[Police Task Mobile UI]
+        D3[Citizen Safe Routes UI]
+        D4[Admin Venue Config UI]
+        M[Universal Mapbox/Leaflet Engine]
+    end
 
-    B1 -->|Risk State Transitions & Gauges| C1
-    B1 -->|Threshold Exceedance Trigger| B2
-    B1 -->|State Log Aggregation| B3
+    A1 & A2 & A3 -->|Raw Data| B1
+    A4 -->|Incident Geo-Tag| C1
 
-    B2 -->|1-Click Action Interventions| C1
-    C1 -->|Execute Gate / Route Modification| A3
-    C1 -->|Trigger Broadcast Advisory| C4
+    B1 -->|Metadata (Count, Speed)| B2
+    B2 -->|Time-Series Features| B3
+    B3 -->|Risk Score| B4
+    B3 -->|Risk Context| B5
     
-    C4 -->|Encrypted Compact Payloads| C3
-    C3 -->|Crowdsourced SOS Incident Pin| A3
-    
-    B4 <-->|Speech Input & Audio Vocal Guidance| C1
+    B4 -->|Recommendation JSON| C1
+    B5 -->|SITREP Text| C1
+
+    C1 <--> DB
+    C2 <--> CACHE
+
+    C1 -->|REST & WebSockets| PWA
+    M --- D1 & D2 & D3 & D4
 ```
 
 ---
 
-## 3. Core System Components & Responsibilities
+## 3. The 10 Major Technical Modules
 
-| Component Name | Primary Source File | Core Responsibility & Architectural Role |
-| :--- | :--- | :--- |
-| **Platform Orchestrator** | [main.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/main.js) | Serves as the central application dependency injection bus and lifecycle coordinator. Synchronizes event callbacks between AI engines, Canvas simulation loops, and UI DOM listeners. |
-| **Digital Twin Engine** | [digitalTwinEngine.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/simulation/digitalTwinEngine.js) | Evaluates particle vector mechanics across structural venue topologies ([venuePresets.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/simulation/venuePresets.js)). Computes dynamic spatial density grids and renders visual heatmaps via 2D Canvas rendering context. |
-| **Risk Prediction Engine** | [riskPredictionEngine.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/ai/riskPredictionEngine.js) | Monitors real-time telemetry frames. Calculates stampede probability %, peak density progress bars, movement velocity dropoff, and manages alert status state transitions (`SAFE` / `WARNING` / `DANGER`). |
-| **Recommendation System** | [recommendationSystem.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/ai/recommendationSystem.js) | Rule-driven advisory decision support. Synthesizes actionable 1-click countermeasures (gate adjustments, Rapid Action Force deployments) that bridge executive controls directly to live simulation states. |
-| **Voice Assistant** | [voiceAssistant.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/modules/voiceAssistant.js) | Integrates Web Speech Recognition API and vocal synthesis to provide hands-free conversational inquiry ("What is Gate 2 density?") and vocal audio navigational feedback. |
-| **GenAI SITREP Engine** | [genAiSummary.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/modules/genAiSummary.js) | Generative briefing document producer that composes executive-level emergency situation reports (SITREPs) with risk analysis and mitigation audits ready for official government distribution. |
-| **Mobile App Controller** | [mobileAppController.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/modules/mobileAppController.js) | Controls the companion smartphone simulator. Manages real-time translation dictionaries ([translations.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/data/translations.js)) across English, Hindi, Marathi, and Tamil, handles SOS reporting, and visualizes safe exit routes. |
+| Module Name | Core Responsibility & Architectural Role |
+| :--- | :--- |
+| **1. Frontend PWA** | Next.js application handling role-based routing (`/authority`, `/police`, `/citizen`). Implements Service Workers for offline map caching. |
+| **2. Auth & RBAC** | FastAPI middleware verifying JWTs. Ensures a Citizen cannot trigger interventions and a Police officer cannot alter venue configurations. |
+| **3. Event Management** | Hierarchical PostgreSQL schema defining an Event $\rightarrow$ Venue $\rightarrow$ Zones $\rightarrow$ Gates $\rightarrow$ Exits $\rightarrow$ Cameras. |
+| **4. Map Engine** | Central UI component (Mapbox/Leaflet) rendering dynamic layers: zone heatmaps, gate statuses, police locations, and citizen safe routes. |
+| **5. Data Hub** | Ingests varied formats (RTSP, MP4, JSON) and normalizes them into a standard `TelemetryFrame` payload for the AI pipeline. |
+| **6. CV Pipeline** | Python-based OpenCV/YOLO script that converts raw video frames into mathematical metadata (people count, $X/Y$ coordinates, movement direction) without storing PII. |
+| **7. Analytics Engine** | Calculates localized density ($people/m^2$), average speed, and flow conflicts from the CV metadata. |
+| **8. Risk Prediction** | XGBoost model utilizing time-series memory (e.g., density gradients over 5 minutes) to forecast congestion bottlenecks *before* they happen. |
+| **9. Recommendation Engine** | Rule-based decision tree that takes a high Risk Score and suggests concrete interventions (e.g., "Open Gate G4", "Deploy 6 Police"). |
+| **10. GenAI Engine** | Translates complex AI metrics into readable natural language (e.g., "Zone C congestion increasing rapidly") and supports hands-free voice command parsing. |
 
 ---
 
-## 4. End-to-End Operational Workflow Topology
+## 4. End-to-End Operational Workflow (The Core Loop)
 
-The system operates across a closed-loop feedback lifecycle:
-1. **State Ingestion & Monitoring:** The venue simulation or optical sensor suite evaluates pedestrian movement patterns across selected topological maps (e.g., Maha Kumbh Mela Ghats or Metro Sports Stadiums).
-2. **Anomaly & Bottleneck Discovery:** If an obstruction occurs (such as a blocked exit or rain shelter surge), [riskPredictionEngine.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/ai/riskPredictionEngine.js) detects local velocity dropoff below $0.5\text{ m/s}$ and escalates system status from `SAFE` to `CRITICAL DANGER`.
-3. **Advisory Synthesis:** The alarm state triggers [recommendationSystem.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/ai/recommendationSystem.js), presenting priority action cards to Command Room executives.
-4. **Execution & Closed-Loop Mitigation:** When an authority approves an intervention (e.g., *Open Emergency Gate 4 & Divert Flow*):
-   * A structural transition command executes in [digitalTwinEngine.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/simulation/digitalTwinEngine.js), opening barriers and redistributing congested particle flow vectors toward clear escape ramps.
-   * An instant multilingual emergency payload transmits via mesh network simulation to [mobileAppController.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/modules/mobileAppController.js), guiding citizens safely via regional text banners and audio cues.
-   * The localized density subsides within minutes, returning telemetry meters back to nominal safe baseline parameters.
+1. **COLLECT:** CCTV streams enter the **Data Hub**.
+2. **PROCESS:** The **CV Pipeline** detects 1,250 people moving toward Gate 3 at $0.35\text{ m/s}$.
+3. **UNDERSTAND:** The **Analytics Engine** flags this as 83% capacity with a flow conflict.
+4. **PREDICT:** The **Risk Engine** forecasts a `CRITICAL` state within 8 minutes.
+5. **DECIDE:** The **Recommendation Engine** determines Gate 5 is open and proposes redirecting traffic.
+6. **ACT:** 
+   * **Authority** receives the recommendation and clicks `APPROVE`.
+   * **Police** PWA receives a push task: "Proceed to Gate 3 for crowd redirection."
+   * **Citizen** PWA receives an alert: "Heavy congestion at Gate 3. Please use Gate 5."
+7. **VERIFY:** The system continues processing. 5 minutes later, density drops. Risk status downgrades to `SAFE`.

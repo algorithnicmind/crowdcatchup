@@ -1,108 +1,118 @@
 # API & Event Bus Schema Specification (Contracts)
 **Project Name:** CrowdShield: AI-Powered Early Warning System for Preventing Crowd Stampedes  
 **Document Type:** Event Architecture, Data Contracts & API Schema  
-**Document Version:** 1.0 (Production Release)  
+**Document Version:** 2.0 (Monorepo/PWA Architecture Release)  
 
 ---
 
-## 1. Event-Driven Application Bus Overview
-To enable modular decoupling and seamless migration from client-side simulation to real-world production hardware (e.g., Python edge servers, RTSP camera gateways, and municipal databases), CrowdShield communicates via formal asynchronous event schemas. 
+## 1. Universal Data Hub Schema (Data Ingestion)
+The Data Hub ingests data from live CCTV, uploaded MP4s, or Digital Twin simulations. To ensure the XGBoost Risk Engine is decoupled from the source type, all inputs are normalized into a standard JSON payload format.
 
-Both human developers and AI coding agents must strictly adhere to these payload schemas when building extensions, writing backend test adapters, or integrating third-party emergency management APIs.
-
----
-
-## 2. Internal Frontend Event Contracts
-
-### 2.1 `TELEMETRY_UPDATE` (Simulation / Sensor Stream -> Risk Engine)
-Emitted by [digitalTwinEngine.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/simulation/digitalTwinEngine.js) (or real-time edge processing hubs) at fixed **400ms decoupling intervals**.
-
-* **Channel / Event Name:** `onTelemetryUpdate` / `event:telemetry_frame`
+* **Protocol:** HTTP POST or WebSockets (`wss://api.crowdshield.local/ingest`)
 * **TypeScript / Schema Interface:**
   ```typescript
   interface TelemetryFrame {
-    timestamp: number;          // Epoch milliseconds (e.g., 1754418652000)
-    crowdCount: number;         // Estimated integer pedestrian head count
-    peakDensity: number;        // Max localized density in people/m² (Float, e.g., 4.2)
-    avgSpeed: number;           // Mean crowd movement speed in meters/sec (Float, e.g., 0.6)
-    stampedeLikelihood: number; // Calculated probability from 0 to 100 (Integer)
-    timeToIncident: string;     // Formatted countdown string (e.g., "04m 12s" or "Safe (>30m)")
-    bottlenecksCount: number;   // Number of stalled grid quadrants (d >= 3.8 & speed < 0.4)
-    reverseFlow: boolean;       // True if a counter-flow directional wave is detected
-    panicPropagation: number;   // Acceleration shockwave metric in m/s² (Float)
-    statusLevel: 'safe' | 'warning' | 'danger'; // Primary traffic state tag
-    scenario: string;           // Active preset scenario identifier (e.g., "bottleneck")
-  }
-  ```
-
-### 2.2 `EXECUTE_INTERVENTION` (Command UI -> Simulation / Physical Actuators)
-Triggered when an authorized officer clicks **"⚡ Accept & Execute Advisory"** inside [recommendationSystem.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/ai/recommendationSystem.js) or commands via [voiceAssistant.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/modules/voiceAssistant.js).
-
-* **Channel / Event Name:** `onExecuteIntervention` / `command:execute_action`
-* **TypeScript / Schema Interface:**
-  ```typescript
-  interface InterventionCommand {
-    actionType: 'open_emergency_exit' | 'deploy_security' | 'one_way_flow';
-    targetGateId?: string;      // Optional specific barrier/gate ID (e.g., "gate_4_emer")
-    officerToken?: string;      // Authorization JWT or role verification hash
-    executedAt: number;         // Epoch timestamp of command confirmation
-  }
-  ```
-
-### 2.3 `SOS_INCIDENT_REPORT` (Citizen Mobile App -> Command Room Dashboard)
-Submitted when an on-site citizen sends an urgent distress report via [mobileAppController.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/modules/mobileAppController.js).
-
-* **Channel / Event Name:** `onSosReported` / `event:citizen_sos`
-* **TypeScript / Schema Interface:**
-  ```typescript
-  interface SosIncidentReport {
-    reportId: string;           // UUIDv4 or timestamped identifier (e.g., "sos_1754418900122")
-    type: 'overcrowding' | 'medical' | 'blockage' | 'panic';
-    zone: string;               // Localized sector string (e.g., "Sector B / Ghat Central")
-    details: string;            // Citizen raw commentary or empty string
-    timestamp: number;          // Epoch execution timestamp
-    geoCoordinates?: {          // Optional GPS parameters if permitted by browser/app
-      lat: number;
-      lng: number;
-      accuracyMeters: number;
-    };
+    event_id: string;           // E.g., "event_001_rath_yatra"
+    zone_id: string;            // E.g., "zone_c"
+    timestamp: string;          // ISO 8601 (e.g., "2026-08-08T11:30:00Z")
+    people_count: number;       // Raw detection count from CV Pipeline
+    density: number;            // people / m²
+    average_speed: number;      // m/s
+    entry_rate: number;         // people / minute entering
+    exit_rate: number;          // people / minute exiting
+    flow_direction: string;     // e.g., "north" or "mixed"
+    flow_conflict: boolean;     // True if counter-flow wave is detected
+    blocked_route: boolean;     // True if CV detects static blockage
   }
   ```
 
 ---
 
-## 3. External Edge Gateway / Mesh Network Protocols
+## 2. Real-Time PWA WebSockets (FastAPI -> Next.js)
 
-### 3.1 WebSocket Audio/Visual Edge Stream Ingestion (Future Backend Extension)
-When replacing client-side canvas simulation with live real-world computer vision gateway server pipelines (e.g., OpenCV / YOLOv8 Edge Camera Nodes):
+The FastAPI server manages active WebSocket connections for the Authority, Police, and Citizen PWAs, pushing role-specific data.
 
-* **Protocol:** WebSockets (`wss://gateway.crowdshield.local:8443/stream`)
-* **Message Framing:** JSON over binary TLS transport.
-* **Expected Inbound Payload:** Matches `TelemetryFrame` schema above with an appended source device identification tag:
-  ```json
-  {
-    "device_id": "CAM_GHAT_SEC4_008",
-    "fps_stream": 15.0,
-    "telemetry": {
-      "timestamp": 1754418652000,
-      "peakDensity": 3.8,
-      "avgSpeed": 0.75,
-      "statusLevel": "warning"
-    }
-  }
-  ```
-
-### 3.2 Offline Bluetooth Low Energy (BLE) Mesh Broadcast Schema
-When pushing warnings to mobile phones during cellular tower blackouts, payloads must strictly conform to a **$\le 256\text{-byte}$ UDP/BLE Advertisement package**:
-
-```json
-{
-  "id": "em_8041",
-  "k": "emergencyEvac",
-  "l": ["en", "hi", "mr", "ta"],
-  "g": "Gate 5",
-  "t": 1754418652000,
-  "p": 2
+### 2.1 `RISK_UPDATE` (To Authority)
+Emitted by the Risk Prediction Engine when a zone state changes.
+```typescript
+interface RiskUpdateEvent {
+  type: "RISK_UPDATE";
+  zone_id: string;
+  risk_score: number;         // 0-100 current risk
+  risk_level: "LOW" | "MODERATE" | "HIGH" | "CRITICAL";
+  predictions: {
+    plus_5_min: number;
+    plus_10_min: number;
+    plus_15_min: number;
+  };
+  timestamp: string;
 }
 ```
-* **Constraint Enforcement:** Any AI assistant or developer extending broadcast features **must never embed heavy graphical assets or raw narrative paragraphs directly in network broadcast payloads**. Always transmit compact dictionary lookup routing keys (`k: "emergencyEvac"`) that resolve locally against installed dictionary stores ([translations.js](file:///C:/Users/ankit/OneDrive/Documents/GitHub/crowdcatchup/src/data/translations.js)).
+
+### 2.2 `RECOMMENDATION_ALERT` (To Authority)
+Triggered when the Decision Engine synthesizes a high-priority action plan.
+```typescript
+interface RecommendationAlert {
+  type: "RECOMMENDATION";
+  risk: number;
+  recommendations: Array<{
+    action: "OPEN_GATE" | "CLOSE_GATE" | "DEPLOY_POLICE" | "BROADCAST_ALERT";
+    target: string;           // e.g., "G4"
+    priority: "HIGH" | "CRITICAL";
+    reason: string;
+  }>;
+}
+```
+
+### 2.3 `EXECUTE_INTERVENTION` (Authority -> API)
+Sent when the Authority clicks `[APPROVE PLAN]`. Requires JWT validation.
+```typescript
+interface ExecuteInterventionCommand {
+  type: "EXECUTE_ACTION";
+  recommendation_id: string;
+  auth_token: string;         // Authority JWT
+}
+```
+
+### 2.4 `SECURITY_TASK` (To Police PWA)
+Sent to the Police mobile application after an intervention is approved.
+```typescript
+interface SecurityTask {
+  type: "NEW_TASK";
+  zone_id: string;
+  distance_meters: number;
+  risk_level: "CRITICAL";
+  instructions: string;       // e.g., "Control crowd near Gate 3"
+  required_officers: number;
+  assigned_officers: number;
+}
+```
+
+### 2.5 `CITIZEN_ALERT` (To Citizen PWA)
+Pushed to public devices. Strips out raw metrics to avoid panic.
+```typescript
+interface CitizenAlert {
+  type: "CROWD_ALERT";
+  level: "WARNING";
+  zone: string;
+  message_key: string;        // E.g., "gateCongestedUseAlternate" (resolves locally in i18next)
+  recommended_gate: string;   // E.g., "G4"
+}
+```
+
+---
+
+## 3. Citizen SOS Reporting (Citizen -> API)
+Submitted when an on-site citizen sends an urgent distress report via the mobile PWA.
+
+```typescript
+interface SosIncidentReport {
+  type: "overcrowding" | "medical" | "blockage" | "panic";
+  geo_coordinates: {          // GPS parameters
+    lat: number;
+    lng: number;
+  };
+  details: string;            // User commentary
+  timestamp: string;
+}
+```
