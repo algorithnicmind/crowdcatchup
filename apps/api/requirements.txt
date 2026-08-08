@@ -1,0 +1,5 @@
+fastapi>=0.103.0
+uvicorn>=0.23.2
+pydantic>=2.4.2
+supabase>=2.0.0
+upstash-redis>=1.0.0
