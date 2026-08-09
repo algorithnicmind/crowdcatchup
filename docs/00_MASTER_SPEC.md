@@ -599,28 +599,6 @@ BLE should be treated as a supporting signal.
 
 It must not be represented as a guaranteed count of every phone in the area.
 
----
-
-# 23. WEARABLE/DEVICE SENSOR DATA
-
-Future sources may include:
-
-* Accelerometer
-* Gyroscope
-* Smartwatch
-* Fitness band
-* Other authorized IoT devices
-
-Potential applications:
-
-* Fall detection
-* Sudden movement
-* Abnormal movement
-* Emergency signals
-
-Do not make sensitive health information a core requirement of the MVP.
-
----
 
 # 24. SYNTHETIC DATA
 
