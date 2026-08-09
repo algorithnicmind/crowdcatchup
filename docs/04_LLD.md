@@ -341,3 +341,167 @@ stateDiagram-v2
 When an intervention is approved, the PWA utilizes `i18next` to render alerts based on the Citizen device language. Supported: English, Hindi, Odia, additional Indian languages later.
 
 Safety-critical messages use controlled templates. AI may draft announcements, but human approval is required for critical broadcasts.
+
+
+---
+
+## 32. CROWD STATE
+
+The Fusion Hub should produce one unified crowd state.
+
+Example:
+
+```json
+{
+  "event_id": "EVT-001",
+  "zone_id": "ZONE-B",
+  "estimated_people": 1280,
+  "density_level": "HIGH",
+  "average_speed": 0.34,
+  "flow_direction": "NORTH",
+  "entry_rate": 165,
+  "exit_rate": 52,
+  "bottleneck_score": 0.87,
+  "risk_score": 86,
+  "risk_level": "CRITICAL",
+  "confidence": 0.89
+}
+```
+
+The rest of the platform should primarily consume this Crowd State instead of directly depending on individual sensor formats.
+
+---
+
+## 33. CROWD ANALYTICS
+
+The system must estimate:
+
+* Crowd density
+* Crowd size
+* Average speed
+* Flow direction
+* Entry rate
+* Exit rate
+* Queue length
+* Zone occupancy
+* Route utilization
+* Gate utilization
+* Bottlenecks
+* Reverse flow
+* Flow conflict
+* Sudden surge
+* Abnormal movement
+
+---
+
+## 34. RISK ENGINE
+
+Risk prediction should consider:
+
+* Density
+* Density growth rate
+* Crowd speed
+* Speed reduction
+* Entry/exit imbalance
+* Gate flow
+* Zone capacity
+* Route capacity
+* Bottleneck score
+* Direction conflicts
+* Reverse movement
+* Sudden surge
+* Route blockage
+* Historical patterns
+* Weather/environmental signals where available
+* Sensor confidence
+
+The system should produce:
+
+Current risk
+and
+Predicted future risk.
+
+---
+
+## 35. PREDICTION HORIZON
+
+The system should aim to predict:
+
+* Next few minutes
+* Approximately 5 minutes
+* Approximately 10 minutes
+* Approximately 15 minutes
+
+The exact prediction horizon must be configurable and evaluated using actual model performance.
+
+Never claim guaranteed prediction.
+
+Use probabilistic risk.
+
+---
+
+## 36. RISK LEVELS
+
+Use:
+
+🟢 LOW
+🟡 MODERATE
+🟠 HIGH
+🔴 CRITICAL
+
+Risk should be zone-specific.
+
+Example:
+
+ZONE-A → LOW
+ZONE-B → CRITICAL
+ZONE-C → HIGH
+ZONE-D → LOW
+
+---
+
+## 37. DECISION ENGINE
+
+The system must not stop at:
+
+"Risk = 85."
+
+It must translate risk into possible interventions.
+
+Examples:
+
+* Open alternate gate
+* Restrict entry gate
+* Redirect incoming crowd
+* Activate one-way flow
+* Close route
+* Open emergency route
+* Deploy police
+* Move security personnel
+* Change barricade configuration
+* Broadcast announcement
+* Send citizen alert
+* Recommend medical deployment
+
+---
+
+## 39. RECOMMENDATION EXPLANATION
+
+Every AI recommendation must explain why.
+
+Example:
+
+**Recommendation: Restrict Gate G3**
+
+Reason:
+
+* Zone B density increased 24% in 4 minutes
+* Entry rate exceeds configured threshold
+* Exit rate is declining
+* Route R4 is approaching capacity
+* Independent sources agree with high confidence
+
+This makes the AI explainable.
+
+---
+

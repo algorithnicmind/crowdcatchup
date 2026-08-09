@@ -176,3 +176,172 @@ Confidence considers: accuracy, freshness, latency, historical reliability, cove
 
 ### Demo Story
 Normal state -> Gate G3 high inflow -> Zone B density rising -> Fusion detects change -> Risk CRITICAL -> AI recommends intervention -> Authority approves -> Risk falls -> Incident prevented.
+
+
+---
+
+## 6. EVENT-FIRST ARCHITECTURE
+
+CrowdShield begins with an event.
+
+The lifecycle is:
+
+CREATE EVENT
+→ DEFINE VENUE
+→ DEFINE EVENT AREA
+→ CREATE ZONES
+→ CREATE ENTRY/EXIT POINTS
+→ CONFIGURE SMART GATES
+→ CREATE ROUTES
+→ CREATE EMERGENCY ROUTES
+→ ADD CAMERAS
+→ ADD OTHER DATA SOURCES
+→ CONFIGURE CAPACITIES
+→ VALIDATE VENUE
+→ RUN SIMULATION
+→ PUBLISH EVENT
+→ LIVE MONITORING
+→ RISK PREDICTION
+→ INTERVENTION
+→ POST-EVENT ANALYTICS
+
+Every data point must belong to an event.
+
+---
+
+## 53. TECHNICAL ARCHITECTURE
+
+Recommended initial stack:
+
+## Frontend
+
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
+* PWA support
+* Mapbox/MapLibre/OpenStreetMap-compatible mapping architecture
+* Recharts/ECharts for analytics
+
+## Backend
+
+* Python
+* FastAPI
+* Pydantic
+* SQLAlchemy
+* PostgreSQL
+* PostGIS
+* Redis
+
+## AI/ML
+
+* Python
+* PyTorch
+* OpenCV
+* YOLO-family detector
+* Tracking algorithm
+* scikit-learn where appropriate
+
+## Real-time
+
+* WebSockets
+* Redis Pub/Sub or Redis Streams initially
+
+Future scalability:
+
+* Kafka
+* Dedicated stream processing
+
+## Storage
+
+* PostgreSQL/PostGIS
+* Object storage for video/images
+* Redis for live state/cache
+
+## Deployment
+
+Design for:
+
+* Docker
+* AWS
+* Managed PostgreSQL
+* Object storage
+* Redis
+* Container deployment
+* Monitoring
+
+Do not over-engineer the MVP with unnecessary microservices.
+
+Start modular monolith + clearly separated services/modules.
+
+---
+
+## 61. FINAL SYSTEM PRINCIPLE
+
+The entire CrowdShield platform should follow this principle:
+
+> **Configure the event first. Sense the crowd from multiple sources. Fuse the observations. Understand the crowd state. Predict risk. Recommend preventive action. Let authorized humans act. Measure the result.**
+
+The system should move crowd management from:
+
+**Reactive → Predictive → Preventive.**
+
+---
+
+## 62. FINAL ARCHITECTURE
+
+```text
+                    CROWDShield PWA
+                          │
+        ┌─────────────────┼─────────────────┐
+        │                 │                 │
+    AUTHORITY           POLICE         EVENT OWNER
+        │                                   │
+        │                                EVENT SETUP
+        │                                   │
+        │                            ┌──────┴──────┐
+        │                            ↓             ↓
+        │                         MAP BUILDER   CONFIGURATION
+        │                            │             │
+        │                            └──────┬──────┘
+        │                                   ↓
+        │                           EVENT DIGITAL TWIN
+        │                                   │
+        └───────────────────────────────────┤
+                                            ↓
+                                  DATA SOURCE REGISTRY
+                                            │
+          ┌──────────┬──────────┬──────────┼──────────┬──────────┐
+          ↓          ↓          ↓          ↓          ↓          ↓
+        CCTV     SMART GATE    GPS       DRONE       BLE     TELECOM
+          │          │          │          │          │          │
+          └──────────┴──────────┴──────────┴──────────┴──────────┘
+                                            │
+                                    DATA FUSION HUB
+                                            │
+                           ┌────────────────┼────────────────┐
+                           ↓                ↓                ↓
+                      NORMALIZE         VALIDATE        SOURCE HEALTH
+                           └────────────────┼────────────────┘
+                                            ↓
+                                      SENSOR FUSION
+                                            ↓
+                                       CROWD STATE
+                                            ↓
+                                    AI RISK ENGINE
+                                            ↓
+                                  PREDICTION ENGINE
+                                            ↓
+                                    DECISION ENGINE
+                                            ↓
+                                   RECOMMENDATIONS
+                                            ↓
+                               AUTHORITY / POLICE ACTION
+                                            ↓
+                                      CROWD RESPONSE
+                                            ↓
+                                      FEEDBACK LOOP
+```
+
+---
+

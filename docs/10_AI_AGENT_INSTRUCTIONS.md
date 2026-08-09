@@ -141,3 +141,64 @@ Implement features according to the 9-phase build order:
 | 9 - Production | Security, testing, monitoring, deployment |
 
 Do not jump ahead to Phase 7 features before Phase 3 is solid.
+
+
+---
+
+## 59. DEVELOPMENT PRINCIPLES FOR THE AI CODING AGENT
+
+The coding agent must:
+
+1. Understand the complete architecture before coding.
+2. Never randomly rewrite working code.
+3. Inspect the existing repository before making changes.
+4. Preserve existing functionality.
+5. Follow modular architecture.
+6. Use TypeScript strictly on frontend.
+7. Use typed Pydantic schemas on backend.
+8. Validate all API inputs.
+9. Never put secrets in source code.
+10. Never implement authorization only in frontend.
+11. Write tests for important business logic.
+12. Use migrations for database changes.
+13. Avoid unnecessary dependencies.
+14. Avoid premature microservices.
+15. Keep code production-oriented.
+16. Add logging and error handling.
+17. Handle sensor failures gracefully.
+18. Keep real and synthetic sources compatible through the same data contracts.
+19. Keep every data record associated with an event.
+20. Never mix event data.
+21. Make AI recommendations explainable.
+22. Keep humans in control of critical interventions.
+23. Treat privacy as a design requirement.
+24. Document major architectural decisions.
+25. Never claim a feature works unless it is actually implemented and tested.
+
+---
+
+## 60. IMPORTANT AI AGENT BEHAVIOR
+
+Before implementing any major feature:
+
+1. Inspect repository.
+2. Understand existing architecture.
+3. Identify affected modules.
+4. Plan changes.
+5. Implement incrementally.
+6. Run tests.
+7. Run lint/type checks.
+8. Verify database migrations.
+9. Verify API behavior.
+10. Verify frontend behavior.
+11. Verify security implications.
+12. Document changes.
+
+Do not create fake integrations.
+
+If an external system such as telecom or live drone infrastructure is unavailable, create a clearly marked adapter/interface and a simulator/mock implementation.
+
+Never pretend the simulator is a real telecom connection.
+
+---
+

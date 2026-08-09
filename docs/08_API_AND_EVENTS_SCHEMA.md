@@ -294,3 +294,68 @@ type InterventionType =
   | "CHANGE_BARRICADE"
   | "RECOMMEND_MEDICAL";
 ```
+
+
+---
+
+## 26. STANDARD OBSERVATION FORMAT
+
+Every source should produce a standardized observation.
+
+Example:
+
+```json
+{
+  "event_id": "EVT-001",
+  "source_id": "CCTV-07",
+  "source_type": "CCTV",
+  "zone_id": "ZONE-B",
+  "timestamp": "2026-08-09T17:05:10Z",
+  "metric": "people_count",
+  "value": 1240,
+  "confidence": 0.91,
+  "latency_ms": 300,
+  "health": "ONLINE"
+}
+```
+
+Smart Gate:
+
+```json
+{
+  "event_id": "EVT-001",
+  "source_id": "SG-03",
+  "source_type": "SMART_GATE",
+  "gate_id": "G-03",
+  "timestamp": "2026-08-09T17:05:11Z",
+  "metric": "entry_rate",
+  "value": 142,
+  "confidence": 0.94,
+  "health": "ONLINE"
+}
+```
+
+---
+
+## 27. EVENT ISOLATION
+
+Every observation must contain an event identifier.
+
+Never mix:
+
+Event A
+with
+Event B.
+
+The system must enforce:
+
+EVENT
+→ VENUE
+→ ZONE/GATE/ROUTE
+→ SOURCE
+→ OBSERVATION
+
+This is a fundamental data-integrity rule.
+
+---
+

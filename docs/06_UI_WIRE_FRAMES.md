@@ -176,3 +176,81 @@ The Authority dashboard includes a Source Health panel showing all active data s
 When a citizen opens the PWA, their device locale determines the language. Broadcasted emergency instructions are pushed over WebSockets and rendered natively in **English, Hindi, Odia, or additional Indian languages** instantly.
 
 Messages are short and safety-focused: "Please avoid Gate 3. Use Gate 5."
+
+
+---
+
+## 40. POLICE DASHBOARD
+
+Police interface should show:
+
+* Assigned events
+* Live map
+* High-risk zones
+* Incident locations
+* Recommended deployment
+* Safest route
+* Emergency route
+* Nearby police units
+* Tasks
+* Alerts
+* Incident acknowledgement
+* Incident resolution
+
+---
+
+## 41. AUTHORITY DASHBOARD
+
+Authority dashboard should show:
+
+* All active events
+* Event risk
+* Live map
+* Crowd heatmap
+* Zone risk
+* Gate status
+* Route status
+* Incidents
+* Security deployment
+* AI recommendations
+* Historical analytics
+* System health
+* Data source health
+
+---
+
+## 42. EVENT OWNER DASHBOARD
+
+Event Owner should see:
+
+* Event status
+* Crowd count
+* Occupancy
+* Gate flow
+* Zone conditions
+* Route status
+* Incidents
+* Infrastructure status
+* Pre-event simulation
+* Event analytics
+
+---
+
+## 43. CITIZEN PWA
+
+Citizen interface should remain simple.
+
+Show:
+
+* Event map
+* Current congestion
+* Safety alerts
+* Safe route
+* Emergency information
+* Incident reporting
+* Multilingual notifications
+
+Do not expose sensitive operational information.
+
+---
+

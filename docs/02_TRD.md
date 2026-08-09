@@ -177,3 +177,73 @@ SOURCE → ADAPTER → INGESTION → NORMALIZATION → VALIDATION →
 GEO MAPPING → SOURCE HEALTH → CONFIDENCE → FUSION →
 CROWD STATE → RISK → RECOMMENDATION
 ```
+
+
+---
+
+## 54. BACKEND MODULES
+
+Recommended modules:
+
+```text
+auth
+users
+organizations
+events
+venues
+zones
+gates
+routes
+sensors
+data_ingestion
+data_normalization
+data_validation
+source_health
+sensor_fusion
+crowd_state
+analytics
+risk_engine
+recommendations
+incidents
+alerts
+notifications
+police
+simulation
+digital_twin
+reports
+audit
+```
+
+Keep business logic separated.
+
+---
+
+## 63. BUILDING INSTRUCTION
+
+Do not immediately generate the entire application in one step.
+
+First:
+
+**Analyze the repository and create a technical implementation plan based on this specification.**
+
+Then identify:
+
+* Existing code
+* Existing architecture
+* Missing modules
+* Database changes
+* API changes
+* Frontend changes
+* AI/ML requirements
+* Infrastructure requirements
+* Dependencies
+* Risks
+
+After the plan is approved, implement the system incrementally.
+
+The final implementation must be:
+
+**Modular + Secure + Testable + Scalable + Explainable + Event-centric + Multi-source + Production-oriented.**
+
+Do not sacrifice architecture quality merely to create a visual demo.
+

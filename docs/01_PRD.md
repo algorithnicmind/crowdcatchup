@@ -172,3 +172,496 @@ The demo tells a story:
 ---
 
 *Designed and engineered for maximum public safety during the TechNova Challenge 2026.*
+
+
+---
+
+## 2. PROJECT PURPOSE
+
+CrowdShield is an AI-powered event crowd-safety platform designed specifically for **large public gatherings and events**.
+
+The primary objective is to detect dangerous crowd conditions **before they develop into crowd crushes or stampedes** and provide actionable recommendations to authorities, police and event organizers.
+
+CrowdShield must not be designed merely as a CCTV monitoring dashboard.
+
+The core concept is:
+
+> **Create an event-specific digital representation of the venue and continuously combine multiple independent crowd-data sources into a unified Crowd Data Fusion Hub. Use the resulting crowd state to predict risk and recommend preventive interventions.**
+
+The system must be resilient.
+
+No single sensor/source should be treated as permanently reliable.
+
+If CCTV fails, GPS or Smart Gates may still provide information.
+
+If telecom data is unavailable, CCTV + Smart Gates + other sources can continue.
+
+If a drone is unavailable, the system must continue operating.
+
+---
+
+## 3. PRIMARY SCOPE
+
+CrowdShield primarily manages:
+
+* Religious gatherings
+* Festivals
+* Melas
+* Rath Yatra/processions
+* Concerts
+* Sports events
+* Cultural events
+* Political/public gatherings
+* Exhibitions
+* Large temporary public events
+
+The primary scope is **event crowd safety**.
+
+Do NOT turn the project into a general city-wide traffic management system.
+
+Traffic/transport information may be added later as an external supporting signal, but event crowd safety remains the core product.
+
+---
+
+## 4. CORE USERS
+
+The system uses one PWA/application ecosystem with role-based interfaces.
+
+There are four primary user roles:
+
+## 4.1 Authority
+
+Responsible for:
+
+* Monitoring multiple events
+* Monitoring overall risk
+* Viewing live crowd maps
+* Viewing incidents
+* Approving interventions
+* Deploying/reallocating police/security resources
+* Managing emergency responses
+* Viewing analytics
+* Reviewing historical incidents
+* Managing event-level permissions
+
+## 4.2 Police/Security
+
+Responsible for:
+
+* Viewing assigned event
+* Viewing high-risk zones
+* Receiving alerts
+* Viewing incidents
+* Receiving deployment recommendations
+* Viewing safest routes
+* Updating incident status
+* Confirming field actions
+* Reporting field conditions
+
+## 4.3 Event Owner/Organizer
+
+Responsible for:
+
+* Creating events
+* Configuring event details
+* Defining venue boundary
+* Creating zones
+* Defining entries/exits
+* Configuring Smart Gates
+* Creating routes
+* Recording routes using GPS
+* Creating temporary routes
+* Adding emergency routes
+* Registering cameras/sensors
+* Configuring capacities
+* Running pre-event simulations
+* Monitoring event status
+* Managing event infrastructure
+
+## 4.4 Citizen
+
+Responsible for:
+
+* Viewing event information
+* Receiving congestion/safety alerts
+* Receiving location-based warnings
+* Viewing safe routes
+* Reporting incidents
+* Optionally sharing location with permission
+* Receiving multilingual announcements
+
+Citizens must NOT receive sensitive authority/police operational information.
+
+---
+
+## 5. PWA REQUIREMENT
+
+CrowdShield must primarily be implemented as a **Progressive Web App (PWA)**.
+
+The PWA should provide:
+
+* Responsive UI
+* Desktop support
+* Mobile support
+* Installability
+* Push notifications where supported
+* Offline-friendly capabilities
+* Service worker
+* Cached critical information
+* Role-based dashboards
+* Map-based interfaces
+
+However, do not assume a PWA can perform unrestricted background GPS or Bluetooth scanning.
+
+Where advanced native capabilities are required in the future, design the architecture so a native companion application/SDK can be added without rewriting the backend.
+
+---
+
+## 38. HUMAN-IN-THE-LOOP
+
+CrowdShield is a decision-support system.
+
+AI recommends.
+
+Authorized humans approve or execute.
+
+Do not design the MVP to autonomously control public infrastructure without authorization.
+
+Example:
+
+AI:
+"Recommend restricting G3."
+
+Authority:
+APPROVE
+
+Then:
+
+System:
+"Intervention recorded."
+
+---
+
+## 47. MULTILINGUAL COMMUNICATION
+
+The system should support multilingual alerts.
+
+Architecture should allow:
+
+* English
+* Hindi
+* Odia
+* Additional Indian languages later
+
+Messages should be short and safety-focused.
+
+Example:
+
+"Please avoid Gate 3. Use Gate 5."
+
+AI may generate incident summaries and recommended announcements, but safety-critical messages should use controlled templates and human approval where appropriate.
+
+---
+
+## 48. GENERATIVE AI
+
+Use Generative AI for:
+
+* Incident summaries
+* Authority reports
+* Event summaries
+* Natural-language dashboard queries
+* Multilingual announcement drafts
+* Explanation of risk
+* Event post-analysis
+
+Do not let generative AI directly override deterministic safety controls.
+
+---
+
+## 49. VOICE COMMAND CENTER
+
+Future/bonus feature:
+
+Authority can ask:
+
+"Which zone currently has the highest risk?"
+
+System:
+
+"Zone B has the highest current risk."
+
+Or:
+
+"Which gate should receive more security?"
+
+System provides an explainable recommendation.
+
+---
+
+## 50. OFFLINE / NETWORK FAILURE
+
+The system must be resilient.
+
+Possible failures:
+
+* Internet outage
+* CCTV disconnection
+* GPS unavailable
+* Telecom unavailable
+* Drone unavailable
+* Sensor failure
+* Server connectivity problems
+
+The system should support:
+
+* Local buffering
+* Eventual synchronization
+* Cached map
+* Last-known state
+* Source health status
+* Degraded operation
+
+Do not pretend the entire cloud system can operate normally without connectivity.
+
+Instead implement graceful degradation.
+
+---
+
+## 51. SECURITY
+
+Implement:
+
+* Authentication
+* Authorization
+* RBAC
+* Strong password handling
+* JWT/session security
+* HTTPS
+* Encryption in transit
+* Encryption at rest where appropriate
+* API validation
+* Rate limiting
+* Audit logging
+* Secure file uploads
+* Input validation
+* Secrets management
+* Security headers
+* CORS configuration
+* Logging
+* Monitoring
+
+Roles must be enforced on the backend, not only in the frontend.
+
+---
+
+## 52. PRIVACY
+
+The system deals with potentially sensitive:
+
+* Location
+* Video
+* Device information
+* Telecom-derived information
+* Potential wearable signals
+
+Therefore:
+
+* Minimize personal data
+* Prefer aggregation
+* Use consent where required
+* Avoid unnecessary identity tracking
+* Define retention policies
+* Restrict access
+* Audit access
+* Separate operational data from personally identifiable information
+* Do not store raw data indefinitely
+* Provide appropriate deletion/retention mechanisms
+
+Core principle:
+
+> **Estimate the crowd, not unnecessarily track the person.**
+
+---
+
+## 56. DO NOT BUILD EVERYTHING AT ONCE
+
+Build in phases.
+
+## Phase 1 — Foundation
+
+* Repository
+* Architecture
+* Authentication
+* RBAC
+* Database
+* Event management
+* PWA
+
+## Phase 2 — Event Map
+
+* Map
+* Event boundary
+* Zones
+* Gates
+* Routes
+* Emergency routes
+* GPS route recording
+* Temporary infrastructure
+
+## Phase 3 — Data Hub
+
+* Source registry
+* Standard observation model
+* Synthetic data
+* Data ingestion
+* Validation
+* Source health
+* Fusion
+
+## Phase 4 — Real Crowd Data
+
+* CCTV
+* Smart Gate
+* GPS
+
+## Phase 5 — AI
+
+* Crowd analytics
+* Risk model
+* Prediction
+* Bottleneck detection
+* Anomaly detection
+
+## Phase 6 — Decision Support
+
+* Recommendations
+* Police deployment
+* Gate recommendations
+* Route recommendations
+* Announcements
+
+## Phase 7 — User Experiences
+
+* Authority
+* Police
+* Event Owner
+* Citizen
+
+## Phase 8 — Simulation
+
+* Digital Twin
+* Scenario simulation
+* What-if analysis
+
+## Phase 9 — Production Readiness
+
+* Security
+* Testing
+* Monitoring
+* Performance
+* Deployment
+* Documentation
+
+---
+
+## 57. HACKATHON MVP
+
+Do NOT attempt to connect every real-world source.
+
+Implement strongly:
+
+### Real
+
+* PWA
+* Authentication
+* Event creation
+* Event map
+* Zones
+* Routes
+* Smart Gate simulation
+* CCTV/video processing
+* Citizen GPS
+* Real-time dashboard
+* Crowd heatmap
+* Risk prediction
+* Recommendations
+* Role-based interfaces
+
+### Simulated
+
+* Telecom
+* Drone
+* BLE
+* Wearables
+
+The architecture must still support them as real adapters later.
+
+---
+
+## 58. DEMO SCENARIO
+
+The final demo should tell a story.
+
+Create an event.
+
+Configure:
+
+* Event boundary
+* 5 zones
+* 6 gates
+* 8 routes
+* 2 emergency routes
+* CCTV cameras
+* Smart Gates
+
+Start simulation/live data.
+
+Normal:
+
+🟢 Zone A
+🟢 Zone B
+🟢 Zone C
+
+Then generate:
+
+* Gate G3 high inflow
+* Zone B density increasing
+* Route R4 becoming congested
+* CCTV detecting slowing movement
+* GPS showing increasing participating devices
+
+Fusion engine:
+
+→ Crowd state changes.
+
+Risk engine:
+
+→ Zone B risk increases.
+
+Prediction:
+
+> "High risk developing in Zone B within approximately 10 minutes."
+
+Decision engine:
+
+> Restrict G3
+> Open G5
+> Redirect crowd
+> Deploy police
+> Broadcast warning
+
+Authority approves.
+
+Crowd state changes.
+
+Risk falls.
+
+Then show:
+
+**Incident prevented / risk mitigated.**
+
+This should be the central hackathon story.
+
+---
+

@@ -168,3 +168,256 @@ RECOMMENDATION (decision engine proposes interventions)
 | **CitizenAlert** | API | Citizen PWA | level, zone, message_key, recommended_gate |
 | **SourceHealth** | Fusion Hub | Authority PWA | source_id, source_type, health_status, last_seen, confidence_impact |
 | **SosIncident** | Citizen PWA | API | type, geo_coordinates, details, timestamp |
+
+
+---
+
+## 17. DATA SOURCES
+
+CrowdShield must support multiple data sources.
+
+## Core sources
+
+1. CCTV
+2. Smart Gates
+3. Citizen GPS
+4. Venue/entry systems
+
+## Advanced sources
+
+5. Drone
+6. BLE/proximity sensing
+7. Aggregated telecom data
+8. Wearable/IoT sensors
+
+## Development/testing sources
+
+9. Synthetic data
+10. Historical datasets
+11. Replay data
+
+All sources must enter through the same data-ingestion architecture.
+
+---
+
+## 18. CCTV SOURCE
+
+CCTV processing should support:
+
+* RTSP/live streams where available
+* Recorded video replay
+* Camera registration
+* Camera-to-zone mapping
+* Person detection
+* Person tracking
+* Density estimation
+* Movement speed
+* Direction
+* Queue estimation
+* Crowd anomaly detection
+
+Recommended initial computer vision stack:
+
+* YOLO-family object detection model
+* Tracking algorithm
+* OpenCV
+* Python
+* GPU acceleration where available
+
+For the hackathon, recorded video can simulate live CCTV.
+
+The architecture must remain compatible with real-time streams.
+
+---
+
+## 19. CITIZEN GPS
+
+Citizens may voluntarily provide location with explicit permission.
+
+Use GPS primarily for:
+
+* Zone-level participating crowd estimation
+* Movement trends
+* Route usage
+* Congestion indication
+* Location-based alerts
+
+Avoid unnecessary collection of personally identifiable movement history.
+
+Prefer aggregation:
+
+Individual location
+→ zone mapping
+→ aggregated count
+→ crowd state
+
+Do not design the system around secretly tracking individuals.
+
+---
+
+## 24. SYNTHETIC DATA
+
+Synthetic data is a first-class development source.
+
+Create simulation generators for:
+
+* Crowd count
+* Density
+* Flow
+* Speed
+* Gate entry
+* Gate exit
+* GPS participation
+* Telecom estimate
+* Drone estimate
+* BLE estimate
+* Sensor failures
+* Sudden crowd surges
+
+Synthetic data must use the same ingestion pipeline as real sources.
+
+This is critical.
+
+The architecture should not have a completely separate "fake data system."
+
+Instead:
+
+REAL SOURCE
+and
+SIMULATED SOURCE
+
+must both produce the same standardized observation format.
+
+---
+
+## 25. CROWD DATA FUSION HUB
+
+This is one of the most important components of CrowdShield.
+
+The Crowd Data Fusion Hub performs:
+
+1. Data ingestion
+2. Normalization
+3. Validation
+4. Timestamp synchronization
+5. Geospatial mapping
+6. Source health assessment
+7. Confidence calculation
+8. Deduplication/overlap handling
+9. Sensor fusion
+10. Crowd-state generation
+
+---
+
+## 28. SOURCE HEALTH MONITORING
+
+CrowdShield must know whether a source is functioning.
+
+Example:
+
+CCTV-01 → ONLINE
+CCTV-02 → DELAYED
+SmartGate-03 → ONLINE
+Drone-01 → OFFLINE
+Telecom → DELAYED
+
+Source health should influence confidence.
+
+If a source stops sending data, its influence in the fusion layer should decrease.
+
+---
+
+## 29. SOURCE CONFIDENCE
+
+Every source observation must have a confidence score.
+
+Confidence can consider:
+
+* Accuracy
+* Freshness
+* Latency
+* Historical reliability
+* Coverage
+* Sensor health
+* Data completeness
+
+Never blindly trust a single source.
+
+---
+
+## 30. SENSOR FUSION
+
+Do NOT add source counts together.
+
+Example:
+
+CCTV = 1,200
+GPS = 1,000
+Telecom = 1,400
+Drone = 1,300
+
+These represent overlapping populations.
+
+The fusion engine must estimate the underlying crowd state.
+
+Initial implementation may use confidence-weighted estimation.
+
+Future implementations may use:
+
+* Bayesian fusion
+* Kalman filtering
+* Probabilistic models
+* Learned sensor fusion
+* Temporal models
+
+---
+
+## 31. SENSOR DISAGREEMENT DETECTION
+
+If:
+
+CCTV = 2,500
+GPS = 1,200
+Telecom = 1,300
+Drone = 1,350
+
+CrowdShield should detect:
+
+**Possible CCTV anomaly**
+
+and reduce confidence instead of automatically declaring the crowd count to be 2,500.
+
+---
+
+## 55. DATA PIPELINE
+
+Standard architecture:
+
+```text
+SOURCE
+ ↓
+ADAPTER
+ ↓
+INGESTION
+ ↓
+NORMALIZATION
+ ↓
+VALIDATION
+ ↓
+GEO MAPPING
+ ↓
+SOURCE HEALTH
+ ↓
+CONFIDENCE
+ ↓
+FUSION
+ ↓
+CROWD STATE
+ ↓
+RISK
+ ↓
+RECOMMENDATION
+```
+
+---
+
