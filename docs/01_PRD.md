@@ -19,7 +19,37 @@ The core principle:
 
 ---
 
-## 2. Problem Statement & Background
+## 2. TechNova Challenge Requirements (Official Prompt)
+
+This section outlines the exact judging criteria and mandatory deliverables for the Hackathon.
+
+### Mandatory Deliverables
+* **A prototype:** Working mobile app (Citizen PWA) and a reporting portal (Command Dashboard).
+* **Architecture diagram & Source Code:** Including data flow, modules, and third-party APIs used.
+* **A short pitch deck:** (max 10 slides) and a Demo Video.
+* **Documentation:** Detailing tech choices, assumptions, and compliance checks.
+> [!CAUTION]
+> *All deliverables are mandatory. Missing any required deliverable will result in disqualification.*
+
+### Evaluation Criteria (Weightage)
+* **Innovation & Originality (40%):** Unique use of technology, UX design, or enforcement logic.
+* **Technical Feasibility (30%):** Realism of proposed tech stack and solution architecture (Low-cost, limited infrastructure support).
+* **User Friendliness (20%):** Clear, intuitive design and walkthroughs.
+* **Data Ethics & Privacy (10%):** Responsible handling of data, especially public imagery.
+
+### Official Problem Statement Goals
+Design an affordable, scalable, AI-powered mobile and cloud-based solution capable of predicting potential stampede situations before they occur. The solution must answer:
+* Where is crowd density increasing abnormally?
+* Which locations are becoming bottlenecks?
+* Is there a risk of crowd crush within the next few minutes?
+* Which evacuation route is safest?
+* How should authorities redistribute security personnel?
+* Which gates should be opened or temporarily closed?
+* What announcements should be made to reduce panic?
+
+---
+
+## 3. Problem Statement & Background
 * **Historical Crisis:** India documented over 120 stampede-related deaths in 2024 and more than 110 in 2025.
 * **The Root Cause:** In a densely packed crowd (d >= 4.5 persons/m2), individual physical agency is lost. Even a minor incident causes severe compression waves and panic propagation.
 * **The Opportunity:** A software-first, role-based platform that processes multiple independent data sources to predict crush likelihood, generate 1-click countermeasures for authorities, guide on-ground police, and broadcast localized safe routes to citizens.
