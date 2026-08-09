@@ -48,5 +48,8 @@ You are explicitly required to practice **Loop Engineering**. The user must NEVE
 2. **Event-First Architecture:** Everything belongs to an Event. Follow the hierarchy: `EVENT → VENUE → ZONE/GATE/ROUTE → SOURCE → OBSERVATION`.
 3. **No Fake Integrations:** If a data source (like CCTV) is unavailable, build a standard adapter and a mock implementation. Never pretend a simulator is a real connection.
 4. **Data Isolation:** You must ensure data records are strictly associated with their corresponding event. Never mix event data.
+5. **Strict Testing & Validation Protocol:** Test-Driven Development (TDD) is encouraged. Before declaring any backend API endpoint or complex AI function complete, you must write and run a Pytest unit test to prove it works.
+6. **Security & Secrets Handling (Data Ethics - 10%):** NEVER hardcode API keys, database URLs, or sensitive tokens in the source code. All secrets must strictly be read from `.env` files. If a new secret is needed, clearly instruct the user to add it to their local environment.
+7. **Error Handling & Graceful Degradation:** Never allow the frontend to crash entirely on a failed API call. Always implement graceful degradation, loading states, and offline fallback mechanisms (via Service Workers/IndexedDB) to handle network outages.
 
 **By reading this, you are bound to these rules. Proceed with excellence to win this hackathon.**
