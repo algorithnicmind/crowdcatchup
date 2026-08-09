@@ -1,44 +1,131 @@
 # API & Event Bus Schema Specification (Contracts)
-**Project Name:** CrowdShield: AI-Powered Early Warning System for Preventing Crowd Stampedes  
-**Document Type:** Event Architecture, Data Contracts & API Schema  
-**Document Version:** 2.0 (Monorepo/PWA Architecture Release)  
+**Project Name:** CrowdShield: AI-Powered Multi-Source Early Warning and Decision Support System for Large Public Events
+**Document Version:** 3.0 (Multi-Source Data Fusion Architecture Release)
+
+> **Authoritative Source:** For the complete 63-section system specification, see [`00_MASTER_SPEC.md`](./00_MASTER_SPEC.md).
 
 ---
 
-## 1. Universal Data Hub Schema (Data Ingestion)
-The Data Hub ingests data from live CCTV, uploaded MP4s, or Digital Twin simulations. To ensure the XGBoost Risk Engine is decoupled from the source type, all inputs are normalized into a standard JSON payload format.
+## 1. Standard Observation Format (Universal Data Contract)
 
-* **Protocol:** HTTP POST or WebSockets (`wss://api.crowdshield.local/ingest`)
-* **TypeScript / Schema Interface:**
-  ```typescript
-  interface TelemetryFrame {
-    event_id: string;           // E.g., "event_001_rath_yatra"
-    zone_id: string;            // E.g., "zone_c"
-    timestamp: string;          // ISO 8601 (e.g., "2026-08-08T11:30:00Z")
-    people_count: number;       // Raw detection count from CV Pipeline
-    density: number;            // people / m²
-    average_speed: number;      // m/s
-    entry_rate: number;         // people / minute entering
-    exit_rate: number;          // people / minute exiting
-    flow_direction: string;     // e.g., "north" or "mixed"
-    flow_conflict: boolean;     // True if counter-flow wave is detected
-    blocked_route: boolean;     // True if CV detects static blockage
-  }
-  ```
+Every data source — CCTV, Smart Gate, GPS, Drone, BLE, Telecom, Synthetic — must produce observations in this format. This is the fundamental data contract of the system.
+
+```typescript
+interface StandardObservation {
+  event_id: string;           // "EVT-001" — Every observation belongs to an event
+  source_id: string;          // "CCTV-07", "SG-03", "GPS-AGGREGATED"
+  source_type: "CCTV" | "SMART_GATE" | "GPS" | "DRONE" | "BLE" | "TELECOM" | "SYNTHETIC";
+  zone_id: string;            // "ZONE-B"
+  timestamp: string;          // ISO 8601
+  metric: string;             // "people_count" | "entry_rate" | "exit_rate" | "avg_speed" | "zone_device_count" | ...
+  value: number;              // Numeric value for the metric
+  confidence: number;         // 0.0 - 1.0, how reliable this observation is
+  latency_ms: number;         // How old is this data (milliseconds)
+  health: "ONLINE" | "DELAYED" | "OFFLINE";
+}
+```
+
+### 1.1 Example: CCTV Observation
+```json
+{
+  "event_id": "EVT-001",
+  "source_id": "CCTV-07",
+  "source_type": "CCTV",
+  "zone_id": "ZONE-B",
+  "timestamp": "2026-08-09T17:05:10Z",
+  "metric": "people_count",
+  "value": 1240,
+  "confidence": 0.91,
+  "latency_ms": 300,
+  "health": "ONLINE"
+}
+```
+
+### 1.2 Example: Smart Gate Observation
+```json
+{
+  "event_id": "EVT-001",
+  "source_id": "SG-03",
+  "source_type": "SMART_GATE",
+  "gate_id": "G-03",
+  "zone_id": "ZONE-B",
+  "timestamp": "2026-08-09T17:05:11Z",
+  "metric": "entry_rate",
+  "value": 142,
+  "confidence": 0.94,
+  "latency_ms": 100,
+  "health": "ONLINE"
+}
+```
+
+### 1.3 Example: GPS Aggregated Observation
+```json
+{
+  "event_id": "EVT-001",
+  "source_id": "GPS-AGGREGATED",
+  "source_type": "GPS",
+  "zone_id": "ZONE-B",
+  "timestamp": "2026-08-09T17:05:12Z",
+  "metric": "zone_device_count",
+  "value": 980,
+  "confidence": 0.78,
+  "latency_ms": 2000,
+  "health": "ONLINE"
+}
+```
 
 ---
 
-## 2. Real-Time PWA WebSockets (FastAPI -> Next.js)
+## 2. Crowd State (Fusion Hub Output)
 
-The FastAPI server manages active WebSocket connections for the Authority, Police, and Citizen PWAs, pushing role-specific data.
+The Fusion Hub produces one unified crowd state per zone. This is what the rest of the platform consumes.
 
-### 2.1 `RISK_UPDATE` (To Authority)
-Emitted by the Risk Prediction Engine when a zone state changes.
+```typescript
+interface CrowdState {
+  event_id: string;
+  zone_id: string;
+  estimated_people: number;
+  density: number;              // people/m2
+  density_level: "LOW" | "MODERATE" | "HIGH" | "CRITICAL";
+  average_speed: number;        // m/s
+  flow_direction: string;       // "NORTH", "SOUTH", "MIXED", "STALLED"
+  entry_rate: number;           // people/min entering zone
+  exit_rate: number;            // people/min exiting zone
+  bottleneck_score: number;     // 0.0 - 1.0
+  flow_conflict: boolean;
+  risk_score: number;           // 0 - 100
+  risk_level: "LOW" | "MODERATE" | "HIGH" | "CRITICAL";
+  confidence: number;           // Fusion confidence
+  timestamp: string;
+}
+```
+
+---
+
+## 3. Source Health Schema
+
+```typescript
+interface SourceHealth {
+  source_id: string;
+  source_type: string;
+  event_id: string;
+  health_status: "ONLINE" | "DELAYED" | "OFFLINE" | "SIMULATED";
+  last_seen: string;            // ISO 8601
+  confidence_impact: number;    // 0.0 - 1.0, how much this source contributes to fusion
+  error_message?: string;
+}
+```
+
+---
+
+## 4. Real-Time PWA WebSockets (FastAPI -> Next.js)
+
+### 4.1 `RISK_UPDATE` (To Authority)
 ```typescript
 interface RiskUpdateEvent {
   type: "RISK_UPDATE";
   zone_id: string;
-  risk_score: number;         // 0-100 current risk
+  risk_score: number;
   risk_level: "LOW" | "MODERATE" | "HIGH" | "CRITICAL";
   predictions: {
     plus_5_min: number;
@@ -49,70 +136,161 @@ interface RiskUpdateEvent {
 }
 ```
 
-### 2.2 `RECOMMENDATION_ALERT` (To Authority)
-Triggered when the Decision Engine synthesizes a high-priority action plan.
+### 4.2 `CROWD_STATE_UPDATE` (To All Roles)
 ```typescript
-interface RecommendationAlert {
-  type: "RECOMMENDATION";
-  risk: number;
-  recommendations: Array<{
-    action: "OPEN_GATE" | "CLOSE_GATE" | "DEPLOY_POLICE" | "BROADCAST_ALERT";
-    target: string;           // e.g., "G4"
-    priority: "HIGH" | "CRITICAL";
-    reason: string;
-  }>;
+interface CrowdStateUpdate {
+  type: "CROWD_STATE_UPDATE";
+  zone_id: string;
+  estimated_people: number;
+  density_level: string;
+  average_speed: number;
+  flow_direction: string;
+  bottleneck_score: number;
+  confidence: number;
+  timestamp: string;
 }
 ```
 
-### 2.3 `EXECUTE_INTERVENTION` (Authority -> API)
-Sent when the Authority clicks `[APPROVE PLAN]`. Requires JWT validation.
+### 4.3 `RECOMMENDATION_ALERT` (To Authority)
+```typescript
+interface RecommendationAlert {
+  type: "RECOMMENDATION";
+  recommendation_id: string;
+  zone_id: string;
+  risk: number;
+  actions: Array<{
+    action: "OPEN_GATE" | "CLOSE_GATE" | "RESTRICT_GATE" | "DEPLOY_POLICE" | "REDIRECT_CROWD" | "BROADCAST_ALERT" | "OPEN_EMERGENCY_ROUTE";
+    target: string;
+    priority: "HIGH" | "CRITICAL";
+  }>;
+  explanation: {
+    primary_reason: string;
+    supporting_factors: string[];
+    source_agreement: number;
+  };
+}
+```
+
+### 4.4 `EXECUTE_INTERVENTION` (Authority -> API)
 ```typescript
 interface ExecuteInterventionCommand {
   type: "EXECUTE_ACTION";
   recommendation_id: string;
-  auth_token: string;         // Authority JWT
+  auth_token: string;
 }
 ```
 
-### 2.4 `SECURITY_TASK` (To Police PWA)
-Sent to the Police mobile application after an intervention is approved.
+### 4.5 `SECURITY_TASK` (To Police PWA)
 ```typescript
 interface SecurityTask {
   type: "NEW_TASK";
   zone_id: string;
   distance_meters: number;
   risk_level: "CRITICAL";
-  instructions: string;       // e.g., "Control crowd near Gate 3"
+  instructions: string;
   required_officers: number;
   assigned_officers: number;
 }
 ```
 
-### 2.5 `CITIZEN_ALERT` (To Citizen PWA)
-Pushed to public devices. Strips out raw metrics to avoid panic.
+### 4.6 `CITIZEN_ALERT` (To Citizen PWA)
 ```typescript
 interface CitizenAlert {
   type: "CROWD_ALERT";
-  level: "WARNING";
+  level: "INFO" | "WARNING" | "EVACUATE";
   zone: string;
-  message_key: string;        // E.g., "gateCongestedUseAlternate" (resolves locally in i18next)
-  recommended_gate: string;   // E.g., "G4"
+  message_key: string;        // i18next translation key
+  recommended_gate: string;
+}
+```
+
+### 4.7 `SOURCE_HEALTH_UPDATE` (To Authority)
+```typescript
+interface SourceHealthUpdate {
+  type: "SOURCE_HEALTH";
+  sources: Array<{
+    source_id: string;
+    source_type: string;
+    health: string;
+    confidence_impact: number;
+  }>;
+  fusion_confidence: number;
 }
 ```
 
 ---
 
-## 3. Citizen SOS Reporting (Citizen -> API)
-Submitted when an on-site citizen sends an urgent distress report via the mobile PWA.
+## 5. Citizen SOS Reporting (Citizen -> API)
 
 ```typescript
 interface SosIncidentReport {
   type: "overcrowding" | "medical" | "blockage" | "panic";
-  geo_coordinates: {          // GPS parameters
+  geo_coordinates: {
     lat: number;
     lng: number;
   };
-  details: string;            // User commentary
+  details: string;
   timestamp: string;
 }
+```
+
+---
+
+## 6. Smart Gate Configuration
+
+```typescript
+interface SmartGateConfig {
+  gate_id: string;
+  event_id: string;
+  zone_id: string;
+  gate_type: "ENTRY" | "EXIT" | "BIDIRECTIONAL";
+  technology: "AI_CAMERA" | "IR" | "LIDAR" | "TURNSTILE" | "RFID" | "QR";
+  max_capacity_per_minute: number;
+  connected_routes: string[];
+  location: { lat: number; lng: number };
+}
+```
+
+---
+
+## 7. Event Configuration
+
+```typescript
+interface EventConfig {
+  event_id: string;
+  name: string;
+  event_type: string;
+  description: string;
+  date: string;
+  start_time: string;
+  end_time: string;
+  expected_attendance: number;
+  status: "DRAFT" | "CONFIGURATION" | "READY" | "LIVE" | "PAUSED" | "COMPLETED" | "CANCELLED" | "ARCHIVED";
+  boundary: GeoPolygon;
+  zones: Zone[];
+  gates: Gate[];
+  routes: Route[];
+  cameras: Camera[];
+  smart_gates: SmartGateConfig[];
+}
+```
+
+---
+
+## 8. Intervention Types
+
+```typescript
+type InterventionType =
+  | "OPEN_GATE"
+  | "CLOSE_GATE"
+  | "RESTRICT_GATE"
+  | "DEPLOY_POLICE"
+  | "REDIRECT_CROWD"
+  | "ACTIVATE_ONE_WAY"
+  | "CLOSE_ROUTE"
+  | "OPEN_EMERGENCY_ROUTE"
+  | "BROADCAST_ANNOUNCEMENT"
+  | "SEND_CITIZEN_ALERT"
+  | "CHANGE_BARRICADE"
+  | "RECOMMEND_MEDICAL";
 ```

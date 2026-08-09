@@ -1,15 +1,21 @@
 # High-Level Design Document (HLD)
-**Project Name:** CrowdShield: AI-Powered Early Warning System for Preventing Crowd Stampedes  
-**Document Type:** System Architecture & High-Level Design Specification  
-**Document Version:** 2.0 (Monorepo/PWA Architecture Release)  
+**Project Name:** CrowdShield: AI-Powered Multi-Source Early Warning and Decision Support System for Large Public Events
+**Document Version:** 3.0 (Multi-Source Data Fusion Architecture Release)
+
+> **Authoritative Source:** For the complete 63-section system specification, see [`00_MASTER_SPEC.md`](./00_MASTER_SPEC.md).
 
 ---
 
 ## 1. System Architectural Overview
-CrowdShield is architected as an interconnected, event-driven reactive platform. It centralizes data ingestion, scales AI processing on the backend, and distributes actionable intelligence to four distinct user roles via a unified Progressive Web App (PWA).
 
-The architecture is divided into three primary layers:
-1. **The Ingestion & AI Layer:** Processes live CCTV, datasets, and simulations through computer vision and ML risk models.
+CrowdShield is architected as an interconnected, event-driven reactive platform. It centralizes multi-source data ingestion through a **Crowd Data Fusion Hub**, scales AI processing on the backend, and distributes actionable intelligence to four distinct user roles via a unified Progressive Web App (PWA).
+
+The core principle:
+
+> **Configure the event first. Sense the crowd from multiple sources. Fuse the observations. Understand the crowd state. Predict risk. Recommend preventive action. Let authorized humans act. Measure the result.**
+
+### 1.1 Three-Layer Architecture
+1. **The Ingestion & AI Layer:** Processes CCTV, Smart Gates, GPS, Drone, BLE, Telecom, and Synthetic data through the Data Fusion Hub and AI pipeline.
 2. **The API & Services Layer (FastAPI):** Manages routing, RBAC, WebSockets, and database persistence.
 3. **The Presentation Layer (Next.js PWA):** Renders the central interactive map and role-specific dashboards.
 
@@ -17,85 +23,156 @@ The architecture is divided into three primary layers:
 
 ## 2. Component Architecture Diagram
 
-```mermaid
-graph TB
-    subgraph INGESTION["1. Data Hub (Ingestion Layer)"]
-        A1[CCTV / RTSP Feeds]
-        A2[Simulation Data]
-        A3[Dataset / MP4 Uploads]
-        A4[Citizen Reports]
-    end
-
-    subgraph AI_PIPELINE["2. AI & Analytics Engine"]
-        B1[CV Pipeline: YOLO + BoT-SORT]
-        B2[Crowd Analytics: Density & Flow]
-        B3[Risk Prediction: XGBoost]
-        B4[Decision Engine: Action Recommendations]
-        B5[GenAI: Incident Summarization]
-    end
-
-    subgraph BACKEND["3. API Gateway & State (FastAPI)"]
-        C1[Auth & RBAC Middleware]
-        C2[WebSocket Manager]
-        C3[Notification Service]
-        DB[(Supabase PostgreSQL)]
-        CACHE[(Upstash Redis)]
-    end
-
-    subgraph PWA["4. Unified Next.js PWA"]
-        D1[Authority Command Center]
-        D2[Police Task Mobile UI]
-        D3[Citizen Safe Routes UI]
-        D4[Admin Venue Config UI]
-        M[Leaflet Map Engine]
-    end
-
-    A1 & A2 & A3 -->|Raw Data| B1
-    A4 -->|Incident Geo-Tag| C1
-
-    B1 -->|Metadata (Count, Speed)| B2
-    B2 -->|Time-Series Features| B3
-    B3 -->|Risk Score| B4
-    B3 -->|Risk Context| B5
-    
-    B4 -->|Recommendation JSON| C1
-    B5 -->|SITREP Text| C1
-
-    C1 <--> DB
-    C2 <--> CACHE
-
-    C1 -->|REST & WebSockets| PWA
-    M --- D1 & D2 & D3 & D4
+```text
+                    CROWDShield PWA
+                          │
+        ┌─────────────────┼─────────────────┐
+        │                 │                 │
+    AUTHORITY           POLICE         EVENT OWNER
+        │                                   │
+        │                                EVENT SETUP
+        │                                   │
+        │                            ┌──────┴──────┐
+        │                            ↓             ↓
+        │                         MAP BUILDER   CONFIGURATION
+        │                            │             │
+        │                            └──────┬──────┘
+        │                                   ↓
+        │                           EVENT DIGITAL TWIN
+        │                                   │
+        └───────────────────────────────────┤
+                                            ↓
+                                  DATA SOURCE REGISTRY
+                                            │
+          ┌──────────┬──────────┬──────────┼──────────┬──────────┐
+          ↓          ↓          ↓          ↓          ↓          ↓
+        CCTV     SMART GATE    GPS       DRONE       BLE     TELECOM
+          │          │          │          │          │          │
+          └──────────┴──────────┴──────────┴──────────┴──────────┘
+                                            │
+                                    DATA FUSION HUB
+                                            │
+                           ┌────────────────┼────────────────┐
+                           ↓                ↓                ↓
+                      NORMALIZE         VALIDATE        SOURCE HEALTH
+                           └────────────────┼────────────────┘
+                                            ↓
+                                      SENSOR FUSION
+                                            ↓
+                                       CROWD STATE
+                                            ↓
+                                    AI RISK ENGINE
+                                            ↓
+                                  PREDICTION ENGINE
+                                            ↓
+                                    DECISION ENGINE
+                                            ↓
+                                   RECOMMENDATIONS
+                                            ↓
+                               AUTHORITY / POLICE ACTION
+                                            ↓
+                                      CROWD RESPONSE
+                                            ↓
+                                      FEEDBACK LOOP
 ```
 
 ---
 
-## 3. The 10 Major Technical Modules
+## 3. The 25+ Backend Modules
 
-| Module Name | Core Responsibility & Architectural Role |
+| Module | Core Responsibility |
 | :--- | :--- |
-| **1. Frontend PWA** | Next.js application handling role-based routing (`/authority`, `/police`, `/citizen`). Implements Zustand for state and Service Workers for offline map caching. |
-| **2. Auth & RBAC** | FastAPI middleware verifying JWTs. Ensures a Citizen cannot trigger interventions and a Police officer cannot alter venue configurations. |
-| **3. Event Management** | Hierarchical Supabase PostgreSQL schema defining an Event $\rightarrow$ Venue $\rightarrow$ Zones $\rightarrow$ Gates $\rightarrow$ Exits $\rightarrow$ Cameras. |
-| **4. Map Engine** | Central UI component (Leaflet via react-leaflet) rendering dynamic layers: zone heatmaps, gate statuses, police locations, and citizen safe routes. |
-| **5. Data Hub** | Ingests varied formats (RTSP, MP4, JSON) and normalizes them into a standard `TelemetryFrame` payload for the AI pipeline. |
-| **6. CV Pipeline** | Python-based OpenCV/YOLOv8 script that converts raw video frames into mathematical metadata (people count, $X/Y$ coordinates, movement direction) without storing PII. |
-| **7. Analytics Engine** | Calculates localized density ($people/m^2$), average speed, and flow conflicts from the CV metadata. |
-| **8. Risk Prediction** | XGBoost model utilizing time-series memory (e.g., density gradients over 5 minutes) to forecast congestion bottlenecks *before* they happen. |
-| **9. Recommendation Engine** | Rule-based decision tree that takes a high Risk Score and suggests concrete interventions (e.g., "Open Gate G4", "Deploy 6 Police"). |
-| **10. GenAI Engine** | Translates complex AI metrics into readable natural language (e.g., "Zone C congestion increasing rapidly") and supports hands-free voice command parsing. |
+| **auth** | Authentication, JWT, session management |
+| **users** | User profiles, role assignment |
+| **organizations** | Multi-tenant organization management |
+| **events** | Event lifecycle (8 statuses), event CRUD |
+| **venues** | Venue geometry, boundaries |
+| **zones** | Zone builder, capacity, thresholds |
+| **gates** | Gate configuration, Gate-Zone-Route relationships |
+| **routes** | Custom routes (one-way, emergency, police, temporary) |
+| **sensors** | Sensor/camera registration, source registry |
+| **data_ingestion** | Multi-source adapter framework |
+| **data_normalization** | Standard Observation Format conversion |
+| **data_validation** | Schema + range validation |
+| **source_health** | ONLINE/DELAYED/OFFLINE monitoring per source |
+| **sensor_fusion** | Confidence-weighted fusion, disagreement detection |
+| **crowd_state** | Unified per-zone crowd state generation |
+| **analytics** | Density, speed, flow, queue, occupancy calculations |
+| **risk_engine** | XGBoost risk prediction (5/10/15 min horizons) |
+| **recommendations** | Decision engine, intervention proposals with explanations |
+| **incidents** | Incident creation, tracking, resolution |
+| **alerts** | Alert generation and distribution |
+| **notifications** | Push notifications, multilingual broadcasts |
+| **police** | Task assignment, deployment tracking |
+| **simulation** | Pre-event scenario simulation, Digital Twin |
+| **digital_twin** | Event digital representation |
+| **reports** | Post-event analytics, historical reports |
+| **audit** | Audit logging, security trail |
 
 ---
 
 ## 4. End-to-End Operational Workflow (The Core Loop)
 
-1. **COLLECT:** CCTV streams enter the **Data Hub**.
-2. **PROCESS:** The **CV Pipeline** detects 1,250 people moving toward Gate 3 at $0.35\text{ m/s}$.
-3. **UNDERSTAND:** The **Analytics Engine** flags this as 83% capacity with a flow conflict.
-4. **PREDICT:** The **Risk Engine** forecasts a `CRITICAL` state within 8 minutes.
-5. **DECIDE:** The **Recommendation Engine** determines Gate 5 is open and proposes redirecting traffic.
-6. **ACT:** 
-   * **Authority** receives the recommendation and clicks `APPROVE`.
-   * **Police** PWA receives a push task: "Proceed to Gate 3 for crowd redirection."
-   * **Citizen** PWA receives an alert: "Heavy congestion at Gate 3. Please use Gate 5."
-7. **VERIFY:** The system continues processing. 5 minutes later, density drops. Risk status downgrades to `SAFE`.
+1. **CONFIGURE:** Event Owner creates event, defines venue, zones, gates, routes, cameras, Smart Gates.
+2. **SENSE:** CCTV, Smart Gates, GPS, and other sources continuously send observations.
+3. **NORMALIZE:** All sources converted to Standard Observation Format.
+4. **FUSE:** Fusion Hub combines overlapping observations, calculates confidence-weighted crowd state.
+5. **UNDERSTAND:** Analytics Engine calculates density, speed, flow conflicts per zone.
+6. **PREDICT:** Risk Engine forecasts crush likelihood in 5/10/15-minute windows.
+7. **RECOMMEND:** Decision Engine proposes concrete interventions with explanations.
+8. **APPROVE:** Authority reviews and clicks APPROVE on intervention plan.
+9. **ACT:** Police receive tasks. Citizens receive safe-route alerts.
+10. **VERIFY:** System continues processing. Risk downgrades when conditions improve.
+
+---
+
+## 5. Event-First Data Model
+
+Every data point belongs to an event. The hierarchy is:
+
+```
+EVENT → VENUE → ZONE/GATE/ROUTE → SOURCE → OBSERVATION
+```
+
+This is a fundamental data-integrity rule. Never mix Event A with Event B.
+
+---
+
+## 6. Source Adapter Pattern
+
+Each data source connects through a standardized adapter:
+
+```text
+REAL SOURCE → ADAPTER → STANDARD OBSERVATION FORMAT → FUSION HUB
+SIMULATED SOURCE → ADAPTER → STANDARD OBSERVATION FORMAT → FUSION HUB
+```
+
+Real and simulated sources must produce identical output formats. Never pretend a simulator is a real connection.
+
+---
+
+## 7. Source Health & Confidence
+
+| Source Health | Confidence Impact |
+| :--- | :--- |
+| ONLINE | Full confidence weight |
+| DELAYED | Reduced confidence weight |
+| OFFLINE | Minimal confidence weight, fallback to other sources |
+
+Confidence considers: accuracy, freshness, latency, historical reliability, coverage, sensor health, data completeness.
+
+---
+
+## 8. Hackathon MVP Scope
+
+### Real Implementation
+* PWA, Authentication, Event creation, Event map, Zones, Routes
+* Smart Gate simulation, CCTV/video processing, Citizen GPS
+* Real-time dashboard, Crowd heatmap, Risk prediction, Recommendations
+* Role-based interfaces (Authority, Police, Event Owner, Citizen)
+
+### Simulated (architecture ready for real later)
+* Telecom, Drone, BLE, Wearables
+
+### Demo Story
+Normal state -> Gate G3 high inflow -> Zone B density rising -> Fusion detects change -> Risk CRITICAL -> AI recommends intervention -> Authority approves -> Risk falls -> Incident prevented.
