@@ -1,37 +1,40 @@
-# 🛡️ CrowdShield: AI-Powered Early Warning System for Preventing Crowd Stampedes
+# CrowdShield: AI-Powered Multi-Source Early Warning and Decision Support System for Large Public Events
 **TechNova Challenge 2026 — Problem Statement 1 Solution**
 
-![Version](https://img.shields.io/badge/Version-2.0.0--PROD-00F2FE?style=for-the-badge&logo=shield&logoColor=black)
-![Stack](https://img.shields.io/badge/Stack-Next.js_%7C_FastAPI_%7C_Supabase-10B981?style=for-the-badge&logo=react&logoColor=white)
+![Version](https://img.shields.io/badge/Version-3.0.0--MULTI--SOURCE-00F2FE?style=for-the-badge&logo=shield&logoColor=black)
+![Stack](https://img.shields.io/badge/Stack-Next.js_%7C_FastAPI_%7C_PostGIS-10B981?style=for-the-badge&logo=react&logoColor=white)
 ![AI](https://img.shields.io/badge/AI-OpenCV_%7C_YOLOv8_%7C_XGBoost-F59E0B?style=for-the-badge)
 
-**CrowdShield** is an advanced AI-powered early warning public safety platform built to eliminate crowd crushes and stampedes across massive Indian gatherings—such as the Maha Kumbh Mela, stadium sports finals, and regional music festivals. 
+**CrowdShield** is an AI-powered event crowd-safety platform that detects dangerous crowd conditions **before they develop into crowd crushes or stampedes** and provides actionable recommendations to authorities, police, and event organizers.
 
-Instead of four disjointed apps, CrowdShield is **one unified Progressive Web App (PWA)** powered by a central **AI Data Hub**. It ingests live CCTV, datasets, and simulations to predict congestion risks and push role-based, real-time alerts to Authorities, Police, Citizens, and Event Owners.
+Instead of monitoring a single CCTV feed, CrowdShield combines **multiple independent data sources** (CCTV, Smart Gates, GPS, Drone, BLE, Telecom) into a unified **Crowd Data Fusion Hub** that produces a single crowd state per zone, predicts risk, and recommends preventive interventions.
 
----
+The core principle:
 
-## 🌟 Core Features & Innovations
-
-1. **AI Predictive Risk Engine:** Processes computer vision metrics (density, speed, flow conflict) and uses XGBoost to predict congestion risks in 5, 10, and 15-minute future windows.
-2. **Unified PWA with Role-Based Access Control (RBAC):** A single application that provides four unique experiences based on user login:
-   * 👮 **Authority (Command Center):** Full map overview, AI predictions, and intervention approval.
-   * 🛡️ **Police/Security:** Mobile task navigation directly to critical risk zones.
-   * 👤 **Citizen:** Public safety view, safe routes, and multilingual alerts (no panic-inducing metrics).
-   * 🧑‍💼 **Event Owner:** Venue setup, gate configuration, and analytics.
-3. **Universal Map Engine:** A dynamic central map (powered by **Leaflet**) that serves as the core UI, overlaying density heatmaps, active incidents, and safe routes in real-time via WebSockets.
-4. **Data Hub & Feedback Loop:** Accepts inputs from live RTSP feeds, MP4 uploads, or Digital Twin simulations, feeding them into a standard data pipeline: `Collect → Analyze → Predict → Recommend → Act → Verify`.
-5. **Offline & Edge Resilience:** The Next.js PWA uses Service Workers and IndexedDB to cache venue maps and critical emergency instructions, ensuring operation during cellular network saturation.
-6. **GenAI Integration:** Synthesizes complex AI metrics into readable incident summaries and multilingual public announcements.
+> **Configure the event first. Sense the crowd from multiple sources. Fuse the observations. Understand the crowd state. Predict risk. Recommend preventive action. Let authorized humans act. Measure the result.**
 
 ---
 
-## 🚀 Quick Start & Live Demonstration Guide
+## Core Features & Innovations
+
+1. **Multi-Source Data Fusion Hub:** Combines CCTV, Smart Gates, Citizen GPS, Drone, BLE, and Telecom through standardized adapters into a unified crowd state. No single sensor is permanently reliable — the system continues operating when any source fails.
+2. **Standard Observation Format:** Every data source produces the same standardized observation (event_id, source_id, source_type, zone_id, metric, value, confidence, health). Real and simulated sources use identical formats.
+3. **AI Predictive Risk Engine:** XGBoost model forecasts crush likelihood in 5, 10, and 15-minute future windows with explainable recommendations.
+4. **Unified PWA with RBAC:** One application, four experiences — Authority, Police, Citizen, Event Owner — differentiated by JWT-based role routing.
+5. **Event-First Architecture:** Every data point belongs to an event. Event lifecycle: Draft → Configuration → Ready → Live → Completed.
+6. **Smart Gate System:** Hardware-agnostic gate counting (AI camera, IR, LiDAR, turnstile, RFID, QR) with real-time status monitoring.
+7. **Custom Route System:** Routes that don't exist in normal maps — one-way, emergency, police-only, temporary, GPS-recorded.
+8. **Digital Twin & Simulation:** Pre-event what-if scenarios (sudden inflow, route blockage, gate failure, crowd surge).
+9. **Offline & Edge Resilience:** Service Workers + IndexedDB cache venue maps during cellular network failure.
+10. **Human-in-the-Loop:** AI recommends. Authorized humans approve. Every recommendation explains why.
+
+---
+
+## Quick Start
 
 CrowdShield is a modern monorepo consisting of a Next.js frontend and a FastAPI backend.
 
 ### Step 1: Start the FastAPI Backend
-Navigate to the API directory, install dependencies, and start the server:
 ```bash
 cd apps/api
 python -m venv venv
@@ -41,7 +44,6 @@ uvicorn main:app --reload --port 8000
 ```
 
 ### Step 2: Start the Next.js PWA
-In a new terminal window, navigate to the Web directory:
 ```bash
 cd apps/web
 npm install
@@ -49,55 +51,71 @@ npm run dev
 ```
 
 ### Step 3: Open the Platform
-Navigate to **`http://localhost:3000`** in your browser. Log in with different test accounts to experience the Authority, Police, and Citizen dashboards.
+Navigate to **`http://localhost:3000`** in your browser.
 
 ---
 
-## 📚 Enterprise Technical Documentation Suite (`docs/`)
+## Documentation Suite (`docs/`)
 
-Our comprehensive engineering specifications, architectural diagrams, data flows, and AI developer protocols are arranged sequentially inside the [`docs/`](./docs) directory:
-
-| Seq | Document Specification | Target Audience & Contents Summary |
+| Seq | Document | Key Contents |
 | :---: | :--- | :--- |
-| **01** | **[Product Requirements Document (PRD)](./docs/01_PRD.md)** | Product Strategy, User Personas (Authority, Police, Citizen, Admin), and Success KPIs. |
-| **02** | **[Technical Requirements Document (TRD)](./docs/02_TRD.md)** | Engineering Stack (Next.js, FastAPI, PostgreSQL) and core AI prediction thresholds. |
-| **03** | **[High-Level Design Document (HLD)](./docs/03_HLD.md)** | The 10 Major Modules, System Topology, and real-time WebSocket architecture. |
-| **04** | **[Low-Level Design Document (LLD)](./docs/04_LLD.md)** | Computer Vision pipelines, ML prediction features, and RBAC mechanisms. |
-| **05** | **[Data Flow Diagrams Document (DFD)](./docs/05_DFD.md)** | Level 0/1/2 diagrams for data ingestion, AI processing, and recommendation feedback loops. |
-| **06** | **[UI Specs & Wireframe Mapping](./docs/06_UI_WIRE_FRAMES.md)** | Central map UI, role-based dashboard wireframes, and responsive PWA layouts. |
-| **07** | **[Production Deployment Playbook](./docs/07_DEPLOYMENT_AND_OPS.md)** | AWS deployment, caching, and offline PWA service worker strategies. |
-| **08** | **[API & Event Bus Schema](./docs/08_API_AND_EVENTS_SCHEMA.md)** | JSON schemas for standardizing CCTV, Simulation, and Dataset inputs. |
-| **09** | **[Testing, QA & Chaos Strategy](./docs/09_TESTING_AND_QA_STRATEGY.md)** | Playwright (Frontend), Pytest (Backend), Locust (Load), and ML evaluation metrics. |
-| **10** | **[AI Agent Coding Instructions](./docs/10_AI_AGENT_INSTRUCTIONS.md)** | Monorepo conventions, boundaries, and LLM automation rules. |
-| **00** | **[Documentation Portal Index](./docs/README.md)** | Central table of contents within the `docs/` folder. |
+| **00** | **[Master System Specification](./docs/00_MASTER_SPEC.md)** | **Authoritative 63-section spec.** Read this first. |
+| **01** | **[PRD](./docs/01_PRD.md)** | Personas, event lifecycle, functional requirements, build phases. |
+| **02** | **[TRD](./docs/02_TRD.md)** | Tech stack, data sources, Fusion Hub, observation format. |
+| **03** | **[HLD](./docs/03_HLD.md)** | Architecture, 25+ modules, data pipeline. |
+| **04** | **[LLD](./docs/04_LLD.md)** | Smart Gates, GPS routes, fusion math, Gate-Zone-Route. |
+| **05** | **[DFD](./docs/05_DFD.md)** | Multi-source data flow diagrams. |
+| **06** | **[UI Specs](./docs/06_UI_WIRE_FRAMES.md)** | Role dashboards, venue builder, Smart Gate UI. |
+| **07** | **[Deployment](./docs/07_DEPLOYMENT_AND_OPS.md)** | AWS, resilience, graceful degradation. |
+| **08** | **[API Schema](./docs/08_API_AND_EVENTS_SCHEMA.md)** | Standard Observation, Crowd State, WebSocket events. |
+| **09** | **[Testing](./docs/09_TESTING_AND_QA_STRATEGY.md)** | Pytest, Playwright, multi-source testing, chaos playbooks. |
+| **10** | **[AI Agent Rules](./docs/10_AI_AGENT_INSTRUCTIONS.md)** | Monorepo boundaries, event-first rules, adapter pattern. |
 
 ---
 
-## 📂 Repository Architecture (Monorepo)
+## Repository Architecture (Monorepo)
 
 ```
 crowdshield/
 ├── apps/
 │   ├── web/                 # Next.js PWA (Frontend UI & Role Routing)
 │   └── api/                 # FastAPI (Backend, WebSockets, DB interaction)
-├── ai/
-│   ├── detection/           # OpenCV/YOLO vision pipeline
-│   ├── tracking/            # BoT-SORT and optical flow
-│   ├── analytics/           # Density, speed, and flow math
-│   ├── prediction/          # XGBoost risk modeling
-│   └── recommendation/      # Decision engine for actions
-├── simulation/
-│   └── digital-twin/        # Scenario generation for testing
-├── packages/
-│   ├── types/               # Shared TypeScript definitions
-│   └── config/              # Shared lint/build configs
+├── ai/                      # AI/ML Pipeline (OpenCV, YOLOv8, XGBoost)
 ├── data/
 │   ├── raw/                 # Input video/datasets
 │   └── processed/           # Feature stores
-├── docs/                    # Technical documentation (01_PRD to 10_AI_AGENT)
+├── simulation/
+│   └── digital-twin/        # Scenario generation for testing
+├── docs/                    # Technical documentation (00_MASTER_SPEC to 10_AI_AGENT)
 ├── README.md                # Project overview (This File)
 └── package.json             # Root workspace definitions
 ```
+
+---
+
+## Data Sources
+
+| Category | Sources | MVP Status |
+| :--- | :--- | :--- |
+| **Core** | CCTV, Smart Gates, Citizen GPS | Real |
+| **Advanced** | Drone, BLE, Telecom | Simulated (architecture ready for real) |
+| **Development** | Synthetic, Historical, Replay | Always available |
+
+---
+
+## Build Phases
+
+| Phase | Name | Scope |
+| :---: | :--- | :--- |
+| 1 | Foundation | Auth, RBAC, Database, Event Management, PWA |
+| 2 | Event Map | Map builder, zones, gates, routes, GPS recording |
+| 3 | Data Hub | Source registry, observation model, fusion |
+| 4 | Real Data | CCTV, Smart Gate, GPS adapters |
+| 5 | AI | Analytics, risk model, prediction |
+| 6 | Decision | Recommendations, deployment, announcements |
+| 7 | UX | Authority, Police, Event Owner, Citizen dashboards |
+| 8 | Simulation | Digital Twin, scenario simulation |
+| 9 | Production | Security, testing, monitoring, deployment |
 
 ---
 
