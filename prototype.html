@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrowdShield — UI Prototype</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; }
+.sidebar { width: 260px; min-height: 100vh; background: #1e293b; border-right: 1px solid #334155; }
+.sidebar-link { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: #94a3b8; cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent; }
+.sidebar-link:hover { background: #334155; color: #e2e8f0; }
+.sidebar-link.active { background: #1e3a5f; color: #38bdf8; border-left-color: #38bdf8; }
+.sidebar-link .icon { font-size: 18px; width: 24px; text-align: center; }
+.sidebar-link .badge { background: #ef4444; color: white; font-size: 11px; padding: 2px 7px; border-radius: 9999px; margin-left: auto; }
+.topbar { height: 64px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+.metric-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; }
+.risk-low { border-left: 4px solid #22c55e; }
+.risk-medium { border-left: 4px solid #eab308; }
+.risk-high { border-left: 4px solid #f97316; }
+.risk-critical { border-left: 4px solid #ef4444; }
+.source-healthy { color: #22c55e; }
+.source-degraded { color: #eab308; }
+.source-offline { color: #ef4444; }
+.btn-approve { background: #16a34a; color: white; padding: 6px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; }
+.btn-approve:hover { background: #15803d; }
+.btn-reject { background: #dc2626; color: white; padding: 6px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; }
+.btn-reject:hover { background: #b91c1c; }
+.btn-navigate { background: #2563eb; color: white; padding: 8px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; }
+.btn-navigate:hover { background: #1d4ed8; }
+.map-container { height: 400px; border-radius: 12px; border: 1px solid #334155; }
+.alert-banner { background: linear-gradient(135deg, #dc2626, #b91c1c); padding: 12px 20px; border-radius: 8px; display: flex; align-items: center; gap: 12px; animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }
+.zone-editor { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 16px; }
+.zone-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid #334155; }
+.zone-item:last-child { border-bottom: none; }
+.citizen-alert { background: #1e293b; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 12px; border: 1px solid #334155; }
+.sos-btn { background: linear-gradient(135deg, #dc2626, #ef4444); color: white; border: none; padding: 20px 40px; border-radius: 16px; font-size: 20px; font-weight: 700; cursor: pointer; box-shadow: 0 0 30px rgba(239,68,68,0.4); }
+.sos-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(239,68,68,0.6); }
+.live-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: blink 1s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.tab-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: #94a3b8; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+.tab-btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
+.tab-btn:hover:not(.active) { background: #334155; color: #e2e8f0; }
+.metric-big { font-size: 32px; font-weight: 800; }
+.scrollbar-thin::-webkit-scrollbar { width: 6px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: #1e293b; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar fixed top-0 left-0 right-0 z-50">
+  <div class="flex items-center gap-3">
+    <div class="text-xl font-bold text-sky-400">🛡️ CrowdShield</div>
+    <div class="flex items-center gap-2 ml-4">
+      <div class="live-dot"></div>
+      <span class="text-xs text-green-400 font-medium">LIVE</span>
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <span class="text-sm text-slate-400" id="currentTime"></span>
+    <div class="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg">
+      <div class="w-8 h-8 bg-sky-500 rounded-full flex items-center justify-center text-white font-bold text-sm">A</div>
+      <span class="text-sm font-medium" id="userName">Authority User</span>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar fixed left-0 top-16 z-40 scrollbar-thin overflow-y-auto">
+  <div class="p-4">
+    <div class="text-xs text-slate-500 uppercase tracking-wider mb-3 font-semibold">Dashboard</div>
+    <div class="sidebar-link active" onclick="showDashboard('authority')">
+      <span class="icon">🏛️</span> Authority Command
+    </div>
+    <div class="sidebar-link" onclick="showDashboard('police')">
+      <span class="icon">👮</span> Police Operations
+      <span class="badge">3</span>
+    </div>
+    <div class="sidebar-link" onclick="showDashboard('eventowner')">
+      <span class="icon">📋</span> Event Owner
+    </div>
+    <div class="sidebar-link" onclick="showDashboard('citizen')">
+      <span class="icon">👤</span> Citizen View
+    </div>
+    <div class="mt-6 text-xs text-slate-500 uppercase tracking-wider mb-3 font-semibold">Management</div>
+    <div class="sidebar-link">
+      <span class="icon">🗺️</span> Event Map
+    </div>
+    <div class="sidebar-link">
+      <span class="icon">⚠️</span> Risk Panel
+    </div>
+    <div class="sidebar-link">
+      <span class="icon">📡</span> Data Sources
+    </div>
+    <div class="sidebar-link">
+      <span class="icon">💡</span> AI Recommendations
+    </div>
+    <div class="sidebar-link">
+      <span class="icon">🚨</span> Incidents
+      <span class="badge">2</span>
+    </div>
+    <div class="mt-6 text-xs text-slate-500 uppercase tracking-wider mb-3 font-semibold">System</div>
+    <div class="sidebar-link">
+      <span class="icon">⚙️</span> Settings
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="ml-[260px] mt-16 min-h-screen">
+
+  <!-- ============================================ -->
+  <!-- AUTHORITY DASHBOARD -->
+  <!-- ============================================ -->
+  <div id="dashboard-authority" class="p-6">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold">Authority Command Center</h1>
+        <p class="text-slate-400 text-sm mt-1">Maha Kumbh Mela 2026 — Live Monitoring</p>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn-navigate" onclick="simulateIncident()">⚡ Simulate Incident</button>
+        <button class="bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-600">📊 Export Report</button>
+      </div>
+    </div>
+
+    <!-- ALERT BANNER -->
+    <div id="alertBanner" class="alert-banner mb-6 hidden">
+      <span class="text-2xl">⚠️</span>
+      <div>
+        <div class="font-bold text-white">HIGH RISK DETECTED — Zone B</div>
+        <div class="text-sm text-red-100">Density exceeding 4.5 persons/m² — AI recommends immediate intervention</div>
+      </div>
+      <button class="ml-auto text-white font-bold bg-white/20 px-4 py-2 rounded-lg hover:bg-white/30" onclick="dismissAlert()">DISMISS</button>
+    </div>
+
+    <!-- MAP + METRICS ROW -->
+    <div class="grid grid-cols-12 gap-6 mb-6">
+      <!-- MAP -->
+      <div class="col-span-8">
+        <div class="metric-card">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-semibold text-lg">Live Event Map</h3>
+            <div class="flex gap-2">
+              <span class="text-xs bg-green-900/50 text-green-400 px-2 py-1 rounded">🟢 Low Risk</span>
+              <span class="text-xs bg-yellow-900/50 text-yellow-400 px-2 py-1 rounded">🟡 Medium</span>
+              <span class="text-xs bg-red-900/50 text-red-400 px-2 py-1 rounded">🔴 Critical</span>
+            </div>
+          </div>
+          <div id="authorityMap" class="map-container"></div>
+        </div>
+      </div>
+
+      <!-- METRICS -->
+      <div class="col-span-4 space-y-4">
+        <div class="metric-card risk-low">
+          <div class="text-xs text-slate-400 uppercase tracking-wider">Total Crowd</div>
+          <div class="metric-big text-white" id="totalCrowd">47,832</div>
+          <div class="text-sm text-green-400 mt-1">↓ 2.3% from peak</div>
+        </div>
+        <div class="metric-card risk-medium">
+          <div class="text-xs text-slate-400 uppercase tracking-wider">Active Zones</div>
+          <div class="metric-big text-white">5 / 5</div>
+          <div class="text-sm text-yellow-400 mt-1">Zone B: Elevated</div>
+        </div>
+        <div class="metric-card risk-high">
+          <div class="text-xs text-slate-400 uppercase tracking-wider">Risk Score</div>
+          <div class="metric-big text-orange-400" id="riskScore">6.2</div>
+          <div class="text-sm text-orange-400 mt-1">↑ Rising — 10 min forecast: 8.1</div>
+        </div>
+        <div class="metric-card">
+          <div class="text-xs text-slate-400 uppercase tracking-wider">Data Sources Online</div>
+          <div class="metric-big text-sky-400">4 / 6</div>
+          <div class="text-sm text-slate-400 mt-1">Drone, Telecom offline</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM PANELS -->
+    <div class="grid grid-cols-12 gap-6">
+      <!-- RISK PANEL -->
+      <div class="col-span-4">
+        <div class="metric-card">
+          <h3 class="font-semibold text-lg mb-4">🎯 Zone Risk Status</h3>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-green-900/20 rounded-lg border border-green-800/30">
+              <div class="flex items-center gap-3">
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div>
+                  <div class="font-medium">Zone A — Main Entry</div>
+                  <div class="text-xs text-slate-400">Capacity: 3,200 / 5,000</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-green-400 font-bold text-lg">2.1</div>
+                <div class="text-xs text-slate-400">LOW</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-yellow-900/20 rounded-lg border border-yellow-800/30" id="zoneB">
+              <div class="flex items-center gap-3">
+                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <div>
+                  <div class="font-medium">Zone B — Central Plaza</div>
+                  <div class="text-xs text-slate-400">Capacity: 4,100 / 3,000</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-yellow-400 font-bold text-lg" id="zoneBRisk">6.2</div>
+                <div class="text-xs text-slate-400">MEDIUM</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-red-900/20 rounded-lg border border-red-800/30" id="zoneC" style="display:none;">
+              <div class="flex items-center gap-3">
+                <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                <div>
+                  <div class="font-medium">Zone C — Temple Area</div>
+                  <div class="text-xs text-slate-400">Capacity: 3,800 / 4,000</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-red-400 font-bold text-lg" id="zoneCRisk">8.7</div>
+                <div class="text-xs text-slate-400">CRITICAL</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-green-900/20 rounded-lg border border-green-800/30">
+              <div class="flex items-center gap-3">
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div>
+                  <div class="font-medium">Zone D — Food Court</div>
+                  <div class="text-xs text-slate-400">Capacity: 1,800 / 4,000</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-green-400 font-bold text-lg">1.8</div>
+                <div class="text-xs text-slate-400">LOW</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-green-900/20 rounded-lg border border-green-800/30">
+              <div class="flex items-center gap-3">
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div>
+                  <div class="font-medium">Zone E — Parking</div>
+                  <div class="text-xs text-slate-400">Capacity: 950 / 3,000</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-green-400 font-bold text-lg">0.9</div>
+                <div class="text-xs text-slate-400">LOW</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOURCE HEALTH -->
+      <div class="col-span-4">
+        <div class="metric-card">
+          <h3 class="font-semibold text-lg mb-4">📡 Data Source Health</h3>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">📹</span>
+                <div>
+                  <div class="font-medium">CCTV Cameras</div>
+                  <div class="text-xs text-slate-400">6 active streams</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="source-healthy font-bold">🟢 98%</div>
+                <div class="text-xs text-slate-400">42ms latency</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">🚧</span>
+                <div>
+                  <div class="font-medium">Smart Gates</div>
+                  <div class="text-xs text-slate-400">6 gates active</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="source-healthy font-bold">🟢 95%</div>
+                <div class="text-xs text-slate-400">18ms latency</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">📱</span>
+                <div>
+                  <div class="font-medium">Citizen GPS</div>
+                  <div class="text-xs text-slate-400">12,400 devices</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="source-degraded font-bold">🟡 85%</div>
+                <div class="text-xs text-slate-400">120ms latency</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">📡</span>
+                <div>
+                  <div class="font-medium">BLE Beacons</div>
+                  <div class="text-xs text-slate-400">48 beacons</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="source-healthy font-bold">🟢 92%</div>
+                <div class="text-xs text-slate-400">55ms latency</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">🚁</span>
+                <div>
+                  <div class="font-medium">Drone Feed</div>
+                  <div class="text-xs text-slate-400">1 drone</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="source-offline font-bold">🔴 0%</div>
+                <div class="text-xs text-slate-400">Offline</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">📶</span>
+                <div>
+                  <div class="font-medium">Telecom Data</div>
+                  <div class="text-xs text-slate-400">Tower density</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="source-offline font-bold">🔴 0%</div>
+                <div class="text-xs text-slate-400">Offline</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI RECOMMENDATIONS -->
+      <div class="col-span-4">
+        <div class="metric-card">
+          <h3 class="font-semibold text-lg mb-4">💡 AI Recommendations</h3>
+          <div class="space-y-3" id="recommendationsList">
+            <div class="p-3 bg-orange-900/20 rounded-lg border border-orange-700/30">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="font-medium text-orange-300">⚠️ Restrict Gate G3</div>
+                  <div class="text-sm text-slate-300 mt-1">Zone B inflow exceeding safe threshold. Reduce entry rate from Gate 3.</div>
+                  <div class="text-xs text-slate-500 mt-2">Confidence: 94% • Source: CCTV + Smart Gate fusion</div>
+                </div>
+              </div>
+              <div class="flex gap-2 mt-3">
+                <button class="btn-approve text-sm" onclick="approveRecommendation(this, 'Gate G3 restricted')">✓ Approve</button>
+                <button class="btn-reject text-sm" onclick="rejectRecommendation(this)">✗ Reject</button>
+              </div>
+            </div>
+            <div class="p-3 bg-blue-900/20 rounded-lg border border-blue-700/30">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="font-medium text-blue-300">🚪 Open Gate G5</div>
+                  <div class="text-sm text-slate-300 mt-1">Alternative exit for Zone B crowd. Divert flow away from congested area.</div>
+                  <div class="text-xs text-slate-500 mt-2">Confidence: 89% • Source: GPS + Gate flow analysis</div>
+                </div>
+              </div>
+              <div class="flex gap-2 mt-3">
+                <button class="btn-approve text-sm" onclick="approveRecommendation(this, 'Gate G5 opened')">✓ Approve</button>
+                <button class="btn-reject text-sm" onclick="rejectRecommendation(this)">✗ Reject</button>
+              </div>
+            </div>
+            <div class="p-3 bg-purple-900/20 rounded-lg border border-purple-700/30">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="font-medium text-purple-300">👮 Deploy Police Unit</div>
+                  <div class="text-sm text-slate-300 mt-1">Deploy 2 officers to Zone B — Gate 3 area for crowd management.</div>
+                  <div class="text-xs text-slate-500 mt-2">Confidence: 91% • Source: Risk prediction + Crowd density</div>
+                </div>
+              </div>
+              <div class="flex gap-2 mt-3">
+                <button class="btn-approve text-sm" onclick="approveRecommendation(this, 'Police deployed to Zone B')">✓ Approve</button>
+                <button class="btn-reject text-sm" onclick="rejectRecommendation(this)">✗ Reject</button>
+              </div>
+            </div>
+            <div class="p-3 bg-cyan-900/20 rounded-lg border border-cyan-700/30">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="font-medium text-cyan-300">📢 Broadcast Warning</div>
+                  <div class="text-sm text-slate-300 mt-1">Send multilingual alert to Zone B: "Please move toward Gate G5 for faster exit."</div>
+                  <div class="text-xs text-slate-500 mt-2">Confidence: 96% • Source: Fusion engine + Route analysis</div>
+                </div>
+              </div>
+              <div class="flex gap-2 mt-3">
+                <button class="btn-approve text-sm" onclick="approveRecommendation(this, 'Warning broadcast sent')">✓ Approve</button>
+                <button class="btn-reject text-sm" onclick="rejectRecommendation(this)">✗ Reject</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- POLICE DASHBOARD -->
+  <!-- ============================================ -->
+  <div id="dashboard-police" class="p-6 hidden">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold">Police Operations Dashboard</h1>
+        <p class="text-slate-400 text-sm mt-1">Officer Rajesh Kumar — Badge #4521 • Assigned: Zone B</p>
+      </div>
+      <div class="flex gap-3">
+        <button class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700">🚨 Emergency Mode</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-12 gap-6">
+      <!-- ASSIGNED ZONE MAP -->
+      <div class="col-span-5">
+        <div class="metric-card">
+          <h3 class="font-semibold text-lg mb-3">🗺️ My Assigned Zone</h3>
+          <div id="policeMap" class="map-container" style="height:300px;"></div>
+          <div class="mt-3 p-3 bg-slate-800/50 rounded-lg">
+            <div class="text-sm text-slate-400">Current Position</div>
+            <div class="font-medium">Zone B — Near Gate G3</div>
+            <div class="text-xs text-green-400 mt-1">✓ GPS Active • Accuracy: 5m</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASK LIST -->
+      <div class="col-span-7">
+        <div class="metric-card">
+          <h3 class="font-semibold text-lg mb-4">📋 Active Tasks</h3>
+          <div class="space-y-3">
+            <div class="p-4 bg-red-900/20 rounded-lg border border-red-700/30">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center text-white font-bold">1</div>
+                  <div>
+                    <div class="font-bold text-red-300">HIGH PRIORITY — Deploy to Gate G3</div>
+                    <div class="text-sm text-slate-300 mt-1">Crowd surge detected. Move to Gate G3 entrance and manage crowd flow.</div>
+                    <div class="flex gap-4 mt-2 text-xs text-slate-400">
+                      <span>⏱️ Assigned: 2 min ago</span>
+                      <span>📍 Distance: 120m</span>
+                      <span>🔴 URGENT</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-2 mt-3 ml-13">
+                <button class="btn-navigate text-sm">🧭 Navigate</button>
+                <button class="bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600">✓ Acknowledge</button>
+                <button class="bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-500">📝 Update Status</button>
+              </div>
+            </div>
+
+            <div class="p-4 bg-yellow-900/20 rounded-lg border border-yellow-700/30">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center text-white font-bold">2</div>
+                  <div>
+                    <div class="font-bold text-yellow-300">MEDIUM — Redirect Crowd from Route R4</div>
+                    <div class="text-sm text-slate-300 mt-1">Route R4 congested. Guide people toward Route R6 (alternative path).</div>
+                    <div class="flex gap-4 mt-2 text-xs text-slate-400">
+                      <span>⏱️ Assigned: 5 min ago</span>
+                      <span>📍 Distance: 200m</span>
+                      <span>🟡 MODERATE</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-2 mt-3 ml-13">
+                <button class="btn-navigate text-sm">🧭 Navigate</button>
+                <button class="bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600">✓ Acknowledge</button>
+              </div>
+            </div>
+
+            <div class="p-4 bg-blue-900/20 rounded-lg border border-blue-700/30">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">3</div>
+                  <div>
+                    <div class="font-bold text-blue-300">LOW — Open Gate G5</div>
+                    <div class="text-sm text-slate-300 mt-1">Gate G5 is locked. Open it to provide alternative exit for Zone B crowd.</div>
+                    <div class="flex gap-4 mt-2 text-xs text-slate-400">
+                      <span>⏱️ Assigned: 8 min ago</span>
+                      <span>📍 Distance: 350m</span>
+                      <span>🔵 LOW</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-2 mt-3 ml-13">
+                <button class="btn-navigate text-sm">🧭 Navigate</button>
+                <button class="bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600">✓ Acknowledge</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INCIDENTS -->
+    <div class="mt-6">
+      <div class="metric-card">
+        <h3 class="font-semibold text-lg mb-4">🚨 Active Incidents</h3>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="p-4 bg-red-900/20 rounded-lg border border-red-700/30">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-red-400 text-xl">🚨</span>
+              <div class="font-bold text-red-300">Crowd Surge — Zone B</div>
+            </div>
+            <div class="text-sm text-slate-300">Density exceeding safe limits near Gate G3. Multiple people reporting discomfort.</div>
+            <div class="text-xs text-slate-500 mt-2">Reported: 2 min ago • Status: ACTIVE</div>
+          </div>
+          <div class="p-4 bg-yellow-900/20 rounded-lg border border-yellow-700/30">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-yellow-400 text-xl">⚠️</span>
+              <div class="font-bold text-yellow-300">Gate Blocked — Gate G3</div>
+            </div>
+            <div class="text-sm text-slate-300">Physical obstruction at Gate G3 entry. Crowds unable to enter normally.</div>
+            <div class="text-xs text-slate-500 mt-2">Reported: 5 min ago • Status: IN PROGRESS</div>
+          </div>
+          <div class="p-4 bg-slate-800/50 rounded-lg border border-slate-700/30">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-slate-400 text-xl">📢</span>
+              <div class="font-bold text-slate-300">Info — Route Congestion</div>
+            </div>
+            <div class="text-sm text-slate-300">Route R4 showing slower than normal pedestrian flow. Not critical.</div>
+            <div class="text-xs text-slate-500 mt-2">Reported: 8 min ago • Status: MONITORING</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- EVENT OWNER DASHBOARD -->
+  <!-- ============================================ -->
+  <div id="dashboard-eventowner" class="p-6 hidden">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold">Event Owner — Venue Configuration</h1>
+        <p class="text-slate-400 text-sm mt-1">Maha Kumbh Mela 2026 • Status: <span class="text-green-400 font-medium">LIVE</span></p>
+      </div>
+      <div class="flex gap-3">
+        <button class="bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-600">▶️ Run Simulation</button>
+        <button class="bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sky-500">💾 Save Changes</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-12 gap-6">
+      <!-- EVENT DETAILS -->
+      <div class="col-span-3">
+        <div class="metric-card">
+          <h3 class="font-semibold mb-4">📋 Event Details</h3>
+          <div class="space-y-3 text-sm">
+            <div>
+              <div class="text-slate-400">Event Name</div>
+              <div class="font-medium">Maha Kumbh Mela 2026</div>
+            </div>
+            <div>
+              <div class="text-slate-400">Date</div>
+              <div class="font-medium">Jan 14 — Mar 4, 2026</div>
+            </div>
+            <div>
+              <div class="text-slate-400">Expected Attendance</div>
+              <div class="font-medium">50,000,000</div>
+            </div>
+            <div>
+              <div class="text-slate-400">Status</div>
+              <div class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="text-green-400 font-medium">LIVE</span>
+              </div>
+            </div>
+            <button class="w-full bg-slate-700 text-white py-2 rounded-lg text-sm hover:bg-slate-600">✏️ Edit Details</button>
+          </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="metric-card mt-4">
+          <h3 class="font-semibold mb-4">📊 Venue Stats</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between"><span class="text-slate-400">Zones</span><span class="font-medium">5</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Gates</span><span class="font-medium">6</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Routes</span><span class="font-medium">8</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Cameras</span><span class="font-medium">6</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Smart Gates</span><span class="font-medium">4</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Emergency Routes</span><span class="font-medium">2</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VENUE MAP BUILDER -->
+      <div class="col-span-9">
+        <div class="metric-card">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-semibold text-lg">🗺️ Venue Map Builder</h3>
+            <div class="flex gap-2">
+              <button class="tab-btn active" onclick="switchMapTab('zones', this)">Zones</button>
+              <button class="tab-btn" onclick="switchMapTab('gates', this)">Gates</button>
+              <button class="tab-btn" onclick="switchMapTab('routes', this)">Routes</button>
+              <button class="tab-btn" onclick="switchMapTab('cameras', this)">Cameras</button>
+            </div>
+          </div>
+          <div id="eventOwnerMap" class="map-container" style="height:350px;"></div>
+        </div>
+
+        <!-- ZONE / GATE / ROUTE EDITORS -->
+        <div class="grid grid-cols-3 gap-4 mt-4">
+          <!-- ZONES -->
+          <div class="zone-editor">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="font-semibold">🟢 Zones</h4>
+              <button class="text-sky-400 text-sm hover:text-sky-300">+ Add Zone</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">Zone A</div>
+                <div class="text-xs text-slate-400">5,000 cap • Main Entry</div>
+              </div>
+              <div class="flex gap-1">
+                <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+                <button class="text-red-400 text-xs hover:text-red-300">Del</button>
+              </div>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">Zone B</div>
+                <div class="text-xs text-slate-400">3,000 cap • Central Plaza</div>
+              </div>
+              <div class="flex gap-1">
+                <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+                <button class="text-red-400 text-xs hover:text-red-300">Del</button>
+              </div>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">Zone C</div>
+                <div class="text-xs text-slate-400">4,000 cap • Temple Area</div>
+              </div>
+              <div class="flex gap-1">
+                <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+                <button class="text-red-400 text-xs hover:text-red-300">Del</button>
+              </div>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">Zone D</div>
+                <div class="text-xs text-slate-400">4,000 cap • Food Court</div>
+              </div>
+              <div class="flex gap-1">
+                <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+                <button class="text-red-400 text-xs hover:text-red-300">Del</button>
+              </div>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">Zone E</div>
+                <div class="text-xs text-slate-400">3,000 cap • Parking</div>
+              </div>
+              <div class="flex gap-1">
+                <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+                <button class="text-red-400 text-xs hover:text-red-300">Del</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- GATES -->
+          <div class="zone-editor">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="font-semibold">🚪 Gates</h4>
+              <button class="text-sky-400 text-sm hover:text-sky-300">+ Add Gate</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">G1 — North Entry</div>
+                <div class="text-xs text-green-400">✅ OPEN • Smart Gate</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">G2 — South Entry</div>
+                <div class="text-xs text-green-400">✅ OPEN • Smart Gate</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">G3 — West Entry</div>
+                <div class="text-xs text-yellow-400">⚠️ RESTRICTED • Smart Gate</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">G4 — East Exit</div>
+                <div class="text-xs text-green-400">✅ OPEN</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">G5 — Emergency</div>
+                <div class="text-xs text-red-400">🔒 LOCKED</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">G6 — VIP Entry</div>
+                <div class="text-xs text-green-400">✅ OPEN</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+          </div>
+
+          <!-- ROUTES -->
+          <div class="zone-editor">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="font-semibold">🛤️ Routes</h4>
+              <button class="text-sky-400 text-sm hover:text-sky-300">+ Add Route</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">R1 — Main → Zone A</div>
+                <div class="text-xs text-green-400">Two-way • 1.2km</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">R2 — Zone A → Zone B</div>
+                <div class="text-xs text-green-400">One-way • 0.8km</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">R3 — Zone B → Exit</div>
+                <div class="text-xs text-green-400">One-way • 0.6km</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">R4 — Central Loop</div>
+                <div class="text-xs text-yellow-400">Two-way • 2.1km • CONGESTED</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">R5 — Temple Path</div>
+                <div class="text-xs text-green-400">One-way • 0.4km</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">R6 — Alternative Exit</div>
+                <div class="text-xs text-green-400">One-way • 1.0km</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">E1 — Emergency Route</div>
+                <div class="text-xs text-red-400">Emergency only • 0.5km</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+            <div class="zone-item">
+              <div>
+                <div class="font-medium">E2 — Emergency Route</div>
+                <div class="text-xs text-red-400">Emergency only • 0.7km</div>
+              </div>
+              <button class="text-sky-400 text-xs hover:text-sky-300">Edit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- CITIZEN DASHBOARD -->
+  <!-- ============================================ -->
+  <div id="dashboard-citizen" class="p-6 hidden">
+    <div class="max-w-2xl mx-auto">
+      <!-- HEADER -->
+      <div class="text-center mb-6">
+        <h1 class="text-2xl font-bold">🛡️ Stay Safe at Maha Kumbh Mela</h1>
+        <p class="text-slate-400 text-sm mt-1">Real-time crowd guidance for your safety</p>
+      </div>
+
+      <!-- YOUR LOCATION MAP -->
+      <div class="metric-card mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-semibold text-lg">📍 Your Location</h3>
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span class="text-xs text-green-400">GPS Active</span>
+          </div>
+        </div>
+        <div id="citizenMap" class="map-container" style="height:280px;"></div>
+      </div>
+
+      <!-- SAFETY STATUS -->
+      <div class="metric-card mb-4">
+        <div class="flex items-center gap-4 p-4 bg-green-900/20 rounded-lg border border-green-700/30">
+          <div class="text-4xl">✅</div>
+          <div>
+            <div class="font-bold text-green-300 text-lg">You are in a SAFE area</div>
+            <div class="text-sm text-slate-300">Zone A — Main Entry. Crowd density is normal.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE ALERTS -->
+      <div class="metric-card mb-4">
+        <h3 class="font-semibold text-lg mb-3">📢 Live Safety Alerts</h3>
+        <div class="space-y-3">
+          <div class="citizen-alert border-l-4 border-yellow-500">
+            <span class="text-2xl">⚠️</span>
+            <div>
+              <div class="font-medium text-yellow-300">AVOID Zone B — High Crowd Density</div>
+              <div class="text-sm text-slate-400">Zone B (Central Plaza) is currently very crowded. Use alternative routes.</div>
+            </div>
+          </div>
+          <div class="citizen-alert border-l-4 border-green-500">
+            <span class="text-2xl">✅</span>
+            <div>
+              <div class="font-medium text-green-300">USE Gate G5 — Low Congestion</div>
+              <div class="text-sm text-slate-400">Gate G5 is open with minimal wait time. Best exit option right now.</div>
+            </div>
+          </div>
+          <div class="citizen-alert border-l-4 border-sky-500">
+            <span class="text-2xl">🛤️</span>
+            <div>
+              <div class="font-medium text-sky-300">Follow Green Route to Exit 2</div>
+              <div class="text-sm text-slate-400">Safest path currently: Zone A → Route R6 → Exit 2. Estimated walk: 8 min.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAFE ROUTES -->
+      <div class="metric-card mb-4">
+        <h3 class="font-semibold text-lg mb-3">🛤️ Recommended Safe Routes</h3>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between p-3 bg-green-900/20 rounded-lg">
+            <div class="flex items-center gap-3">
+              <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+              <div>
+                <div class="font-medium">Route R6 → Exit 2</div>
+                <div class="text-xs text-slate-400">1.0 km • ~8 min walk • LOW congestion</div>
+              </div>
+            </div>
+            <button class="btn-navigate text-sm">🧭 Navigate</button>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-green-900/20 rounded-lg">
+            <div class="flex items-center gap-3">
+              <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+              <div>
+                <div class="font-medium">Route R1 → Main Exit</div>
+                <div class="text-xs text-slate-400">1.2 km • ~10 min walk • LOW congestion</div>
+              </div>
+            </div>
+            <button class="btn-navigate text-sm">🧭 Navigate</button>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-red-900/20 rounded-lg opacity-60">
+            <div class="flex items-center gap-3">
+              <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+              <div>
+                <div class="font-medium text-red-300">Route R4 — AVOID</div>
+                <div class="text-xs text-slate-400">2.1 km • HIGH congestion • Not recommended</div>
+              </div>
+            </div>
+            <span class="text-red-400 text-sm font-medium">🚫 Avoid</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOS + REPORT -->
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="metric-card text-center">
+          <div class="text-4xl mb-3">🆘</div>
+          <button class="sos-btn w-full" onclick="triggerSOS()">SOS — EMERGENCY</button>
+          <p class="text-xs text-slate-400 mt-3">Tap only in genuine emergency. Alert will be sent to authorities.</p>
+        </div>
+        <div class="metric-card">
+          <h3 class="font-semibold text-lg mb-3">📝 Report Issue</h3>
+          <div class="space-y-2">
+            <button class="w-full text-left p-3 bg-slate-800/50 rounded-lg hover:bg-slate-700/50 text-sm">
+              🚨 Crowd surge / pushing
+            </button>
+            <button class="w-full text-left p-3 bg-slate-800/50 rounded-lg hover:bg-slate-700/50 text-sm">
+              🤕 Person injured / needs help
+            </button>
+            <button class="w-full text-left p-3 bg-slate-800/50 rounded-lg hover:bg-slate-700/50 text-sm">
+              🔥 Fire / smoke visible
+            </button>
+            <button class="w-full text-left p-3 bg-slate-800/50 rounded-lg hover:bg-slate-700/50 text-sm">
+              🚧 Route blocked / obstruction
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MULTILINGUAL -->
+      <div class="metric-card">
+        <h3 class="font-semibold text-lg mb-3">🌐 Language / भाषा</h3>
+        <div class="flex gap-2 flex-wrap">
+          <button class="tab-btn active">English</button>
+          <button class="tab-btn">हिन्दी</button>
+          <button class="tab-btn">ଓଡ଼ିଆ</button>
+          <button class="tab-btn">বাংলা</button>
+          <button class="tab-btn">தமிழ்</button>
+          <button class="tab-btn">తెలుగు</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============ MAPS ============
+const eventLocation = [25.4358, 81.8463]; // Prayagraj coordinates
+
+const zones = [
+  { name: 'Zone A — Main Entry', coords: [[25.438, 81.843], [25.440, 81.843], [25.440, 81.847], [25.438, 81.847]], color: '#22c55e', risk: 'low' },
+  { name: 'Zone B — Central Plaza', coords: [[25.435, 81.844], [25.437, 81.844], [25.437, 81.849], [25.435, 81.849]], color: '#eab308', risk: 'medium' },
+  { name: 'Zone C — Temple Area', coords: [[25.432, 81.845], [25.434, 81.845], [25.434, 81.850], [25.432, 81.850]], color: '#ef4444', risk: 'critical' },
+  { name: 'Zone D — Food Court', coords: [[25.436, 81.850], [25.438, 81.850], [25.438, 81.854], [25.436, 81.854]], color: '#22c55e', risk: 'low' },
+  { name: 'Zone E — Parking', coords: [[25.433, 81.840], [25.435, 81.840], [25.435, 81.843], [25.433, 81.843]], color: '#22c55e', risk: 'low' }
+];
+
+const gates = [
+  { name: 'G1 — North Entry', pos: [25.440, 81.845], status: 'open' },
+  { name: 'G2 — South Entry', pos: [25.432, 81.847], status: 'open' },
+  { name: 'G3 — West Entry', pos: [25.435, 81.843], status: 'restricted' },
+  { name: 'G4 — East Exit', pos: [25.437, 81.854], status: 'open' },
+  { name: 'G5 — Emergency', pos: [25.433, 81.850], status: 'locked' },
+  { name: 'G6 — VIP Entry', pos: [25.439, 81.850], status: 'open' }
+];
+
+const routes = [
+  { name: 'R1 — Main → Zone A', coords: [[25.441, 81.845], [25.440, 81.845], [25.439, 81.845]], color: '#22c55e' },
+  { name: 'R2 — Zone A → Zone B', coords: [[25.438, 81.845], [25.437, 81.846], [25.437, 81.847]], color: '#22c55e' },
+  { name: 'R3 — Zone B → Exit', coords: [[25.437, 81.849], [25.437, 81.851], [25.437, 81.854]], color: '#22c55e' },
+  { name: 'R4 — Central Loop', coords: [[25.435, 81.844], [25.433, 81.847], [25.435, 81.849], [25.437, 81.847], [25.435, 81.844]], color: '#eab308' },
+  { name: 'R6 — Alternative Exit', coords: [[25.436, 81.844], [25.434, 81.842], [25.432, 81.841]], color: '#22c55e' },
+  { name: 'E1 — Emergency', coords: [[25.435, 81.849], [25.434, 81.851], [25.433, 81.850]], color: '#ef4444' }
+];
+
+let authorityMap, policeMap, eventOwnerMap, citizenMap;
+
+function initMaps() {
+  // Authority Map
+  authorityMap = L.map('authorityMap').setView(eventLocation, 15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(authorityMap);
+  drawMapElements(authorityMap);
+
+  // Police Map
+  policeMap = L.map('policeMap').setView([25.435, 81.846], 16);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(policeMap);
+  L.circleMarker([25.4355, 81.8455], { radius: 8, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 1 }).addTo(policeMap).bindPopup('📍 You are here');
+  drawMapElements(policeMap);
+
+  // Event Owner Map
+  eventOwnerMap = L.map('eventOwnerMap').setView(eventLocation, 15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(eventOwnerMap);
+  drawMapElements(eventOwnerMap);
+
+  // Citizen Map
+  citizenMap = L.map('citizenMap').setView([25.438, 81.845], 16);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(citizenMap);
+  L.circleMarker([25.438, 81.845], { radius: 10, color: '#22c55e', fillColor: '#22c55e', fillOpacity: 1 }).addTo(citizenMap).bindPopup('📍 You are here');
+  // Safe route
+  L.polyline([[25.438, 81.845], [25.436, 81.844], [25.434, 81.842], [25.432, 81.841]], { color: '#22c55e', weight: 4, dashArray: '8, 8' }).addTo(citizenMap).bindPopup('🟢 Safe Route R6');
+  // Danger zone
+  L.polygon(zones[2].coords, { color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.2, weight: 2 }).addTo(citizenMap).bindPopup('🔴 Zone C — Avoid');
+}
+
+function drawMapElements(map) {
+  zones.forEach(z => {
+    L.polygon(z.coords, { color: z.color, fillColor: z.color, fillOpacity: 0.2, weight: 2 }).addTo(map).bindPopup(`<b>${z.name}</b><br>Risk: ${z.risk.toUpperCase()}`);
+  });
+  gates.forEach(g => {
+    const color = g.status === 'open' ? '#22c55e' : g.status === 'restricted' ? '#eab308' : '#ef4444';
+    L.circleMarker(g.pos, { radius: 6, color: color, fillColor: color, fillOpacity: 1 }).addTo(map).bindPopup(`<b>${g.name}</b><br>Status: ${g.status.toUpperCase()}`);
+  });
+  routes.forEach(r => {
+    L.polyline(r.coords, { color: r.color, weight: 3, dashArray: r.color === '#ef4444' ? '5, 5' : null }).addTo(map).bindPopup(r.name);
+  });
+}
+
+// ============ DASHBOARD SWITCHING ============
+function showDashboard(name) {
+  ['authority', 'police', 'eventowner', 'citizen'].forEach(d => {
+    document.getElementById('dashboard-' + d).classList.add('hidden');
+  });
+  document.getElementById('dashboard-' + name).classList.remove('hidden');
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  const names = { authority: 'Authority User', police: 'Officer Rajesh Kumar', eventowner: 'Event Organizer', citizen: 'Guest' };
+  document.getElementById('userName').textContent = names[name] || name;
+
+  setTimeout(() => {
+    if (name === 'authority') authorityMap.invalidateSize();
+    if (name === 'police') policeMap.invalidateSize();
+    if (name === 'eventowner') eventOwnerMap.invalidateSize();
+    if (name === 'citizen') citizenMap.invalidateSize();
+  }, 100);
+}
+
+// ============ SIMULATE INCIDENT ============
+function simulateIncident() {
+  document.getElementById('alertBanner').classList.remove('hidden');
+  document.getElementById('zoneB').className = 'flex items-center justify-between p-3 bg-red-900/20 rounded-lg border border-red-800/30';
+  document.getElementById('zoneBRisk').textContent = '8.7';
+  document.getElementById('zoneBRisk').className = 'text-red-400 font-bold text-lg';
+  document.getElementById('zoneC').style.display = 'flex';
+  document.getElementById('riskScore').textContent = '8.7';
+  document.getElementById('riskScore').className = 'metric-big text-red-400';
+  document.getElementById('totalCrowd').textContent = '52,140';
+}
+
+function dismissAlert() {
+  document.getElementById('alertBanner').classList.add('hidden');
+}
+
+// ============ RECOMMENDATIONS ============
+function approveRecommendation(btn, text) {
+  const card = btn.closest('.p-3');
+  card.className = 'p-3 bg-green-900/20 rounded-lg border border-green-700/30';
+  card.querySelector('.font-medium').className = 'font-medium text-green-300';
+  btn.parentElement.innerHTML = '<span class="text-green-400 text-sm font-medium">✅ APPROVED — ' + text + '</span>';
+}
+
+function rejectRecommendation(btn) {
+  const card = btn.closest('.p-3');
+  card.className = 'p-3 bg-slate-800/50 rounded-lg border border-slate-700/30 opacity-50';
+  btn.parentElement.innerHTML = '<span class="text-slate-400 text-sm font-medium">✗ REJECTED</span>';
+}
+
+// ============ MAP TABS ============
+function switchMapTab(tab, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ============ SOS ============
+function triggerSOS() {
+  alert('🆘 SOS ACTIVATED!\n\nYour location has been shared with authorities.\nHelp is on the way.\n\nStay calm. Stay where you are.');
+}
+
+// ============ TIME ============
+function updateTime() {
+  const now = new Date();
+  document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+// ============ INIT ============
+window.addEventListener('load', initMaps);
+</script>
+
+</body>
+</html>
