@@ -18,8 +18,6 @@ Before you write any code, propose any plan, or modify any files, you **MUST** r
 6. **Dashboards & User Flow:** `docs/06_UI_WIRE_FRAMES.md`
 7. **Agent Coding Rules:** `docs/10_AI_AGENT_INSTRUCTIONS.md`
 
-*(Note: `00_MASTER_SPEC.md` has been archived. Read the modular files instead).*
-
 **AGENT WORKFLOW:** 
 1. Receive user request.
 2. Identify which of the above modular docs contains the rules for this feature.

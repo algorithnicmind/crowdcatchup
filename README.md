@@ -59,19 +59,19 @@ Navigate to **`http://localhost:3000`** in your browser.
 
 ## Documentation Suite (`docs/`)
 
-| Seq | Document | Key Contents |
-| :---: | :--- | :--- |
-| **00** | **[Master System Specification](./docs/00_MASTER_SPEC.md)** | **Authoritative 63-section spec.** Read this first. |
-| **01** | **[PRD](./docs/01_PRD.md)** | Personas, event lifecycle, functional requirements, build phases. |
-| **02** | **[TRD](./docs/02_TRD.md)** | Tech stack, data sources, Fusion Hub, observation format. |
-| **03** | **[HLD](./docs/03_HLD.md)** | Architecture, 25+ modules, data pipeline. |
-| **04** | **[LLD](./docs/04_LLD.md)** | Smart Gates, GPS routes, fusion math, Gate-Zone-Route. |
-| **05** | **[DFD](./docs/05_DFD.md)** | Multi-source data flow diagrams. |
-| **06** | **[UI Specs](./docs/06_UI_WIRE_FRAMES.md)** | Role dashboards, venue builder, Smart Gate UI. |
-| **07** | **[Deployment](./docs/07_DEPLOYMENT_AND_OPS.md)** | AWS, resilience, graceful degradation. |
-| **08** | **[API Schema](./docs/08_API_AND_EVENTS_SCHEMA.md)** | Standard Observation, Crowd State, WebSocket events. |
-| **09** | **[Testing](./docs/09_TESTING_AND_QA_STRATEGY.md)** | Pytest, Playwright, multi-source testing, chaos playbooks. |
-| **10** | **[AI Agent Rules](./docs/10_AI_AGENT_INSTRUCTIONS.md)** | Monorepo boundaries, event-first rules, adapter pattern. |
+| Seq | Document | Target Audience | Key Highlights |
+| :---: | :--- | :--- | :--- |
+| **01** | **[PRD](./docs/01_PRD.md)** | Product Evaluators | Problem statement, 4 personas, event lifecycle, functional requirements, build phases, demo scenario. |
+| **02** | **[TRD](./docs/02_TRD.md)** | System Architects | Tech stack, data sources, Fusion Hub, observation format, crowd state, sensor fusion, backend modules. |
+| **03** | **[HLD](./docs/03_HLD.md)** | Solution Designers | Architecture diagram, 25+ modules, data pipeline, event-first model, source adapter pattern. |
+| **04** | **[LLD](./docs/04_LLD.md)** | Algorithm Specialists | Smart Gate system, GPS route recording, temporary infrastructure, Gate-Zone-Route, XGBoost features, fusion math. |
+| **05** | **[DFD](./docs/05_DFD.md)** | Data Architects | Multi-source data flow, Level 0/1/2 diagrams, fusion pipeline, Standard Observation Format. |
+| **06** | **[UI Specs](./docs/06_UI_WIRE_FRAMES.md)** | UX/UI Designers | Map-centric design, 4 role dashboards, Event Owner venue builder, Smart Gate status UI, Source Health panel. |
+| **07** | **[Deployment](./docs/07_DEPLOYMENT_AND_OPS.md)** | DevOps | AWS infrastructure, multi-source resilience, graceful degradation, offline PWA, event isolation. |
+| **08** | **[API Schema](./docs/08_API_AND_EVENTS_SCHEMA.md)** | Integration Engineers | Standard Observation, Crowd State, Source Health, WebSocket events, Smart Gate config, Event config. |
+| **09** | **[Testing](./docs/09_TESTING_AND_QA_STRATEGY.md)** | QA Engineers | Pytest, Playwright, ML eval, multi-source testing, fusion accuracy, chaos playbooks. |
+| **10** | **[AI Agent Rules](./docs/10_AI_AGENT_INSTRUCTIONS.md)** | AI Assistants, Devs | Monorepo boundaries, event-first rules, adapter pattern, anti-panic protocol, build phase awareness. |
+| **11** | **[Domain Model](./docs/11_DOMAIN_MODEL.md)** | Database Designers | Domain entities, Event map layers, zones, custom route system. |
 
 ---
 
