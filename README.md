@@ -27,6 +27,8 @@ The core principle:
 8. **Digital Twin & Simulation:** Pre-event what-if scenarios (sudden inflow, route blockage, gate failure, crowd surge).
 9. **Offline & Edge Resilience:** Service Workers + IndexedDB cache venue maps during cellular network failure.
 10. **Human-in-the-Loop:** AI recommends. Authorized humans approve. Every recommendation explains why.
+11. **Citizen Journey Navigation (Innovation):** Google Maps-style safe routing from source to destination with group-aware recommendations. Adapts routes based on group size, special needs (elderly, children, wheelchair), and real-time crowd conditions. Three-phase journey: Getting to event → Inside event → Going home.
+12. **Group-Aware Routing:** Modified Dijkstra algorithm with crowd weights. Routes adapt for solo travelers, couples, families, groups, and large groups. Special needs get priority routing.
 
 ---
 
@@ -113,7 +115,7 @@ crowdshield/
 | 4 | Real Data | CCTV, Smart Gate, GPS adapters |
 | 5 | AI | Analytics, risk model, prediction |
 | 6 | Decision | Recommendations, deployment, announcements |
-| 7 | UX | Authority, Police, Event Owner, Citizen dashboards |
+| 7 | UX | Authority, Police, Event Owner, **Citizen Journey Navigation** |
 | 8 | Simulation | Digital Twin, scenario simulation |
 | 9 | Production | Security, testing, monitoring, deployment |
 

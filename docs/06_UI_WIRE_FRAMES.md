@@ -254,3 +254,150 @@ Do not expose sensitive operational information.
 
 ---
 
+## 64. CITIZEN JOURNEY PLANNER WIREFRAME
+
+### Journey Input Screen
+```
++--------------------------------+
+| CrowdShield           [User]   |
++--------------------------------+
+| 🛡️ Plan Your Safe Journey     |
++--------------------------------+
+| FROM:                           |
+| [📍 My Location (GPS)]         |
+|                                 |
+| TO:                             |
+| [🏛️ Maha Kumbh Mela]          |
+|                                 |
+| 👥 Group Size:                  |
+| [-] [ 4 ] [+]                  |
+| ○ Solo  ○ Couple  ● Family     |
+| ○ Group  ○ Large Group          |
+|                                 |
+| Special Needs:                  |
+| [ ] Elderly members             |
+| [✓] Children (under 10)         |
+| [ ] Wheelchair/mobility         |
+|                                 |
+| Preferred Time:                 |
+| [📅 Tomorrow] [⏰ 6:00 AM]     |
+|                                 |
+| Transport:                      |
+| [🚗 Drive] [🚶 Walk] [🚌 Bus]  |
++--------------------------------+
+| [🔍 Find Safe Route]            |
++--------------------------------+
+```
+
+### Route Results Screen
+```
++--------------------------------+
+| CrowdShield           [User]   |
++--------------------------------+
+| 🗺️ Recommended Route           |
++--------------------------------+
+| 🟢 SAFE ROUTE SELECTED         |
+|                                 |
+| Route: NH-27 → Ring Rd → G5    |
+| Distance: 3.2 km               |
+| Time: 25 min (walk)            |
+| Safety Score: 8.5/10           |
+|                                 |
+| ┌──────────────────────────┐   |
+| │ MAP                      │   |
+| │ 📍 You ─── 🟢 ─── 🏛️    │   |
+| │         (green route)    │   |
+| └──────────────────────────┘   |
+|                                 |
+| 🚪 RECOMMENDED GATE: G5        |
+| Queue: 3 min (12 people)       |
+| Width: Wide (suitable for 4)   |
+|                                 |
+| ⚠️ AVOID: Gate G3 (congested)  |
+| ⚠️ AVOID: Zone B (crowded)     |
+|                                 |
+| 👨‍👩‍👧‍👦 FAMILY TIPS:              |
+| • Designate meeting point      |
+| • Share location with group    |
+| • Keep children close          |
+|                                 |
+| [🧭 Start Navigation]          |
++--------------------------------+
+```
+
+### Navigation Screen
+```
++--------------------------------+
+| CrowdShield           [User]   |
++--------------------------------+
+| 🧭 NAVIGATING                  |
++--------------------------------+
+| ┌──────────────────────────┐   |
+| │ MAP                      │   |
+| │ 📍 You → 🟢 → 🏛️ Gate 5 │   |
+| │ (live position)          │   |
+| └──────────────────────────┘   |
+|                                 |
+| ➡️ Turn right on NH-27         |
+|    in 200m                     |
+|                                 |
+| ⏱️ 18 min remaining            |
+| 📏 1.8 km remaining            |
+|                                 |
+| 👥 Group: 4/4 together ✓       |
+|                                 |
+| 🟢 Route clear ahead           |
+|                                 |
+| [🚨 SOS]  [📋 Report Issue]    |
++--------------------------------+
+```
+
+### Group Coordination Screen
+```
++--------------------------------+
+| 👥 Group: Sharma Family (4)    |
++--------------------------------+
+| ┌──────────────────────────┐   |
+| │ MAP                      │   |
+| │ 👤 Dad ── 📍 You         │   |
+| │ 👤 Mom 50m behind        │   |
+| │ 👤 Kid with Dad          │   |
+| └──────────────────────────┘   |
+|                                 |
+| Dad: 200m ahead ✓              |
+| Mom: 50m behind ⚠️             |
+| Kid: With Dad ✓                |
+|                                 |
+| 💡 Mom is falling behind.      |
+|    Wait at next landmark       |
+|    (Temple, 100m ahead)        |
+|                                 |
+| [📍 Share My Location]         |
+| [📢 Call Group]                |
++--------------------------------+
+```
+
+### Exit Planner Screen
+```
++--------------------------------+
+| 🚪 EXIT PLANNER                |
++--------------------------------+
+| Best exit for you:             |
+|                                 |
+| 🟢 Gate G4 — East Exit         |
+| Queue: 2 min (8 people)        |
+| Route: 400m, clear             |
+|                                 |
+| Other options:                  |
+| Gate G5 — 5 min queue          |
+| Gate G1 — 8 min queue          |
+|                                 |
+| Route to your destination:      |
+| Gate G4 → Route R6 → NH-27     |
+| Time: 25 min to reach home     |
+|                                 |
+| [🧭 Navigate to Gate G4]       |
++--------------------------------+
+
+---
+

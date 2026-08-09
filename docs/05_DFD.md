@@ -290,6 +290,56 @@ must both produce the same standardized observation format.
 
 ---
 
+## 64. CITIZEN NAVIGATION DATA FLOW
+
+### Journey Planning Flow
+```
+Citizen opens PWA
+  → GPS detects current location
+  → User enters destination + group size + special needs
+  → Frontend calls POST /navigation/plan
+  → Journey Planner queries:
+      - OpenStreetMap road network (via osm_adapter)
+      - Current crowd state (via fusion hub)
+      - Gate status and queue estimates
+  → Route Engine calculates group-aware safe route
+  → Returns: SafeRoute with crowd overlay, gate recommendation, group tips
+  → Frontend renders route on map with crowd heatmap
+```
+
+### Live Navigation Flow
+```
+Citizen starts navigation
+  → Frontend opens WebSocket /navigation/live
+  → Server streams navigation updates every 5 seconds:
+      - Current position
+      - Next instruction
+      - Crowd ahead
+      - Reroute suggestions
+  → If crowd state changes ahead:
+      - Server detects reroute needed
+      - Sends REROUTE_ALERT with new route
+      - Frontend updates map and instructions
+  → If group member falls behind:
+      - Server detects separation
+      - Sends GROUP_MEMBER_ALERT
+      - Suggests meeting point
+```
+
+### Exit Planning Flow
+```
+Citizen wants to leave event
+  → Frontend calls POST /navigation/exit-plan
+  → System queries:
+      - Current zone location
+      - Gate queue estimates
+      - Exit route crowd levels
+      - User's destination
+  → Returns: Best exit gate + safe route to destination
+  → Frontend renders exit route on map
+
+---
+
 ## 25. CROWD DATA FUSION HUB
 
 This is one of the most important components of CrowdShield.

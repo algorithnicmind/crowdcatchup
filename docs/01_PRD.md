@@ -168,6 +168,48 @@ All sources enter through the same data-ingestion architecture. Real and simulat
 
 ---
 
+## 9A. CITIZEN JOURNEY NAVIGATION (Innovation)
+
+CrowdShield goes beyond monitoring inside the event. The citizen experience spans three journey phases:
+
+### Phase 1: Getting to the Event
+Citizen opens PWA → enters source and destination → system recommends:
+- Best route from current location to event venue
+- Which gate to enter (based on lowest congestion and group size)
+- Estimated travel time and queue time at gate
+- Alternate routes if primary is congested
+
+### Phase 2: Inside the Event
+- Safe navigation between zones
+- Avoid congested areas (red zones)
+- Find nearest safe exit
+- Real-time alerts
+- SOS if in trouble
+
+### Phase 3: Going Home
+- Best exit gate (least queue)
+- Safe route from exit to destination
+- Post-event crowd flow awareness
+- Transport integration
+
+---
+
+## 9B. GROUP-AWARE NAVIGATION (Innovation)
+
+The citizen journey planner adapts recommendations based on group composition:
+
+| Profile | Size | Routing Behavior |
+| :--- | :--- | :--- |
+| Solo | 1 | Any route, any gate |
+| Couple | 2 | Any route, any gate |
+| Family | 3-5 | Wide routes preferred, meeting points recommended |
+| Group | 6-15 | Wide routes required, avoid dense areas |
+| Large Group | 15+ | Wide routes only, split into sub-groups |
+
+Special needs: Elderly, children (under 10), wheelchair/mobility — each gets priority routing.
+
+---
+
 ## 10. Build Phases
 
 | Phase | Name | Scope |

@@ -276,6 +276,64 @@ Start modular monolith + clearly separated services/modules.
 
 ---
 
+## 63. CITIZEN NAVIGATION MODULE
+
+### New Module: `features/navigation/`
+
+```text
+features/navigation/
+├── domain/
+│   ├── entities/
+│   │   ├── group.py           # Group profile (size, special needs)
+│   │   ├── journey.py         # User journey (source → destination)
+│   │   └── safe_route.py      # Computed safe route with crowd weights
+│   ├── interfaces/
+│   │   └── i_route_engine.py  # Route calculation interface
+│   └── enums/
+│       ├── transport_mode.py  # DRIVE, WALK, TRANSIT
+│       └── group_profile.py   # SOLO, COUPLE, FAMILY, GROUP, LARGE_GROUP
+├── application/
+│   ├── use_cases/
+│   │   ├── plan_group_journey.py   # Compute best route for group
+│   │   ├── navigate.py             # Turn-by-turn with crowd data
+│   │   └── check_reroute.py        # Reroute on congestion
+│   └── services/
+│       └── navigation_service.py   # Integrates with crowd state
+├── infrastructure/
+│   ├── engines/
+│   │   ├── route_engine.py         # Modified Dijkstra with crowd weights
+│   │   └── navigation_engine.py    # Turn-by-turn generation
+│   └── adapters/
+│       └── osm_adapter.py          # OpenStreetMap road network
+└── api/
+    ├── routes.py                   # POST /navigation/plan, WS /navigation/live
+    └── schemas.py
+```
+
+### Frontend Module: `features/citizen-navigation/`
+
+```text
+apps/web/src/features/citizen-navigation/
+├── components/
+│   ├── JourneyPlanner.tsx          # Source → Destination input
+│   ├── GroupSizeSelector.tsx       # +/- buttons, special needs
+│   ├── RouteMap.tsx                # Map with route overlay
+│   ├── NavigationPanel.tsx         # Turn-by-turn directions
+│   ├── CrowdOverlay.tsx            # Real-time crowd density on route
+│   ├── GateRecommendation.tsx      # "Use Gate G5 — Low queue"
+│   ├── GroupTipCard.tsx            # Family-specific tips
+│   └── ExitPlanner.tsx             # Best exit + route home
+├── hooks/
+│   ├── useJourney.ts
+│   ├── useNavigation.ts
+│   ├── useLiveReroute.ts
+│   └── useGroupCoordination.ts
+└── api/
+    └── navigation-client.ts
+```
+
+---
+
 ## 61. FINAL SYSTEM PRINCIPLE
 
 The entire CrowdShield platform should follow this principle:

@@ -202,3 +202,26 @@ Never pretend the simulator is a real telecom connection.
 
 ---
 
+## 64. CITIZEN NAVIGATION RULES
+
+### Rule 7: Citizen Journey First
+The citizen experience spans three phases: Getting to the event, Inside the event, Going home. All three must be considered in every navigation-related feature.
+
+### Rule 8: Group-Aware Routing
+Route recommendations MUST account for group size. Never recommend narrow routes for large groups. Never recommend crowded routes for families with children. Always suggest meeting points for groups.
+
+### Rule 9: Special Needs Priority
+Elderly, children (under 10), and wheelchair/mobility users get priority routing. Shorter routes, wider paths, accessible gates, and slower pace recommendations.
+
+---
+
+## 65. HACKATHON DEMO RULES
+
+### Rule 10: Simulation Mode Awareness
+All features must work in simulation mode. Manual simulation must be available for demo control. Pre-scripted scenarios must be runnable. Real data integration must be optional.
+
+### Rule 11: Real vs Simulated Transparency
+Never pretend simulated data is real. Clearly mark simulated adapters. Real and simulated sources use the same pipeline but are labeled differently in the UI.
+
+---
+

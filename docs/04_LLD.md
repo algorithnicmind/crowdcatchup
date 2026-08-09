@@ -505,3 +505,156 @@ This makes the AI explainable.
 
 ---
 
+## 64. CITIZEN JOURNEY PLANNER (Low-Level)
+
+### Group Entity
+
+```python
+class Group:
+    id: str
+    size: int
+    has_children: bool
+    has_elderly: bool
+    has_mobility_issues: bool
+    preferred_time: datetime | None
+    members: list[User] | None  # If sharing location
+    
+    @property
+    def profile(self) -> str:
+        if self.size == 1: return "SOLO"
+        if self.size == 2: return "COUPLE"
+        if self.size <= 5: return "FAMILY"
+        if self.size <= 15: return "GROUP"
+        return "LARGE_GROUP"
+    
+    @property
+    def min_road_width(self) -> float:
+        return self.size * 0.5  # 0.5m per person
+```
+
+### Journey Entity
+
+```python
+class Journey:
+    id: str
+    user_id: str
+    group_id: str | None
+    source: GeoPoint
+    destination: GeoPoint
+    transport_mode: str  # "DRIVE" | "WALK" | "TRANSIT"
+    status: str  # "PLANNING" | "NAVIGATING" | "COMPLETED"
+    created_at: datetime
+    estimated_arrival: datetime | None
+```
+
+### SafeRoute Value Object
+
+```python
+class SafeRoute:
+    waypoints: list[GeoPoint]
+    distance: float  # meters
+    estimated_time: int  # seconds
+    crowd_level: str  # "LOW" | "MODERATE" | "HIGH" | "AVOID"
+    safety_score: float  # 0.0 - 1.0
+    width_suitable: bool
+    recommended_gate: str
+    crowd_ahead: list[CrowdSegment]  # Crowd info for each segment
+    
+@dataclass
+class CrowdSegment:
+    zone_id: str
+    density: float
+    status: str  # "CLEAR" | "MODERATE" | "CONGESTED" | "DANGEROUS"
+```
+
+### NavigationState Value Object
+
+```python
+class NavigationState:
+    current_position: GeoPoint
+    next_instruction: str
+    remaining_distance: float
+    remaining_time: int
+    crowd_ahead: str  # "CLEAR" | "MODERATE" | "CONGESTED"
+    reroute_suggested: bool
+    reroute_reason: str | None
+    group_members_positions: list[GroupMemberPosition] | None
+
+@dataclass
+class GroupMemberPosition:
+    user_id: str
+    name: str
+    position: GeoPoint
+    distance_from_user: float
+    status: str  # "KEEPING_UP" | "FALLING_BEHIND" | "SEPARATED"
+```
+
+### Journey Planner API Endpoints
+
+```python
+# POST /api/v1/navigation/plan
+class JourneyPlanRequest(BaseModel):
+    source_lat: float
+    source_lng: float
+    dest_lat: float
+    dest_lng: float
+    group_size: int = 1
+    has_children: bool = False
+    has_elderly: bool = False
+    has_mobility_issues: bool = False
+    transport_mode: str = "WALK"
+    preferred_time: datetime | None = None
+
+class JourneyPlanResponse(BaseModel):
+    routes: list[SafeRoute]
+    recommended_route: SafeRoute
+    recommended_gate: Gate
+    estimated_time: int
+    safety_score: float
+    group_tips: list[str]
+    meeting_points: list[MeetingPoint] | None
+
+# WS /api/v1/navigation/live
+# Client sends: { "type": "NAVIGATE", "journey_id": "..." }
+# Server sends: { "type": "NAVIGATION_UPDATE", "state": NavigationState }
+# Server sends: { "type": "REROUTE_ALERT", "reason": "...", "new_route": SafeRoute }
+```
+
+### Route Engine Algorithm (Pseudocode)
+
+```python
+def plan_route(source, destination, group, crowd_state, road_network):
+    # Build graph with crowd-weighted edges
+    graph = build_crowd_weighted_graph(road_network, crowd_state, group)
+    
+    # Run modified Dijkstra
+    shortest_safe_path = dijkstra(graph, source, destination)
+    
+    # Calculate route metrics
+    route = SafeRoute(
+        waypoints=shortest_safe_path.waypoints,
+        distance=shortest_safe_path.distance,
+        estimated_time=calculate_time(shortest_safe_path, group),
+        crowd_level=assess_crowd_level(shortest_safe_path, crowd_state),
+        safety_score=calculate_safety_score(shortest_safe_path, crowd_state, group),
+        width_suitable=all_widths_suitable(shortest_safe_path, group),
+        recommended_gate=find_best_gate(shortest_safe_path, group, crowd_state),
+        crowd_ahead=get_segment_crowd(shortest_safe_path, crowd_state)
+    )
+    
+    # Generate group-specific tips
+    tips = generate_group_tips(route, group)
+    
+    return JourneyPlanResponse(
+        routes=[route],  # Could return multiple alternatives
+        recommended_route=route,
+        recommended_gate=route.recommended_gate,
+        estimated_time=route.estimated_time,
+        safety_score=route.safety_score,
+        group_tips=tips,
+        meeting_points=find_meeting_points(destination, crowd_state)
+    )
+```
+
+---
+

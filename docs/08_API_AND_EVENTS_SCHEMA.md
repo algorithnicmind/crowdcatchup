@@ -359,3 +359,145 @@ This is a fundamental data-integrity rule.
 
 ---
 
+## 64. CITIZEN NAVIGATION API SCHEMAS
+
+### Journey Plan Request
+
+```typescript
+interface JourneyPlanRequest {
+  source_lat: number;
+  source_lng: number;
+  dest_lat: number;
+  dest_lng: number;
+  group_size: number;           // 1-50
+  has_children: boolean;
+  has_elderly: boolean;
+  has_mobility_issues: boolean;
+  transport_mode: "DRIVE" | "WALK" | "TRANSIT";
+  preferred_time?: string;      // ISO 8601
+}
+```
+
+### Journey Plan Response
+
+```typescript
+interface JourneyPlanResponse {
+  routes: SafeRoute[];
+  recommended_route: SafeRoute;
+  recommended_gate: GateRecommendation;
+  estimated_time: number;       // seconds
+  safety_score: number;         // 0.0 - 1.0
+  group_tips: string[];
+  meeting_points: MeetingPoint[];
+}
+
+interface SafeRoute {
+  waypoints: GeoPoint[];
+  distance: number;             // meters
+  estimated_time: number;       // seconds
+  crowd_level: "LOW" | "MODERATE" | "HIGH" | "AVOID";
+  safety_score: number;         // 0.0 - 1.0
+  width_suitable: boolean;
+  recommended_gate: string;
+  crowd_ahead: CrowdSegment[];
+}
+
+interface CrowdSegment {
+  zone_id: string;
+  density: number;
+  status: "CLEAR" | "MODERATE" | "CONGESTED" | "DANGEROUS";
+}
+
+interface GateRecommendation {
+  gate_id: string;
+  name: string;
+  queue_time: number;           // minutes
+  queue_count: number;
+  width: string;                // "NARROW" | "MEDIUM" | "WIDE"
+  suitable_for_group: boolean;
+  accessible: boolean;
+}
+
+interface MeetingPoint {
+  name: string;
+  location: GeoPoint;
+  crowd_level: string;
+  distance_from_event: number;
+}
+
+interface GeoPoint {
+  lat: number;
+  lng: number;
+}
+```
+
+### Navigation WebSocket Events
+
+```typescript
+// Client → Server: Start navigation
+interface StartNavigationCommand {
+  type: "START_NAVIGATION";
+  journey_id: string;
+}
+
+// Server → Client: Navigation update (every 5 seconds)
+interface NavigationUpdate {
+  type: "NAVIGATION_UPDATE";
+  state: {
+    current_position: GeoPoint;
+    next_instruction: string;
+    remaining_distance: number;
+    remaining_time: number;
+    crowd_ahead: "CLEAR" | "MODERATE" | "CONGESTED";
+    group_members?: GroupMemberPosition[];
+  };
+}
+
+// Server → Client: Reroute alert
+interface RerouteAlert {
+  type: "REROUTE_ALERT";
+  reason: string;
+  new_route: SafeRoute;
+}
+
+// Server → Client: Group member alert
+interface GroupMemberAlert {
+  type: "GROUP_MEMBER_ALERT";
+  member_name: string;
+  status: "FALLING_BEHIND" | "SEPARATED";
+  position: GeoPoint;
+  meeting_point_suggestion?: MeetingPoint;
+}
+
+interface GroupMemberPosition {
+  user_id: string;
+  name: string;
+  position: GeoPoint;
+  distance_from_user: number;
+  status: "KEEPING_UP" | "FALLING_BEHIND" | "SEPARATED";
+}
+```
+
+### Exit Plan Request
+
+```typescript
+interface ExitPlanRequest {
+  current_lat: number;
+  current_lng: number;
+  destination_lat: number;
+  destination_lng: number;
+  group_size: number;
+  transport_mode: "DRIVE" | "WALK" | "TRANSIT";
+}
+
+interface ExitPlanResponse {
+  recommended_gate: GateRecommendation;
+  alternative_gates: GateRecommendation[];
+  route_to_gate: SafeRoute;
+  route_to_destination: SafeRoute;
+  estimated_total_time: number;
+}
+```
+
+---
+

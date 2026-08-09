@@ -751,3 +751,73 @@ Each feature module has clear boundaries. To split into microservices later:
 | `features/incidents` | Incident Service | Kafka events |
 
 The in-process event bus makes it trivial to swap to Kafka/Redis later.
+
+---
+
+## 9. CITIZEN NAVIGATION MODULE
+
+### Backend: `apps/api/features/navigation/`
+
+```
+features/navigation/
+├── __init__.py
+├── domain/
+│   ├── __init__.py
+│   ├── entities/
+│   │   ├── __init__.py
+│   │   ├── group.py              # Group profile (size, special needs)
+│   │   ├── journey.py            # User journey (source → destination)
+│   │   └── safe_route.py         # Computed safe route with crowd weights
+│   ├── interfaces/
+│   │   ├── __init__.py
+│   │   └── i_route_engine.py     # Route calculation interface
+│   └── enums/
+│       ├── __init__.py
+│       ├── transport_mode.py     # DRIVE, WALK, TRANSIT
+│       └── group_profile.py      # SOLO, COUPLE, FAMILY, GROUP, LARGE_GROUP
+├── application/
+│   ├── __init__.py
+│   ├── use_cases/
+│   │   ├── __init__.py
+│   │   ├── plan_group_journey.py # Compute best route for group
+│   │   ├── navigate.py           # Turn-by-turn with crowd data
+│   │   └── check_reroute.py      # Reroute on congestion
+│   └── services/
+│       ├── __init__.py
+│       └── navigation_service.py # Integrates with crowd state
+├── infrastructure/
+│   ├── __init__.py
+│   ├── engines/
+│   │   ├── __init__.py
+│   │   ├── route_engine.py       # Modified Dijkstra with crowd weights
+│   │   └── navigation_engine.py  # Turn-by-turn generation
+│   └── adapters/
+│       ├── __init__.py
+│       └── osm_adapter.py        # OpenStreetMap road network
+└── api/
+    ├── __init__.py
+    ├── routes.py                 # POST /navigation/plan, WS /navigation/live
+    └── schemas.py
+```
+
+### Frontend: `apps/web/src/features/citizen-navigation/`
+
+```
+features/citizen-navigation/
+├── components/
+│   ├── JourneyPlanner.tsx          # Source → Destination input
+│   ├── GroupSizeSelector.tsx       # +/- buttons, special needs
+│   ├── RouteMap.tsx                # Map with route overlay
+│   ├── NavigationPanel.tsx         # Turn-by-turn directions
+│   ├── CrowdOverlay.tsx            # Real-time crowd density on route
+│   ├── GateRecommendation.tsx      # "Use Gate G5 — Low queue"
+│   ├── GroupTipCard.tsx            # Family-specific tips
+│   └── ExitPlanner.tsx             # Best exit + route home
+├── hooks/
+│   ├── useJourney.ts
+│   ├── useNavigation.ts
+│   ├── useLiveReroute.ts
+│   └── useGroupCoordination.ts
+└── api/
+    └── navigation-client.ts
+```

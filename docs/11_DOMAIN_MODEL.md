@@ -360,3 +360,117 @@ The simulation should show:
 
 ---
 
+## 64. CITIZEN NAVIGATION DOMAIN MODEL
+
+### Group Entity
+
+```python
+class Group:
+    id: str
+    size: int
+    has_children: bool
+    has_elderly: bool
+    has_mobility_issues: bool
+    preferred_time: datetime | None
+    members: list[User] | None
+    
+    @property
+    def profile(self) -> str:
+        if self.size == 1: return "SOLO"
+        if self.size == 2: return "COUPLE"
+        if self.size <= 5: return "FAMILY"
+        if self.size <= 15: return "GROUP"
+        return "LARGE_GROUP"
+    
+    @property
+    def min_road_width(self) -> float:
+        return self.size * 0.5  # 0.5m per person
+```
+
+### Journey Entity
+
+```python
+class Journey:
+    id: str
+    user_id: str
+    group_id: str | None
+    source: GeoPoint
+    destination: GeoPoint
+    transport_mode: str  # "DRIVE" | "WALK" | "TRANSIT"
+    status: str  # "PLANNING" | "NAVIGATING" | "COMPLETED"
+    created_at: datetime
+    estimated_arrival: datetime | None
+    current_route: SafeRoute | None
+    navigation_state: NavigationState | None
+```
+
+### SafeRoute Value Object
+
+```python
+@dataclass(frozen=True)
+class SafeRoute:
+    waypoints: tuple[GeoPoint, ...]
+    distance: float
+    estimated_time: int
+    crowd_level: str
+    safety_score: float
+    width_suitable: bool
+    recommended_gate: str
+    crowd_ahead: tuple[CrowdSegment, ...]
+
+@dataclass(frozen=True)
+class CrowdSegment:
+    zone_id: str
+    density: float
+    status: str  # "CLEAR" | "MODERATE" | "CONGESTED" | "DANGEROUS"
+```
+
+### NavigationState Value Object
+
+```python
+@dataclass
+class NavigationState:
+    current_position: GeoPoint
+    next_instruction: str
+    remaining_distance: float
+    remaining_time: int
+    crowd_ahead: str
+    reroute_suggested: bool
+    reroute_reason: str | None
+    group_members_positions: list[GroupMemberPosition] | None
+
+@dataclass
+class GroupMemberPosition:
+    user_id: str
+    name: str
+    position: GeoPoint
+    distance_from_user: float
+    status: str  # "KEEPING_UP" | "FALLING_BEHIND" | "SEPARATED"
+```
+
+### Meeting Point Value Object
+
+```python
+@dataclass(frozen=True)
+class MeetingPoint:
+    name: str
+    location: GeoPoint
+    crowd_level: str
+    distance_from_event: float
+    description: str
+```
+
+### Relationships
+
+```
+User ──has──→ Journey (1:1 active)
+User ──belongs_to──→ Group (optional)
+Group ──has──→ MeetingPoints (0..n)
+Journey ──produces──→ SafeRoute (1..3 alternatives)
+SafeRoute ──contains──→ CrowdSegment (0..n)
+Journey ──maintains──→ NavigationState (1:1 during navigation)
+NavigationState ──tracks──→ GroupMemberPosition (0..n)
+```
+
+---
+

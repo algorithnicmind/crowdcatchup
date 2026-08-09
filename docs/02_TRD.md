@@ -218,6 +218,96 @@ Keep business logic separated.
 
 ---
 
+## 64. CITIZEN NAVIGATION ALGORITHM
+
+### Modified Dijkstra with Crowd Weights
+
+The route calculation algorithm extends Dijkstra's shortest path with crowd-aware weights:
+
+```python
+def calculate_route_weight(distance, crowd_density, road_width, group_size, group_profile):
+    # Crowd multiplier: more crowded = higher weight
+    crowd_multiplier = 1.0 + (crowd_density / 2.0)  # 1.0 (empty) → 3.0 (dangerous)
+    
+    # Width penalty: road too narrow for group = high penalty
+    required_width = group_size * 0.5  # 0.5m per person
+    if road_width >= required_width:
+        width_penalty = 1.0
+    elif road_width >= required_width * 0.6:
+        width_penalty = 2.0  # Tight but possible
+    else:
+        width_penalty = 100.0  # Impossible for this group
+    
+    # Group risk: separation risk in crowded areas
+    group_risk = 1.0
+    if group_size > 5 and crowd_density > 2.0:
+        group_risk = 2.0
+    if group_size > 10 and crowd_density > 3.0:
+        group_risk = 5.0
+    if group_profile.has_children and crowd_density > 2.5:
+        group_risk *= 1.5
+    
+    return distance * crowd_multiplier * width_penalty * group_risk
+```
+
+### Gate Recommendation Logic
+
+```python
+def recommend_gate(gates, group_size, group_profile, current_crowd_state):
+    scored_gates = []
+    for gate in gates:
+        score = 0
+        # Queue time (lower is better)
+        score -= gate.queue_estimate * 2
+        # Capacity (higher is better for large groups)
+        if group_size > 5:
+            score += gate.max_capacity_per_minute * 0.5
+        # Width suitability
+        if gate.width >= group_size * 0.5:
+            score += 10
+        # Current crowd at gate
+        score -= current_crowd_state.get_density(gate.zone_id) * 5
+        # Special needs
+        if group_profile.has_mobility_issues and gate.accessible:
+            score += 20
+        scored_gates.append((gate, score))
+    
+    return sorted(scored_gates, key=lambda x: x[1], reverse=True)[0]
+```
+
+### Reroute Trigger Logic
+
+```python
+def check_reroute_needed(current_route, live_crowd_state, group_profile):
+    for segment in current_route.segments:
+        live_density = live_crowd_state.get_density(segment.zone_id)
+        if live_density > 3.0:  # Dangerous density ahead
+            return True, "Density ahead exceeding safe threshold"
+        if segment.road_width < group_profile.group_size * 0.3:
+            return True, "Road ahead too narrow for group"
+    return False, None
+```
+
+---
+
+## 65. OPENSTREETMAP INTEGRATION
+
+### Road Network Data
+- Use OpenStreetMap (OSM) road network for route calculation
+- Import OSM data using `osmnx` Python library
+- Convert road network to graph for Dijkstra/A* algorithms
+- Add CrowdShield operational routes (temporary, emergency) as additional graph edges
+
+### Geocoding
+- Use Nominatim (OSM) for address → coordinate conversion
+- Use reverse geocoding for coordinate → address display
+
+### Map Tiles
+- Use OpenStreetMap tiles for Leaflet (no API key required)
+- Fallback: MapTiler or Stamen tiles
+
+---
+
 ## 63. BUILDING INSTRUCTION
 
 Do not immediately generate the entire application in one step.
