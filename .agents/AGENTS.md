@@ -23,6 +23,18 @@ Before you write any code, propose any plan, or modify any files, you **MUST** r
 2. Identify which of the above modular docs contains the rules for this feature.
 3. Read that document **step-by-step, line-by-line** to understand the exact structure and algorithms required.
 4. Execute the code strictly according to the document.
+5. **Trigger Ripple Effect:** (See below).
+
+---
+
+## 🔄 THE RIPPLE EFFECT (LOOP ENGINEERING PROTOCOL)
+
+You are explicitly required to practice **Loop Engineering**. The user must NEVER have to manually instruct you to "update the backend" after a UI change, or "update the docs" after a code change. 
+
+**Whenever an idea is implemented or a change is made, you MUST automatically cascade the update end-to-end:**
+1. **Code Ripple:** If you change the Frontend/UI, you must automatically evaluate and implement the required changes in the Backend API and Database. If you change the Backend, cascade it to the Frontend and AI pipelines.
+2. **Documentation Ripple:** The `/docs/` folder is a **Living Document Suite**. Whenever you write code that adds a new feature, alters the data flow, or changes a UI component, you MUST proactively open the relevant `/docs/` files (e.g., `06_UI_WIRE_FRAMES.md` or `05_DFD.md`) and update them to reflect the new reality. 
+3. **Never break the loop.** Maintain 100% synchronization between Code, Architecture, and Documentation at all times.
 
 ---
 
