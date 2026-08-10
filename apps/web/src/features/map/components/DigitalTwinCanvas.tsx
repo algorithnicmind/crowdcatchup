@@ -41,12 +41,12 @@ export const DigitalTwinCanvas: React.FC = () => {
       const W = canvas.width;
       const H = canvas.height;
 
-      // 1. Dark Futuristic Background
-      ctx.fillStyle = '#090d16';
+      // 1. Pure Jet Black Background
+      ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, W, H);
 
       // 2. Subtle Minimalist Grid Lines
-      ctx.strokeStyle = 'rgba(51, 65, 85, 0.2)';
+      ctx.strokeStyle = 'rgba(38, 38, 38, 0.5)';
       ctx.lineWidth = 1;
       const gridSize = 40;
       for (let x = 0; x < W; x += gridSize) {
@@ -74,8 +74,8 @@ export const DigitalTwinCanvas: React.FC = () => {
           ctx.fillStyle = 'rgba(234, 179, 8, 0.15)';
           ctx.strokeStyle = 'rgba(234, 179, 8, 0.6)';
         } else {
-          ctx.fillStyle = 'rgba(100, 116, 139, 0.2)';
-          ctx.strokeStyle = 'rgba(100, 116, 139, 0.5)';
+          ctx.fillStyle = 'rgba(38, 38, 38, 0.5)';
+          ctx.strokeStyle = 'rgba(64, 64, 64, 0.8)';
         }
         ctx.fillRect(b.x, b.y, b.width, b.height);
         ctx.strokeRect(b.x, b.y, b.width, b.height);
@@ -143,20 +143,20 @@ export const DigitalTwinCanvas: React.FC = () => {
       gates.forEach((g) => {
         ctx.lineWidth = 2;
         if (!g.isOpen) {
-          ctx.fillStyle = 'rgba(244, 63, 94, 0.2)';
+          ctx.fillStyle = 'rgba(244, 63, 94, 0.25)';
           ctx.strokeStyle = '#f43f5e';
         } else if (g.type === 'emergency') {
-          ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+          ctx.fillStyle = 'rgba(16, 185, 129, 0.25)';
           ctx.strokeStyle = '#10b981';
         } else {
-          ctx.fillStyle = 'rgba(6, 182, 212, 0.2)';
+          ctx.fillStyle = 'rgba(6, 182, 212, 0.25)';
           ctx.strokeStyle = '#06b6d4';
         }
 
         ctx.fillRect(g.x, g.y, g.width, g.height);
         ctx.strokeRect(g.x, g.y, g.width, g.height);
 
-        ctx.fillStyle = '#f8fafc';
+        ctx.fillStyle = '#ffffff';
         ctx.font = '500 10px Inter, sans-serif';
         ctx.fillText(
           `${g.id.toUpperCase()}: ${g.isOpen ? 'OPEN' : 'LOCKED'}`,
@@ -239,7 +239,7 @@ export const DigitalTwinCanvas: React.FC = () => {
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center p-2">
-      <div className="flex items-center justify-between w-full max-w-[760px] mb-2 px-1 text-xs text-slate-400">
+      <div className="flex items-center justify-between w-full max-w-[760px] mb-2 px-1 text-xs text-neutral-400">
         <span className="flex items-center gap-2 font-mono text-[11px]">
           <span className="live-dot" />
           CANVAS DIGITAL TWIN SIMULATOR (60 FPS)
@@ -247,12 +247,12 @@ export const DigitalTwinCanvas: React.FC = () => {
         <span className="font-mono text-cyan-400 text-[11px] font-medium">{venue.name}</span>
       </div>
 
-      <div className="relative rounded-xl overflow-hidden border border-slate-800 glass-panel shadow-2xl">
+      <div className="relative rounded-xl overflow-hidden border border-neutral-800 bg-black shadow-2xl">
         <canvas
           ref={canvasRef}
           width={760}
           height={500}
-          className="block cursor-crosshair bg-slate-950"
+          className="block cursor-crosshair bg-black"
         />
       </div>
     </div>
