@@ -14,24 +14,24 @@ export const RiskMetricsHUD: React.FC = () => {
     venue.securityOutposts.reduce((acc, sp) => acc + sp.personnel, 0) + rafPersonnelAdded;
 
   return (
-    <div className="w-full glass-panel rounded-xl p-4 flex flex-col gap-4 border border-slate-700/80">
-      {/* Top Status Bar */}
-      <div className="flex items-center justify-between border-b border-slate-700 pb-3">
-        <div className="flex items-center gap-2">
+    <div className="w-full glass-panel rounded-2xl p-4 md:p-5 flex flex-col gap-4 border border-slate-800">
+      {/* HUD Header */}
+      <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div className="flex items-center gap-2.5">
           <Activity className="w-5 h-5 text-cyan-400 animate-pulse" />
-          <h2 className="text-sm font-semibold tracking-wider text-slate-200 uppercase font-mono">
-            Live Crowd Telemetry HUD
+          <h2 className="text-xs font-bold tracking-widest text-slate-300 uppercase font-mono">
+            LIVE TELEMETRY COMMAND HUD
           </h2>
         </div>
 
-        {/* Risk Badge */}
+        {/* Dynamic Risk Badge */}
         <div
-          className={`px-3 py-1 rounded-full text-xs font-extrabold tracking-widest uppercase flex items-center gap-1.5 ${
+          className={`px-3.5 py-1 rounded-full text-xs font-extrabold tracking-widest uppercase flex items-center gap-2 transition-all ${
             isCritical
-              ? 'bg-rose-500/20 text-rose-400 border border-rose-500 glow-critical'
+              ? 'bg-rose-500/10 text-rose-400 border border-rose-500/50 glow-rose'
               : isElevated
-              ? 'bg-amber-500/20 text-amber-400 border border-amber-500 glow-warning'
-              : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500 glow-normal'
+              ? 'bg-amber-500/10 text-amber-400 border border-amber-500/50 glow-amber'
+              : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/40 glow-emerald'
           }`}
         >
           {isCritical ? (
@@ -41,77 +41,89 @@ export const RiskMetricsHUD: React.FC = () => {
           ) : (
             <ShieldCheck className="w-4 h-4" />
           )}
-          {telemetry.riskLevel} RISK
+          {telemetry.riskLevel} STATUS
         </div>
       </div>
 
       {/* Grid of Key Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {/* Total Crowd Count */}
-        <div className="bg-slate-800/60 rounded-lg p-3 border border-slate-700/50 flex flex-col justify-between">
-          <span className="text-xs text-slate-400 font-mono flex items-center gap-1">
-            <Users className="w-3.5 h-3.5 text-cyan-400" /> CROWD COUNT
-          </span>
-          <span className="text-2xl font-bold text-slate-100 font-mono mt-1">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {/* Crowd Count */}
+        <div className="glass-panel glass-card-hover rounded-xl p-3.5 border border-slate-800 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5 font-semibold">
+              <Users className="w-3.5 h-3.5 text-cyan-400" /> CROWD COUNT
+            </span>
+            <span className="w-2 h-2 rounded-full bg-cyan-400/60" />
+          </div>
+          <span className="text-2xl font-black text-slate-100 font-mono tracking-tight mt-2">
             {telemetry.totalCrowdCount.toLocaleString()}
           </span>
-          <span className="text-[10px] text-slate-500 mt-1">Particles Tracked</span>
+          <span className="text-[10px] font-mono text-slate-500 mt-1">Particles Tracked</span>
         </div>
 
-        {/* Average Movement Speed */}
-        <div className="bg-slate-800/60 rounded-lg p-3 border border-slate-700/50 flex flex-col justify-between">
-          <span className="text-xs text-slate-400 font-mono flex items-center gap-1">
-            <Gauge className="w-3.5 h-3.5 text-cyan-400" /> FLOW VELOCITY
-          </span>
+        {/* Flow Velocity */}
+        <div className="glass-panel glass-card-hover rounded-xl p-3.5 border border-slate-800 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5 font-semibold">
+              <Gauge className="w-3.5 h-3.5 text-cyan-400" /> FLOW SPEED
+            </span>
+            <span className={`w-2 h-2 rounded-full ${telemetry.avgVelocity < 0.5 ? 'bg-rose-500' : 'bg-emerald-500'}`} />
+          </div>
           <span
-            className={`text-2xl font-bold font-mono mt-1 ${
+            className={`text-2xl font-black font-mono tracking-tight mt-2 ${
               telemetry.avgVelocity < 0.5 ? 'text-rose-400' : 'text-emerald-400'
             }`}
           >
-            {telemetry.avgVelocity} <span className="text-xs font-normal">m/s</span>
+            {telemetry.avgVelocity} <span className="text-xs font-medium text-slate-400">m/s</span>
           </span>
-          <span className="text-[10px] text-slate-500 mt-1">
+          <span className="text-[10px] font-mono text-slate-500 mt-1">
             {telemetry.avgVelocity < 0.5 ? '⚠️ Movement Stall' : 'Optimal Speed'}
           </span>
         </div>
 
-        {/* Risk Score Index */}
-        <div className="bg-slate-800/60 rounded-lg p-3 border border-slate-700/50 flex flex-col justify-between">
-          <span className="text-xs text-slate-400 font-mono flex items-center gap-1">
-            <ShieldAlert className="w-3.5 h-3.5 text-cyan-400" /> RISK SCORE
+        {/* AI Risk Score */}
+        <div className="glass-panel glass-card-hover rounded-xl p-3.5 border border-slate-800 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5 font-semibold">
+              <ShieldAlert className="w-3.5 h-3.5 text-cyan-400" /> AI RISK SCORE
+            </span>
+            <span className="text-[10px] font-mono text-cyan-400">XGBoost</span>
+          </div>
+          <span className="text-2xl font-black text-cyan-400 font-mono tracking-tight mt-2">
+            {riskAssessment.score} <span className="text-xs font-medium text-slate-500">/ 100</span>
           </span>
-          <span className="text-2xl font-bold text-cyan-400 font-mono mt-1">
-            {riskAssessment.score} <span className="text-xs font-normal text-slate-400">/ 100</span>
-          </span>
-          <span className="text-[10px] text-slate-500 mt-1">AI XGBoost Engine</span>
+          <span className="text-[10px] font-mono text-slate-500 mt-1">Confidence Index</span>
         </div>
 
-        {/* Security & RAF Personnel */}
-        <div className="bg-slate-800/60 rounded-lg p-3 border border-slate-700/50 flex flex-col justify-between">
-          <span className="text-xs text-slate-400 font-mono flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" /> SECURITY FORCES
+        {/* Security Personnel */}
+        <div className="glass-panel glass-card-hover rounded-xl p-3.5 border border-slate-800 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5 font-semibold">
+              <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" /> SECURITY UNITS
+            </span>
+            <span className="w-2 h-2 rounded-full bg-emerald-400/60" />
+          </div>
+          <span className="text-2xl font-black text-slate-100 font-mono tracking-tight mt-2">
+            {totalSecurity} <span className="text-xs font-medium text-slate-500">Units</span>
           </span>
-          <span className="text-2xl font-bold text-slate-100 font-mono mt-1">
-            {totalSecurity} <span className="text-xs font-normal text-slate-400">Units</span>
-          </span>
-          <span className="text-[10px] text-slate-500 mt-1">
+          <span className="text-[10px] font-mono text-slate-500 mt-1">
             +{rafPersonnelAdded} RAF Deployed
           </span>
         </div>
       </div>
 
-      {/* Summary Advisory Banner */}
+      {/* Advisory Banner */}
       <div
-        className={`p-3 rounded-lg text-xs font-medium border flex items-center gap-2 ${
+        className={`p-3.5 rounded-xl text-xs font-medium border flex items-center gap-2.5 transition-all ${
           isCritical
-            ? 'bg-rose-950/40 border-rose-700 text-rose-300'
+            ? 'bg-rose-950/30 border-rose-800/60 text-rose-300'
             : isElevated
-            ? 'bg-amber-950/40 border-amber-700 text-amber-300'
-            : 'bg-slate-800/50 border-slate-700 text-slate-300'
+            ? 'bg-amber-950/30 border-amber-800/60 text-amber-300'
+            : 'bg-slate-900/60 border-slate-800 text-slate-300'
         }`}
       >
-        <span className="font-bold font-mono uppercase">AI Advisory:</span>
-        <span>{riskAssessment.summaryText}</span>
+        <span className="font-bold font-mono uppercase shrink-0 text-cyan-400">AI Advisory:</span>
+        <span className="leading-snug">{riskAssessment.summaryText}</span>
       </div>
     </div>
   );
