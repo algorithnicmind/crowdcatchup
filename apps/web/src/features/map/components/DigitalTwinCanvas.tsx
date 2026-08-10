@@ -41,12 +41,12 @@ export const DigitalTwinCanvas: React.FC = () => {
       const W = canvas.width;
       const H = canvas.height;
 
-      // 1. Clear background
-      ctx.fillStyle = '#0f172a';
+      // 1. Dark Futuristic Background
+      ctx.fillStyle = '#090d16';
       ctx.fillRect(0, 0, W, H);
 
-      // 2. Draw Subtle Grid Lines
-      ctx.strokeStyle = 'rgba(51, 65, 85, 0.3)';
+      // 2. Subtle Minimalist Grid Lines
+      ctx.strokeStyle = 'rgba(51, 65, 85, 0.2)';
       ctx.lineWidth = 1;
       const gridSize = 40;
       for (let x = 0; x < W; x += gridSize) {
@@ -62,20 +62,20 @@ export const DigitalTwinCanvas: React.FC = () => {
         ctx.stroke();
       }
 
-      // 3. Draw Barriers
+      // 3. Render Barriers with Smooth Fills
       venue.barriers.forEach((b) => {
         if (b.type === 'stage') {
-          ctx.fillStyle = 'rgba(147, 51, 234, 0.3)';
-          ctx.strokeStyle = '#a855f7';
+          ctx.fillStyle = 'rgba(168, 85, 247, 0.15)';
+          ctx.strokeStyle = 'rgba(168, 85, 247, 0.6)';
         } else if (b.type === 'water') {
-          ctx.fillStyle = 'rgba(14, 165, 233, 0.3)';
-          ctx.strokeStyle = '#38bdf8';
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
         } else if (b.type === 'vip') {
-          ctx.fillStyle = 'rgba(234, 179, 8, 0.3)';
-          ctx.strokeStyle = '#eab308';
+          ctx.fillStyle = 'rgba(234, 179, 8, 0.15)';
+          ctx.strokeStyle = 'rgba(234, 179, 8, 0.6)';
         } else {
-          ctx.fillStyle = 'rgba(71, 85, 105, 0.5)';
-          ctx.strokeStyle = '#64748b';
+          ctx.fillStyle = 'rgba(100, 116, 139, 0.2)';
+          ctx.strokeStyle = 'rgba(100, 116, 139, 0.5)';
         }
         ctx.fillRect(b.x, b.y, b.width, b.height);
         ctx.strokeRect(b.x, b.y, b.width, b.height);
@@ -86,7 +86,6 @@ export const DigitalTwinCanvas: React.FC = () => {
       const particles = particlesRef.current;
 
       particles.forEach((p) => {
-        // Find nearest open exit gate
         const openExits = gates.filter((g) => g.isOpen && (g.type === 'exit' || g.type === 'emergency'));
         let targetGate = openExits[0];
         let minDist = Infinity;
@@ -106,26 +105,21 @@ export const DigitalTwinCanvas: React.FC = () => {
           const gy = targetGate.y + targetGate.height / 2;
           const angle = Math.atan2(gy - p.y, gx - p.x);
 
-          // Force toward target gate
           p.vx += Math.cos(angle) * 0.08;
           p.vy += Math.sin(angle) * 0.08;
         }
 
-        // Apply friction
         p.vx *= 0.95;
         p.vy *= 0.95;
 
-        // Position update
         p.x += p.vx;
         p.y += p.vy;
 
-        // Boundary collision
         if (p.x < 10) { p.x = 10; p.vx *= -0.5; }
         if (p.x > W - 10) { p.x = W - 10; p.vx *= -0.5; }
         if (p.y < 10) { p.y = 10; p.vy *= -0.5; }
         if (p.y > H - 10) { p.y = H - 10; p.vy *= -0.5; }
 
-        // Barrier collision
         venue.barriers.forEach((b) => {
           if (p.x > b.x && p.x < b.x + b.width && p.y > b.y && p.y < b.y + b.height) {
             p.vx *= -0.8;
@@ -135,13 +129,11 @@ export const DigitalTwinCanvas: React.FC = () => {
           }
         });
 
-        // Speed evaluation
         const speed = Math.hypot(p.vx, p.vy);
         p.isStuck = speed < 0.2;
         if (p.isStuck) stuckCount++;
 
-        // Particle rendering color based on velocity
-        ctx.fillStyle = p.isStuck ? '#ef4444' : speed > 1.0 ? '#10b981' : '#f59e0b';
+        ctx.fillStyle = p.isStuck ? '#f43f5e' : speed > 1.0 ? '#10b981' : '#f59e0b';
         ctx.beginPath();
         ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
         ctx.fill();
@@ -151,24 +143,23 @@ export const DigitalTwinCanvas: React.FC = () => {
       gates.forEach((g) => {
         ctx.lineWidth = 2;
         if (!g.isOpen) {
-          ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
-          ctx.strokeStyle = '#ef4444';
+          ctx.fillStyle = 'rgba(244, 63, 94, 0.2)';
+          ctx.strokeStyle = '#f43f5e';
         } else if (g.type === 'emergency') {
-          ctx.fillStyle = 'rgba(16, 185, 129, 0.4)';
+          ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
           ctx.strokeStyle = '#10b981';
         } else {
-          ctx.fillStyle = 'rgba(6, 182, 212, 0.4)';
+          ctx.fillStyle = 'rgba(6, 182, 212, 0.2)';
           ctx.strokeStyle = '#06b6d4';
         }
 
         ctx.fillRect(g.x, g.y, g.width, g.height);
         ctx.strokeRect(g.x, g.y, g.width, g.height);
 
-        // Gate Text
         ctx.fillStyle = '#f8fafc';
-        ctx.font = '10px sans-serif';
+        ctx.font = '500 10px Inter, sans-serif';
         ctx.fillText(
-          `${g.id.toUpperCase()}: ${g.isOpen ? 'OPEN' : 'CLOSED'}`,
+          `${g.id.toUpperCase()}: ${g.isOpen ? 'OPEN' : 'LOCKED'}`,
           g.x,
           g.y > 20 ? g.y - 6 : g.y + g.height + 14
         );
@@ -177,19 +168,19 @@ export const DigitalTwinCanvas: React.FC = () => {
       // 6. Render Active SOS Beacons
       sosIncidents.forEach((sos) => {
         if (sos.status === 'active') {
-          ctx.strokeStyle = '#ef4444';
+          ctx.strokeStyle = '#f43f5e';
           ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.arc(sos.x, sos.y, 16, 0, Math.PI * 2);
           ctx.stroke();
 
-          ctx.fillStyle = '#ef4444';
+          ctx.fillStyle = '#f43f5e';
           ctx.beginPath();
           ctx.arc(sos.x, sos.y, 6, 0, Math.PI * 2);
           ctx.fill();
 
           ctx.fillStyle = '#ffffff';
-          ctx.font = 'bold 9px sans-serif';
+          ctx.font = 'bold 9px Inter, sans-serif';
           ctx.fillText('SOS', sos.x - 9, sos.y - 20);
         }
       });
@@ -249,19 +240,19 @@ export const DigitalTwinCanvas: React.FC = () => {
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center p-2">
       <div className="flex items-center justify-between w-full max-w-[760px] mb-2 px-1 text-xs text-slate-400">
-        <span className="flex items-center gap-1.5 font-mono">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+        <span className="flex items-center gap-2 font-mono text-[11px]">
+          <span className="live-dot" />
           CANVAS DIGITAL TWIN SIMULATOR (60 FPS)
         </span>
-        <span className="font-mono text-cyan-400">{venue.name}</span>
+        <span className="font-mono text-cyan-400 text-[11px] font-medium">{venue.name}</span>
       </div>
 
-      <div className="relative rounded-lg overflow-hidden border border-slate-700 glass-panel shadow-2xl">
+      <div className="relative rounded-xl overflow-hidden border border-slate-800 glass-panel shadow-2xl">
         <canvas
           ref={canvasRef}
           width={760}
           height={500}
-          className="block cursor-crosshair bg-slate-900"
+          className="block cursor-crosshair bg-slate-950"
         />
       </div>
     </div>
