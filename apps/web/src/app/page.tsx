@@ -11,11 +11,7 @@ import { SitrepModal } from '../features/crowd-monitoring/components/SitrepModal
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950 relative overflow-x-hidden">
-      {/* Background Ambient Glow Orbs */}
-      <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
-      <div className="fixed bottom-0 right-1/4 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[160px] pointer-events-none -z-10" />
-
+    <div className="min-h-screen bg-black text-white flex flex-col font-sans selection:bg-cyan-500 selection:text-black relative overflow-x-hidden">
       {/* Top Navigation Header */}
       <Header />
 
@@ -27,7 +23,7 @@ export default function Home() {
           <RiskMetricsHUD />
 
           {/* Canvas Digital Twin Simulation Engine */}
-          <div className="w-full glass-panel rounded-2xl p-3 border border-slate-800">
+          <div className="w-full bg-neutral-950 rounded-2xl p-3 border border-neutral-800 shadow-2xl">
             <DigitalTwinCanvas />
           </div>
 
@@ -38,7 +34,7 @@ export default function Home() {
         {/* Right Column: Embedded Citizen Companion Smartphone Emulator */}
         <section className="lg:col-span-4 flex flex-col items-center justify-start sticky top-24">
           <div className="w-full text-center mb-3">
-            <span className="text-xs font-mono text-cyan-400 font-bold uppercase tracking-widest bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-full">
+            <span className="text-xs font-mono text-cyan-400 font-bold uppercase tracking-widest bg-neutral-900 border border-neutral-800 px-3 py-1 rounded-full">
               📱 CITIZEN COMPANION SMARTPHONE
             </span>
           </div>
