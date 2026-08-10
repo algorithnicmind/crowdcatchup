@@ -8,16 +8,16 @@ export const CountermeasuresPanel: React.FC = () => {
   const { interventions, executeIntervention, gates, toggleGate } = useCrowdStore();
 
   return (
-    <div className="w-full glass-panel rounded-2xl p-4 md:p-5 flex flex-col gap-4 border border-slate-800">
+    <div className="w-full bg-neutral-950 rounded-2xl p-4 md:p-5 flex flex-col gap-4 border border-neutral-800 shadow-2xl">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+      <div className="flex items-center justify-between border-b border-neutral-800/80 pb-3">
         <div className="flex items-center gap-2.5">
           <ShieldAlert className="w-5 h-5 text-amber-400" />
-          <h2 className="text-xs font-bold tracking-widest text-slate-300 uppercase font-mono">
+          <h2 className="text-xs font-bold tracking-widest text-neutral-300 uppercase font-mono">
             INTELLIGENT COUNTERMEASURE ADVISORY QUEUE
           </h2>
         </div>
-        <span className="text-[11px] font-mono text-cyan-400 font-semibold bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-0.5 rounded-full">
+        <span className="text-[11px] font-mono text-cyan-400 font-semibold bg-neutral-900 border border-neutral-800 px-2.5 py-0.5 rounded-full">
           1-CLICK EXECUTION
         </span>
       </div>
@@ -32,8 +32,8 @@ export const CountermeasuresPanel: React.FC = () => {
               key={int.id}
               className={`p-4 rounded-xl border transition-all duration-300 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 ${
                 isExecuted
-                  ? 'bg-slate-900/40 border-slate-800/80 opacity-70'
-                  : 'bg-slate-900/80 border-slate-800 hover:border-cyan-500/40 hover:shadow-lg hover:shadow-cyan-500/5'
+                  ? 'bg-neutral-900/40 border-neutral-800/80 opacity-60'
+                  : 'bg-neutral-900 border-neutral-800 hover:border-neutral-700'
               }`}
             >
               <div className="flex items-start gap-3.5">
@@ -56,7 +56,7 @@ export const CountermeasuresPanel: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold text-slate-100 font-mono flex items-center gap-2">
+                  <span className="text-xs font-bold text-white font-mono flex items-center gap-2">
                     {int.title}
                     {isExecuted && (
                       <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-mono flex items-center gap-1 font-bold">
@@ -64,7 +64,7 @@ export const CountermeasuresPanel: React.FC = () => {
                       </span>
                     )}
                   </span>
-                  <span className="text-xs text-slate-400 mt-1 leading-relaxed">{int.description}</span>
+                  <span className="text-xs text-neutral-400 mt-1 leading-relaxed">{int.description}</span>
                 </div>
               </div>
 
@@ -74,8 +74,8 @@ export const CountermeasuresPanel: React.FC = () => {
                 onClick={() => executeIntervention(int.id)}
                 className={`w-full md:w-auto px-5 py-2.5 rounded-xl text-xs font-bold font-mono tracking-wider transition-all duration-200 whitespace-nowrap cursor-pointer ${
                   isExecuted
-                    ? 'bg-slate-900 text-slate-500 cursor-not-allowed border border-slate-800'
-                    : 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 glow-cyan active:scale-95'
+                    ? 'bg-neutral-900 text-neutral-600 cursor-not-allowed border border-neutral-800'
+                    : 'bg-cyan-500 hover:bg-cyan-400 text-black active:scale-95'
                 }`}
               >
                 {isExecuted ? 'ACTION ACTIVE' : 'EXECUTE NOW'}
@@ -86,8 +86,8 @@ export const CountermeasuresPanel: React.FC = () => {
       </div>
 
       {/* Manual Override Controls */}
-      <div className="pt-3 border-t border-slate-800/80">
-        <span className="text-[11px] font-mono font-semibold text-slate-400 uppercase tracking-wider mb-2.5 block">
+      <div className="pt-3 border-t border-neutral-800/80">
+        <span className="text-[11px] font-mono font-semibold text-neutral-400 uppercase tracking-wider mb-2.5 block">
           Manual Gate Override Switches
         </span>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
@@ -102,7 +102,7 @@ export const CountermeasuresPanel: React.FC = () => {
               }`}
             >
               <span className="truncate">{g.name || g.id.toUpperCase()}</span>
-              <span className="font-extrabold ml-1.5 px-2 py-0.5 rounded-md bg-slate-900/60">{g.isOpen ? 'OPEN' : 'LOCKED'}</span>
+              <span className="font-extrabold ml-1.5 px-2 py-0.5 rounded-md bg-black">{g.isOpen ? 'OPEN' : 'LOCKED'}</span>
             </button>
           ))}
         </div>
