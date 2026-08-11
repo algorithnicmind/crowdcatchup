@@ -1,7 +1,8 @@
 """
 CrowdShield Backend — Redis Client
-Uses Upstash Redis when REDIS_URL is configured.
-Falls back to an in-memory dict for local development (no Redis needed).
+Centralized Redis connection manager.
+Uses local Redis when REDIS_URL is configured.
+Falls back to an in-memory dictionary if REDIS_URL is empty (for local dev without Redis).
 """
 
 from core.config import get_settings
@@ -45,7 +46,7 @@ async def get_redis() -> InMemoryRedis:
     global _redis_client
     if _redis_client is None:
         if settings.REDIS_URL:
-            # Production: use real Redis (upstash-redis or redis.asyncio)
+            # Production: use real local Redis
             # For now, fall back to in-memory until Redis is configured
             try:
                 import redis.asyncio as aioredis
