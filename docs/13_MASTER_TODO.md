@@ -53,10 +53,10 @@
 - [x] **1.6 Seed script**
   Demo event "TechNova 2026" with 5 zones, 6 gates, 8 routes, 2 emergency routes, CCTV cameras, Smart Gates (PRD §58).
   → After: 1.7 · ✅ Done when: seed runs and demo event is queryable via API.
-- [ ] **1.7 PWA setup**
+- [x] **1.7 PWA setup**
   `manifest.json`, theme colors, icons, service worker, installability, meta tags, offline shell.
   → After: 1.8 · ✅ Done when: app is installable and offline shell loads.
-- [ ] **1.8 Frontend foundation**
+- [x] **1.8 Frontend foundation**
   Install shadcn/ui, zustand, leaflet, i18next. `shared/lib/api-client.ts`, `ws-client.ts`, `useWebSocket`. Stores (auth/event/ui). Login + register pages. Role-based route guard `(dashboard)/authority|police|citizen|event-owner`.
   → After: 1.9 · ✅ Done when: login as each of the 4 roles lands on the correct dashboard route.
 - [ ] **1.9 Frontend events UI**
