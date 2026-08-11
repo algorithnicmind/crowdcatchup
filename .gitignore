@@ -63,9 +63,6 @@ lib64/
 # ========================
 # Database
 # ========================
-*.sqlite3
-*.db
-crowdshield.db
 postgres-data/
 redis-data/
 

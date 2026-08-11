@@ -1,7 +1,7 @@
 """
 CrowdShield Backend — Database Engine
 SQLAlchemy async engine with session factory.
-Supports SQLite (local dev) and PostgreSQL (production) via DATABASE_URL.
+Strictly uses PostgreSQL via DATABASE_URL.
 """
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -11,15 +11,9 @@ from core.config import get_settings
 settings = get_settings()
 
 # --- Engine ---
-# SQLite needs connect_args for async; PostgreSQL does not.
-_connect_args = {}
-if settings.DATABASE_URL.startswith("sqlite"):
-    _connect_args = {"check_same_thread": False}
-
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=settings.DEBUG,
-    connect_args=_connect_args,
 )
 
 # --- Session Factory ---

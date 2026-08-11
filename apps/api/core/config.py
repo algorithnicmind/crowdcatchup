@@ -15,8 +15,8 @@ class Settings(BaseSettings):
     APP_VERSION: str = "2.0.0"
     DEBUG: bool = False
 
-    # --- Database (SQLite for local dev, Local PostgreSQL for production) ---
-    DATABASE_URL: str = "sqlite+aiosqlite:///./crowdshield.db"
+    # --- Database (Strictly PostgreSQL) ---
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/crowdshield"
 
     # --- Redis (in-memory fallback if not configured) ---
     REDIS_URL: str = ""  # Empty = use in-memory fallback

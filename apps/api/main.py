@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """Startup and shutdown events."""
     logger.info("Initializing database...")
-    await init_db()  # Creates SQLite tables if they don't exist
+    await init_db()  # Creates PostgreSQL tables if they don't exist
     yield
     logger.info("Closing database...")
     await close_db()
