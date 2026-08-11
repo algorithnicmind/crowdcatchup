@@ -1,0 +1,14 @@
+{
+  "name": "crowdcatchup",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm -w apps/web run dev",
+    "build:web": "npm -w apps/web run build",
+    "lint:web": "npm -w apps/web run lint"
+  }
+}

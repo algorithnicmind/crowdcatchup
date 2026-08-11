@@ -20,7 +20,7 @@
 
 | Phase | Name | Total | Done | Left |
 | :---: | :--- | :---: | :---: | :---: |
-| 1 | Foundation | 12 | 0 | 12 |
+| 1 | Foundation | 12 | 4 | 8 |
 | 2 | Event Map | 9 | 0 | 9 |
 | 3 | Data Hub | 10 | 0 | 10 |
 | 4 | Real Crowd Data | 5 | 0 | 5 |
@@ -29,22 +29,22 @@
 | 7 | User Experiences | 8 | 0 | 8 |
 | 8 | Simulation | 4 | 0 | 4 |
 | 9 | Production + Deliverables | 9 | 0 | 9 |
-| | **TOTAL** | **70** | **0** | **70** |
+| | **TOTAL** | **70** | **4** | **66** |
 
 ---
 
 # PHASE 1 — FOUNDATION (docs/12, docs/02, docs/03 · PRD §56)
 
-- [ ] **1.1 Scaffold the monorepo**
+- [x] **1.1 Scaffold the monorepo**
   Create `apps/web`, `apps/api`, `ai/`, `packages/types`, `packages/config`, `simulation/`, root `package.json` (npm workspaces). Layout must match docs/12_PROJECT_STRUCTURE.md §2 exactly.
   → After: 1.2 · ✅ Done when: structure matches doc 12 §2 tree and repo builds.
-- [ ] **1.2 Backend core**
+- [x] **1.2 Backend core**
   `apps/api/core/` — `config.py` (env from `.env`, NO hardcoded secrets), `database.py` (SQLAlchemy + PostgreSQL/PostGIS or Supabase), `redis.py`, `security.py` (JWT + password hashing), `events.py` (in-process event bus), `dependencies.py`.
   → After: 1.3 · ✅ Done when: FastAPI boots, DB connects, event bus publishes/subscribes.
-- [ ] **1.3 Shared kernel**
+- [x] **1.3 Shared kernel**
   `apps/api/shared/` — base_entity, base_value_object, base_domain_event, base_repository, event_bus, websocket_manager, exceptions, error_handlers, api/dependencies.
   → After: 1.4 · ✅ Done when: shared base classes importable and WS manager tested.
-- [ ] **1.4 Auth feature**
+- [x] **1.4 Auth feature**
   Feature module layout per doc 12 §4.1: domain (User entity, Email/Password VOs, Role enum: AUTHORITY/POLICE/CITIZEN/EVENT_OWNER), use cases (register/login/get_current_user), JWT issuance, repository + model, routes `/api/v1/auth/*`, Pydantic schemas. **RBAC enforced on the backend only** (PRD §51).
   → After: 1.5 · ✅ Done when: Pytest proves register/login/RBAC and JWT expiry.
 - [ ] **1.5 Events feature**
@@ -71,7 +71,7 @@
 - [ ] **1.12 Docs ripple**
   Verify README quick-start works; docs reflect the actual repo state.
   → After: PHASE 1 GATE · ✅ Done when: quick-start runs from scratch.
-- [x] **🚧 PHASE 1 GATE** *(pass before Phase 2)*
+- [ ] **🚧 PHASE 1 GATE** *(pass before Phase 2)*
   Create event persists · JWT + RBAC work · WebSocket connects · PWA installable.
   → After: Phase 2 starts.
 
@@ -104,7 +104,7 @@
 - [ ] **2.9 Tests + docs ripple**
   Polygon/route validation tests; update docs 06 and 11.
   → After: PHASE 2 GATE · ✅ Done when: tests green and docs updated.
-- [x] **🚧 PHASE 2 GATE** *(pass before Phase 3)*
+- [ ] **🚧 PHASE 2 GATE** *(pass before Phase 3)*
   Full demo venue drawn, saved, and rendered on the map.
   → After: Phase 3 starts.
 
@@ -140,7 +140,7 @@
 - [ ] **3.10 End-to-end + tests + docs ripple**
   Simulator → ingest → fusion → WS → UI verified end-to-end; fusion accuracy tests (doc 09).
   → After: PHASE 3 GATE · ✅ Done when: full pipeline verified and tested.
-- [x] **🚧 PHASE 3 GATE** *(pass before Phase 4)*
+- [ ] **🚧 PHASE 3 GATE** *(pass before Phase 4)*
   Fake telemetry flows live to the map — the demo backbone works.
   → After: Phase 4 starts.
 
@@ -161,7 +161,7 @@
 - [ ] **4.5 Transparency in UI**
   Simulated sources show a SIMULATED badge in the Source Health panel (Rule 11).
   → After: PHASE 4 GATE · ✅ Done when: badges visible and honest.
-- [x] **🚧 PHASE 4 GATE** *(pass before Phase 5)*
+- [ ] **🚧 PHASE 4 GATE** *(pass before Phase 5)*
   Every adapter produces valid observations through ONE pipeline.
   → After: Phase 5 starts.
 
@@ -188,7 +188,7 @@
 - [ ] **5.7 ML tests + fallback**
   Model evaluation tests (doc 09); risk pipeline falls back to historical predictions if the camera drops.
   → After: PHASE 5 GATE · ✅ Done when: tests green + fallback verified.
-- [x] **🚧 PHASE 5 GATE** *(pass before Phase 6)*
+- [ ] **🚧 PHASE 5 GATE** *(pass before Phase 6)*
   Per-zone risk + predictions driven by fusion output.
   → After: Phase 6 starts.
 
@@ -212,7 +212,7 @@
 - [ ] **6.6 Explainability UI**
   RecommendationCard + ExplanationPanel (doc 12 frontend).
   → After: PHASE 6 GATE · ✅ Done when: explanation visible with every recommendation.
-- [x] **🚧 PHASE 6 GATE** *(pass before Phase 7)*
+- [ ] **🚧 PHASE 6 GATE** *(pass before Phase 7)*
   Full loop works — recommend → approve → deploy/broadcast → risk drops.
   → After: Phase 7 starts.
 
@@ -242,7 +242,7 @@
 - [ ] **7.8 PWA polish**
   Push notifications, offline map cache (Service Worker + IndexedDB), mobile install.
   → After: PHASE 7 GATE · ✅ Done when: all mobile flows work offline-aware.
-- [x] **🚧 PHASE 7 GATE** *(pass before Phase 8)*
+- [ ] **🚧 PHASE 7 GATE** *(pass before Phase 8)*
   All 4 roles complete a live walkthrough.
   → After: Phase 8 starts.
 
@@ -260,7 +260,7 @@
 - [ ] **8.4 Post-event reports**
   Event summary, risk timeline, intervention history (reports module, HLD §3).
   → After: PHASE 8 GATE · ✅ Done when: report generated from a completed event.
-- [x] **🚧 PHASE 8 GATE** *(pass before Phase 9)*
+- [ ] **🚧 PHASE 8 GATE** *(pass before Phase 9)*
   Demo story (PRD §11) runs end-to-end flawlessly.
   → After: Phase 9 starts.
 
