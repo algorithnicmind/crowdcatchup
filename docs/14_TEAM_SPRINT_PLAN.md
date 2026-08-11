@@ -44,7 +44,7 @@ This document breaks down the high-level delegation plan into a **highly detaile
 ### Day 1: WebSocket & Pub/Sub Setup
 - [ ] **Step 3.1:** Implement the `StandardObservation` Pydantic models for data ingestion.
 - [ ] **Step 3.2:** Build the Source Registry API (CRUD for CCTV cameras, Smart Gates, etc.).
-- [ ] **Step 3.7 (Part 1):** Integrate Upstash Redis for high-frequency Pub/Sub messaging.
+- [ ] **Step 3.7 (Part 1):** Integrate Local Redis for high-frequency Pub/Sub messaging.
 - [ ] **Step 3.7 (Part 2):** Build the robust WebSocket Broadcaster to push updates to the UI.
 
 ### Day 2: The Data Pipeline (Phase 3)
@@ -63,13 +63,13 @@ This document breaks down the high-level delegation plan into a **highly detaile
 - *Goal: This simulator is crucial for the Hackathon demo to prove the system works under stress!*
 
 ### Day 5 & 6: Production Database & Optimization
-- [ ] **Step 1.1 (Migration):** Switch from local SQLite to Supabase PostgreSQL.
-- [ ] **Step 1.1 (PostGIS):** Enable PostGIS on Supabase for spatial queries (finding users inside a Zone polygon).
+- [ ] **Step 1.1 (Migration):** Switch from local SQLite to Local PostgreSQL.
+- [ ] **Step 1.1 (PostGIS):** Enable PostGIS on PostgreSQL for spatial queries (finding users inside a Zone polygon).
 - [ ] **Day 6:** Load test the WebSocket connections (simulate 10,000 updates/sec).
 
 ### Day 7: Deployment
-- [ ] Deploy FastAPI to production (e.g., Render, Railway, AWS).
-- [ ] Ensure Supabase and Redis connections are stable.
+- [ ] Deploy FastAPI to production (e.g., Docker, AWS EC2).
+- [ ] Ensure local PostgreSQL and Redis connections are stable.
 
 ---
 

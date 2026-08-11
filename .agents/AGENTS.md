@@ -42,7 +42,8 @@ You are explicitly required to practice **Loop Engineering**. The user must NEVE
 
 1. **Tech Stack is Locked:** 
    * **Frontend:** Next.js (App Router), TailwindCSS, shadcn/ui, Zustand, Leaflet.
-   * **Backend:** FastAPI, PostgreSQL, Supabase, Upstash (Redis).
+   * **Backend:** FastAPI, PostgreSQL (Self-hosted/Local), Redis (Self-hosted/Local).
+   * **Strict Constraint:** We are explicitly NOT using cloud databases. Do NOT use Supabase, Upstash, or any hosted managed service. Use purely local PostgreSQL and local Redis.
    * **AI:** YOLOv8 (CV), XGBoost (Risk Engine). 
    * *Do NOT use any other frameworks.*
 2. **Event-First Architecture:** Everything belongs to an Event. Follow the hierarchy: `EVENT → VENUE → ZONE/GATE/ROUTE → SOURCE → OBSERVATION`.

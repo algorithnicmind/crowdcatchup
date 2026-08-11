@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "2.0.0"
     DEBUG: bool = False
 
-    # --- Database (SQLite for local dev, PostgreSQL/Supabase for production) ---
+    # --- Database (SQLite for local dev, Local PostgreSQL for production) ---
     DATABASE_URL: str = "sqlite+aiosqlite:///./crowdshield.db"
 
     # --- Redis (in-memory fallback if not configured) ---
@@ -29,9 +29,7 @@ class Settings(BaseSettings):
     # --- CORS ---
     CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:3001"]
 
-    # --- Supabase (optional, for production) ---
-    SUPABASE_URL: str = ""
-    SUPABASE_KEY: str = ""
+
 
     model_config = {
         "env_file": ".env",

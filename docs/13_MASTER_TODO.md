@@ -39,7 +39,7 @@
   Create `apps/web`, `apps/api`, `ai/`, `packages/types`, `packages/config`, `simulation/`, root `package.json` (npm workspaces). Layout must match docs/12_PROJECT_STRUCTURE.md §2 exactly.
   → After: 1.2 · ✅ Done when: structure matches doc 12 §2 tree and repo builds.
 - [x] **1.2 Backend core**
-  `apps/api/core/` — `config.py` (env from `.env`, NO hardcoded secrets), `database.py` (SQLAlchemy + PostgreSQL/PostGIS or Supabase), `redis.py`, `security.py` (JWT + password hashing), `events.py` (in-process event bus), `dependencies.py`.
+  `apps/api/core/` — `config.py` (env from `.env`, NO hardcoded secrets), `database.py` (SQLAlchemy + PostgreSQL/PostGIS), `redis.py`, `security.py` (JWT + password hashing), `events.py` (in-process event bus), `dependencies.py`.
   → After: 1.3 · ✅ Done when: FastAPI boots, DB connects, event bus publishes/subscribes.
 - [x] **1.3 Shared kernel**
   `apps/api/shared/` — base_entity, base_value_object, base_domain_event, base_repository, event_bus, websocket_manager, exceptions, error_handlers, api/dependencies.
@@ -279,7 +279,7 @@
   WebSocket load, AI latency, logging, graceful degradation verification.
   → After: 9.5 · ✅ Done when: WS handles demo load; degraded mode verified.
 - [ ] **9.5 Deployment**
-  CI/CD — Vercel (web), Render/Fly (API), Supabase (DB); env config; HTTPS (doc 07).
+  CI/CD — Vercel (web), Docker/AWS (API), Local PostgreSQL (DB); env config; HTTPS (doc 07).
   → After: 9.6 · ✅ Done when: both apps deploy from CI and talk over HTTPS.
 - [ ] **9.6 Docs final sync + README**
   Verify quick-start; docs 01–12 match the code.
