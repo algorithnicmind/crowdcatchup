@@ -1,53 +1,80 @@
+"""
+CrowdShield Backend — FastAPI Entry Point
+Thin entry point per doc 12 §3.4 Rule 1.
+"""
+
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-import json
+import logging
 
-app = FastAPI(title="CrowdShield API Gateway", version="2.0.0")
+from core.config import get_settings
+from core.database import init_db, close_db
+from core.redis import close_redis
+from shared.infrastructure.websocket_manager import get_ws_manager
+from shared.api.error_handlers import register_error_handlers
+
+# Import Routers
+from features.auth.api.routes import router as auth_router
+from features.events.api.routes import router as events_router
+
+settings = get_settings()
+logging.basicConfig(level=logging.INFO if not settings.DEBUG else logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Startup and shutdown events."""
+    logger.info("Initializing database...")
+    await init_db()  # Creates SQLite tables if they don't exist
+    yield
+    logger.info("Closing database...")
+    await close_db()
+    logger.info("Closing Redis...")
+    await close_redis()
+
+
+app = FastAPI(
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION,
+    lifespan=lifespan,
+)
 
 # Setup CORS for the Next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # For hackathon, allow all
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-class ConnectionManager:
-    def __init__(self):
-        self.active_connections: list[WebSocket] = []
+# Register domain exception handlers
+register_error_handlers(app)
 
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
+# Include API Routers
+app.include_router(auth_router)
+app.include_router(events_router)
 
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
-
-    async def broadcast(self, message: dict):
-        for connection in self.active_connections:
-            await connection.send_text(json.dumps(message))
-
-manager = ConnectionManager()
 
 @app.get("/")
 def read_root():
-    return {"status": "operational", "service": "CrowdShield API Gateway"}
+    return {"status": "operational", "service": settings.APP_NAME}
 
-@app.post("/ingest")
-async def ingest_telemetry(data: dict):
-    # This is where the AI Data Hub (YOLO) will POST the numbers
-    # For now, just broadcast the received data to all connected WebSockets
-    await manager.broadcast({"type": "RISK_UPDATE", "data": data})
-    return {"status": "success"}
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    await manager.connect(websocket)
+    """
+    Central WebSocket endpoint.
+    Clients connect here for real-time updates.
+    """
+    ws_manager = get_ws_manager()
+    # In a real scenario, we'd authenticate the WS connection here
+    await ws_manager.connect(websocket)
     try:
         while True:
             data = await websocket.receive_text()
-            # Handle incoming WebSocket commands from Next.js (like APPROVE_PLAN)
-            print(f"Received from WS: {data}")
+            logger.debug(f"Received WS message: {data}")
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        ws_manager.disconnect(websocket)
