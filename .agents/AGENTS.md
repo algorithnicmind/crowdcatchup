@@ -51,5 +51,6 @@ You are explicitly required to practice **Loop Engineering**. The user must NEVE
 5. **Strict Testing & Validation Protocol:** Test-Driven Development (TDD) is encouraged. Before declaring any backend API endpoint or complex AI function complete, you must write and run a Pytest unit test to prove it works.
 6. **Security & Secrets Handling (Data Ethics - 10%):** NEVER hardcode API keys, database URLs, or sensitive tokens in the source code. All secrets must strictly be read from `.env` files. If a new secret is needed, clearly instruct the user to add it to their local environment.
 7. **Error Handling & Graceful Degradation:** Never allow the frontend to crash entirely on a failed API call. Always implement graceful degradation, loading states, and offline fallback mechanisms (via Service Workers/IndexedDB) to handle network outages.
+8. **Premium Map Experience (Google Maps-like):** The mandatory Leaflet engine must be configured to deliver a top-tier, premium user experience. Use high-quality tile providers (e.g., dark mode/satellite), implement smooth panning/zooming animations, and use rich custom UI overlays to match or exceed the look and feel of Google Maps.
 
 **By reading this, you are bound to these rules. Proceed with excellence to win this hackathon.**

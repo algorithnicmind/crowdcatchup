@@ -14,7 +14,7 @@ CrowdShield emphasizes **Rich Aesthetics and Dynamic Design** using Next.js, Tai
 * 🟡 **Surge Warning (Amber):** `#f59e0b`. Developing queue congestion.
 * 🟠 **High Risk (Orange):** `#f97316`. Elevated risk, action needed.
 * 🔴 **Critical Hazard (Crimson):** `#ef4444`. Immediate danger/bottleneck.
-* 🗺️ **Central Map Engine:** The Leaflet instance is the hero component for every view.
+* 🗺️ **Premium Map Engine:** The Leaflet instance is the hero component for every view. It **MUST** be styled to deliver a "Google Maps-like" premium experience, utilizing high-quality map tiles (e.g., satellite or CartoDB Dark Matter), smooth fly-to animations, custom dynamic markers, and interactive glassmorphism detail panels.
 
 ---
 
