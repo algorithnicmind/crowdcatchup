@@ -47,7 +47,25 @@ def process_observation_background(obs: StandardObservation):
         for rec in recommendations:
             logger.info(f"-> Action: {rec['message']}")
             
-    # In a full implementation, crowd_state and recommendations are broadcast via WebSockets to the frontend.
+    # Broadcast crowd_state via WebSockets
+    from shared.infrastructure.websocket_manager import get_ws_manager
+    import asyncio
+    
+    ws_manager = get_ws_manager()
+    
+    # We create a new asyncio event loop task to run the async broadcast_to_event
+    # because this function is running in a background thread (BackgroundTasks)
+    payload = crowd_state.model_dump()
+    payload["type"] = "CROWD_STATE_UPDATE"
+    
+    try:
+        loop = asyncio.get_running_loop()
+        loop.create_task(ws_manager.broadcast_to_event(obs.event_id, payload))
+    except RuntimeError:
+        # If no running event loop, we can just run it
+        asyncio.run(ws_manager.broadcast_to_event(obs.event_id, payload))
+        
+    logger.info(f"Broadcasted CROWD_STATE_UPDATE for event {obs.event_id}")
 
 @router.post("/ingest")
 async def ingest_observation(obs: StandardObservation, background_tasks: BackgroundTasks):

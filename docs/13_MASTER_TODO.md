@@ -116,10 +116,10 @@
 - [ ] **3.2 Source registry**
   Register sources per event (CCTV, SMART_GATE, GPS, DRONE, BLE, TELECOM, SYNTHETIC); SourceHealth schema (doc 08 §3); strict event isolation (doc 08 §27).
   → After: 3.3 · ✅ Done when: sources CRUD per event, isolated by event_id.
-- [ ] **3.3 Synthetic simulator**
+- [x] **3.3 Synthetic simulator**
   `simulation/` generator + synthetic_adapter — normal inflow, sudden surge, gate blockage, route blocked, crowd surge scenarios; labeled SIMULATED.
   → After: 3.4 · ✅ Done when: simulator emits valid StandardObservations at a configurable rate.
-- [ ] **3.4 Ingestion endpoint**
+- [x] **3.4 Ingestion endpoint**
   Production-grade `/api/v1/ingest` replacing the current stub — Pydantic validation, event isolation, rate limiting, source health updates.
   → After: 3.5 · ✅ Done when: invalid observations rejected; valid ones persist.
 - [ ] **3.5 Normalization + validation pipeline**
@@ -128,7 +128,7 @@
 - [ ] **3.6 Fusion engine**
   Confidence-weighted estimation, timestamp sync, dedup, disagreement detection (LLD §7); Crowd State output per zone (doc 08 §2).
   → After: 3.7 · ✅ Done when: fusion math unit tests pass (LLD §7 formulas).
-- [ ] **3.7 Crowd state + events**
+- [x] **3.7 Crowd state + events**
   CrowdState entity; publish CrowdStateUpdated domain event → WebSocket `CROWD_STATE_UPDATE` (doc 08 §4.2).
   → After: 3.8 · ✅ Done when: WS delivers crowd state to all roles.
 - [ ] **3.8 Source health monitor**
