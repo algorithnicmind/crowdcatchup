@@ -20,7 +20,7 @@
 
 | Phase | Name | Total | Done | Left |
 | :---: | :--- | :---: | :---: | :---: |
-| 1 | Foundation | 12 | 6 | 6 |
+| 1 | Foundation | 12 | 5 | 7 |
 | 2 | Event Map | 9 | 0 | 9 |
 | 3 | Data Hub | 10 | 0 | 10 |
 | 4 | Real Crowd Data | 5 | 0 | 5 |
@@ -29,7 +29,7 @@
 | 7 | User Experiences | 8 | 0 | 8 |
 | 8 | Simulation | 4 | 0 | 4 |
 | 9 | Production + Deliverables | 9 | 0 | 9 |
-| | **TOTAL** | **70** | **6** | **64** |
+| | **TOTAL** | **70** | **5** | **65** |
 
 ---
 
@@ -44,21 +44,21 @@
 - [x] **1.3 Shared kernel**
   `apps/api/shared/` — base_entity, base_value_object, base_domain_event, base_repository, event_bus, websocket_manager, exceptions, error_handlers, api/dependencies.
   → After: 1.4 · ✅ Done when: shared base classes importable and WS manager tested.
-- [x] **1.4 Auth feature**
+- [~] **1.4 Auth feature**
   Feature module layout per doc 12 §4.1: domain (User entity, Email/Password VOs, Role enum: AUTHORITY/POLICE/CITIZEN/EVENT_OWNER), use cases (register/login/get_current_user), JWT issuance, repository + model, routes `/api/v1/auth/*`, Pydantic schemas. **RBAC enforced on the backend only** (PRD §51).
-  → After: 1.5 · ✅ Done when: Pytest proves register/login/RBAC and JWT expiry.
-- [x] **1.5 Events feature**
+  → After: 1.5 · ✅ Done when: Pytest proves register/login/RBAC and JWT expiry. (Currently missing tests)
+- [~] **1.5 Events feature**
   Domain (Event/Zone/Gate/Route entities, GeoPoint/GeoPolygon/DateRange VOs, EventStatus enum with ALL 8 statuses, GateStatus), use cases (create/update/get/list/change_status/create_zone/create_gate/create_route), repositories + models, routes `/api/v1/events/*`, domain events EventCreated + EventStatusChanged.
-  → After: 1.6 · ✅ Done when: event CRUD + lifecycle transitions tested (DRAFT→CONFIGURATION→READY→LIVE).
+  → After: 1.6 · ✅ Done when: event CRUD + lifecycle transitions tested (DRAFT→CONFIGURATION→READY→LIVE). (Currently missing tests)
 - [x] **1.6 Seed script**
   Demo event "TechNova 2026" with 5 zones, 6 gates, 8 routes, 2 emergency routes, CCTV cameras, Smart Gates (PRD §58).
   → After: 1.7 · ✅ Done when: seed runs and demo event is queryable via API.
 - [x] **1.7 PWA setup**
   `manifest.json`, theme colors, icons, service worker, installability, meta tags, offline shell.
   → After: 1.8 · ✅ Done when: app is installable and offline shell loads.
-- [x] **1.8 Frontend foundation**
+- [~] **1.8 Frontend foundation**
   Install shadcn/ui, zustand, leaflet, i18next. `shared/lib/api-client.ts`, `ws-client.ts`, `useWebSocket`. Stores (auth/event/ui). Login + register pages. Role-based route guard `(dashboard)/authority|police|citizen|event-owner`.
-  → After: 1.9 · ✅ Done when: login as each of the 4 roles lands on the correct dashboard route.
+  → After: 1.9 · ✅ Done when: login as each of the 4 roles lands on the correct dashboard route. (Currently missing dashboard route guard)
 - [ ] **1.9 Frontend events UI**
   Event list + create event + status change screens for the Event Owner role.
   → After: 1.10 · ✅ Done when: creating an event from the UI persists and shows in the list.
