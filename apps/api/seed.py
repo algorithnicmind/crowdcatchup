@@ -79,10 +79,10 @@ async def seed_data():
             name="TechNova Challenge 2026",
             description="Massive public tech event and hackathon demo.",
             venue_polygon=[
-                {"lat": 34.0522, "lng": -118.2437},
-                {"lat": 34.0522, "lng": -118.2427},
-                {"lat": 34.0512, "lng": -118.2427},
-                {"lat": 34.0512, "lng": -118.2437},
+                {"lat": 28.6149, "lng": 77.2080},
+                {"lat": 28.6149, "lng": 77.2100},
+                {"lat": 28.6129, "lng": 77.2100},
+                {"lat": 28.6129, "lng": 77.2080},
             ],
             start_date=now,
             end_date=now + timedelta(days=2),
@@ -96,17 +96,24 @@ async def seed_data():
         # 3. Create 5 Zones
         logger.info("Seeding zones...")
         zones = [
-            ("zone_main_stage", "Main Stage", 20000, "STAGE"),
-            ("zone_food_court", "Food Court", 10000, "FOOD"),
-            ("zone_vip", "VIP Area", 2000, "VIP"),
-            ("zone_entry", "Entry Plaza", 15000, "ASSEMBLY"),
-            ("zone_medical", "Medical Tent", 500, "MEDICAL"),
+            ("zone_main_stage", "Main Stage", 20000, "STAGE", [
+                {"lat": 28.6145, "lng": 77.2085}, {"lat": 28.6145, "lng": 77.2095},
+                {"lat": 28.6135, "lng": 77.2095}, {"lat": 28.6135, "lng": 77.2085},
+            ]),
+            ("zone_food_court", "Food Court", 10000, "FOOD", [
+                {"lat": 28.6135, "lng": 77.2085}, {"lat": 28.6135, "lng": 77.2090},
+                {"lat": 28.6130, "lng": 77.2090}, {"lat": 28.6130, "lng": 77.2085},
+            ]),
+            ("zone_vip", "VIP Area", 2000, "VIP", []),
+            ("zone_entry", "Entry Plaza", 15000, "ASSEMBLY", []),
+            ("zone_medical", "Medical Tent", 500, "MEDICAL", []),
         ]
-        for z_id, z_name, z_cap, z_type in zones:
+        for z_id, z_name, z_cap, z_type, z_poly in zones:
             zm = ZoneModel(
                 id=z_id,
                 event_id=event_id,
                 name=z_name,
+                polygon=z_poly,
                 capacity=z_cap,
                 warning_threshold=int(z_cap * 0.8),
                 critical_threshold=int(z_cap * 0.95),
@@ -120,11 +127,14 @@ async def seed_data():
             gate_type = "ENTRY" if i <= 3 else "EXIT"
             if i == 6:
                 gate_type = "EMERGENCY"
+            # Offset locations slightly for gates
+            loc = {"lat": 28.6149, "lng": 77.2080 + (i * 0.0003)}
             gm = GateModel(
                 id=f"gate_{i}",
                 event_id=event_id,
                 zone_id="zone_entry",
                 name=f"Gate {i}",
+                location=loc,
                 type=gate_type,
                 status="OPEN",
                 capacity_per_minute=200,
@@ -137,10 +147,18 @@ async def seed_data():
             route_type = "TWO_WAY"
             if i >= 7:
                 route_type = "EMERGENCY"
+            
+            # Simple line route for mock
+            path = [
+                {"lat": 28.6140, "lng": 77.2080 + (i * 0.0002)},
+                {"lat": 28.6130, "lng": 77.2080 + (i * 0.0002)}
+            ]
+            
             rm = RouteModel(
                 id=f"route_{i}",
                 event_id=event_id,
                 name=f"Route {i}",
+                path=path,
                 type=route_type,
                 capacity=5000,
             )

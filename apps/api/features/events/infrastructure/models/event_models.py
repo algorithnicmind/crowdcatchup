@@ -65,3 +65,18 @@ class RouteModel(Base):
     type = Column(String, nullable=False, default="TWO_WAY")
     is_active = Column(Boolean, default=True)
     capacity = Column(Integer, default=0)
+
+
+class TemporaryInfrastructureModel(Base):
+    __tablename__ = "temporary_infrastructure"
+
+    id = Column(String, primary_key=True, index=True)
+    event_id = Column(String, ForeignKey("events.id"), nullable=False, index=True)
+    name = Column(String, nullable=False)
+    type = Column(String, nullable=False)  # e.g., "MEDICAL", "POLICE", "BARRICADE"
+    location = Column(JSON, nullable=True)  # {lat, lng}
+    start_time = Column(DateTime(timezone=True), nullable=True)
+    end_time = Column(DateTime(timezone=True), nullable=True)
+    status = Column(String, nullable=False, default="ACTIVE")
+    capacity = Column(Integer, default=0)
+    notes = Column(String, default="")

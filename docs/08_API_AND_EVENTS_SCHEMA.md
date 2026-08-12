@@ -275,9 +275,66 @@ interface EventConfig {
 }
 ```
 
+## 8. Spatial Configuration APIs
+
+These endpoints are used by the Event Map tools to persist spatial boundaries and infrastructure to the backend.
+
+### 8.1 `PUT /api/v1/events/{event_id}/boundary`
+Updates the overall venue boundary polygon.
+```json
+{
+  "venue_polygon": [
+    { "lat": 28.6149, "lng": 77.2080 },
+    { "lat": 28.6149, "lng": 77.2100 }
+  ]
+}
+```
+
+### 8.2 `POST /api/v1/events/{event_id}/zones`
+Creates a new event zone (e.g. Stage, Food Court).
+```json
+{
+  "name": "Main Stage",
+  "zone_type": "STAGE",
+  "capacity": 20000,
+  "warning_threshold": 16000,
+  "critical_threshold": 19000,
+  "polygon": [
+    { "lat": 28.6145, "lng": 77.2085 }
+  ]
+}
+```
+
+### 8.3 `POST /api/v1/events/{event_id}/gates`
+Creates a new gate marker.
+```json
+{
+  "zone_id": "zone_123",
+  "name": "Gate 1",
+  "type": "ENTRY",
+  "status": "OPEN",
+  "capacity_per_minute": 200,
+  "location": { "lat": 28.6149, "lng": 77.2080 }
+}
+```
+
+### 8.4 `POST /api/v1/events/{event_id}/routes`
+Creates a custom route for navigation or emergency access.
+```json
+{
+  "name": "Emergency Exit Route",
+  "type": "EMERGENCY",
+  "capacity": 5000,
+  "is_active": true,
+  "path": [
+    { "lat": 28.6140, "lng": 77.2080 }
+  ]
+}
+```
+
 ---
 
-## 8. Intervention Types
+## 9. Intervention Types
 
 ```typescript
 type InterventionType =

@@ -187,15 +187,18 @@ Examples:
 * Temporary medical camp
 * Temporary restricted area
 
-Each temporary object should support:
+Each temporary object is backed by the `TemporaryInfrastructureModel` and supports:
 
-* Start time
-* End time
-* Status
-* Capacity
-* Location
-* Owner
-* Notes
+* `id`: Unique identifier
+* `event_id`: Link to the parent event
+* `name`: Descriptive name (e.g. "Main Medical Tent")
+* `type`: "MEDICAL", "POLICE", "BARRICADE", "WATER", "RESTRICTED"
+* `location`: GeoPoint (lat/lng)
+* `status`: "PLANNED", "ACTIVE", "REMOVED"
+* `capacity`: Optional numerical capacity (e.g. beds in medical tent)
+* `start_time`: When it becomes active
+* `end_time`: When it is removed
+* `notes`: Additional context or instructions
 
 ---
 

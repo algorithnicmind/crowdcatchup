@@ -238,7 +238,7 @@ Recommended initial stack:
 * Python
 * PyTorch
 * OpenCV
-* YOLO-family detector
+* YOLOv8 (Nano) detector
 * Tracking algorithm
 * scikit-learn where appropriate
 
@@ -301,7 +301,7 @@ features/navigation/
 │       └── navigation_service.py   # Integrates with crowd state
 ├── infrastructure/
 │   ├── engines/
-│   │   ├── route_engine.py         # Modified Dijkstra with crowd weights
+│   │   ├── route_engine.py         # A* (A-Star) Algorithm with crowd weights
 │   │   └── navigation_engine.py    # Turn-by-turn generation
 │   └── adapters/
 │       └── osm_adapter.py          # OpenStreetMap road network

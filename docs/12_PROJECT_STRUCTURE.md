@@ -789,7 +789,7 @@ features/navigation/
 │   ├── __init__.py
 │   ├── engines/
 │   │   ├── __init__.py
-│   │   ├── route_engine.py       # Modified Dijkstra with crowd weights
+│   │   ├── route_engine.py       # A* (A-Star) Algorithm with crowd weights
 │   │   └── navigation_engine.py  # Turn-by-turn generation
 │   └── adapters/
 │       ├── __init__.py

@@ -68,6 +68,7 @@ graph TB
         DB[(PostgreSQL/PostGIS)]
         CACHE[(Redis)]
         WS((WebSocket Broadcaster))
+        SPATIAL[Spatial Config APIs]
     end
 
     S1 & S2 & S3 & S4 & S5 & S6 --> A1 & A2 & A3 & A4 & A5 & A6
@@ -80,7 +81,8 @@ graph TB
     P3 -->|Alert| WS
     P4 -->|Summary| WS
     DB <--> WS
-```
+    E9(Event Owner PWA) --> SPATIAL
+    SPATIAL --> DB
 
 ---
 
@@ -90,7 +92,7 @@ graph TB
 ```
 RTSP Stream / MP4 File
   → Frame Extraction (OpenCV)
-  → YOLO Person Detection
+  → YOLOv8 (Nano) + BoT-SORT Person Detection
   → BoT-SORT Tracking
   → Metrics: people_count, avg_speed, direction, flow_conflict
   → StandardObservation { source_type: "CCTV", metric: "people_count", ... }
@@ -218,7 +220,7 @@ CCTV processing should support:
 
 Recommended initial computer vision stack:
 
-* YOLO-family object detection model
+* YOLOv8 (Nano) + BoT-SORT object detection model
 * Tracking algorithm
 * OpenCV
 * Python
@@ -415,7 +417,7 @@ Initial implementation may use confidence-weighted estimation.
 Future implementations may use:
 
 * Bayesian fusion
-* Kalman filtering
+* Confidence-Weighted Averaging
 * Probabilistic models
 * Learned sensor fusion
 * Temporal models

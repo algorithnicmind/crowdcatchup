@@ -30,7 +30,7 @@ classDiagram
 
     class CctvAdapter {
         -String rtsp_url
-        -YoloDetector detector
+        -Yolov8NanoDetector detector
         -ByteTracker tracker
         +read(): StandardObservation
     }
@@ -627,8 +627,8 @@ def plan_route(source, destination, group, crowd_state, road_network):
     # Build graph with crowd-weighted edges
     graph = build_crowd_weighted_graph(road_network, crowd_state, group)
     
-    # Run modified Dijkstra
-    shortest_safe_path = dijkstra(graph, source, destination)
+    # Run A* (A-Star) algorithm with crowd weights
+    shortest_safe_path = a_star_algorithm(graph, source, destination)
     
     # Calculate route metrics
     route = SafeRoute(

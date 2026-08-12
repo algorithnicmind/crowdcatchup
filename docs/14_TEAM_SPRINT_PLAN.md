@@ -15,14 +15,14 @@ This document breaks down the high-level delegation plan into a **highly detaile
 
 ### Day 2: Premium Event Map Foundation (Phase 2)
 - [ ] **Step 1.10:** Build the Base Dashboard Layout (Header, Sidebar, Navigation).
-- [ ] **Step 2.1:** Implement the hero `EventMap.tsx` component using `react-leaflet`.
-- [ ] **Step 2.1 (Aesthetic):** Configure CartoDB Dark Matter tiles (or similar) for the "Google Maps-like" premium look.
-- [ ] **Step 2.1 (Interactivity):** Add smooth fly-to animations and zoom controls.
+- [x] **Step 2.1:** Implement the hero `EventMap.tsx` component using `react-leaflet`.
+- [x] **Step 2.1 (Aesthetic):** Configure CartoDB Dark Matter tiles (or similar) for the "Google Maps-like" premium look.
+- [x] **Step 2.1 (Interactivity):** Add smooth fly-to animations and zoom controls.
 
 ### Day 3: Map Builders & Visuals
-- [ ] **Step 2.3 & 2.4:** Build the UI for the Zone Editor and Gate Editor (allowing the Event Owner to draw polygons on the map).
-- [ ] **Step 2.7:** Build the custom glassmorphism markers and overlays for Temporary Infrastructure (Medical, Police posts).
-- [ ] **Step 2.8:** Ensure the "TechNova 2026" seeded venue renders perfectly on the map.
+- [x] **Step 2.3 & 2.4:** Build the UI for the Zone Editor and Gate Editor (allowing the Event Owner to draw polygons on the map).
+- [x] **Step 2.7:** Build the custom glassmorphism markers and overlays for Temporary Infrastructure (Medical, Police posts).
+- [x] **Step 2.8:** Ensure the "TechNova 2026" seeded venue renders perfectly on the map.
 
 ### Day 4: UI Dashboards (Phase 7)
 - [ ] **Step 7.1:** Build the **Authority Command Center** (Desktop). Add Heatmap toggles, CCTV grids, and Alert feeds.
@@ -88,13 +88,13 @@ This document breaks down the high-level delegation plan into a **highly detaile
 - [ ] **Step 5.4:** Write the Python script that takes the YOLOv8 counting output, formats it into a `StandardObservation` JSON, and POSTs it to Member 2's `/api/v1/ingest` endpoint.
 
 ### Day 4: Risk Prediction Model (Phase 5)
-- [ ] **Step 5.5:** Gather synthetic tabular data for crowd density, weather, time of day, and gate flow.
-- [ ] **Step 5.5 (XGBoost):** Train a basic XGBoost model to predict "Bottleneck Risk Score" (0-100).
-- [ ] **Step 5.6:** Expose the XGBoost model via a local FastAPI micro-endpoint (or integrate it directly into Member 2's backend).
+- [x] **Step 5.5:** Gather synthetic tabular data for crowd density, weather, time of day, and gate flow.
+- [x] **Step 5.5 (XGBoost):** Train a basic XGBoost model to predict "Bottleneck Risk Score" (0-100).
+- [x] **Step 5.6:** Expose the XGBoost model via a local FastAPI micro-endpoint (or integrate it directly into Member 2's backend).
 
 ### Day 5: Decision Support & Rules Engine (Phase 6)
-- [ ] **Step 6.1:** Write the Rules Engine that triggers alerts (e.g., If Density > 4 p/m², Fire `CRITICAL` alert).
-- [ ] **Step 6.2:** Write the Action Recommendation logic (e.g., If Gate 3 is blocked, recommend "Deploy 5 Police" and "Redirect to Gate 4").
+- [x] **Step 6.1:** Write the Rules Engine that triggers alerts (e.g., If Density > 4 p/m², Fire `CRITICAL` alert).
+- [x] **Step 6.2:** Write the Action Recommendation logic (e.g., If Gate 3 is blocked, recommend "Deploy 5 Police" and "Redirect to Gate 4").
 
 ### Day 6 & 7: Fine-Tuning & Demo Prep
 - [ ] **Step 6.4:** Fine-tune the XGBoost thresholds so that the UI flashes Red/Yellow beautifully during the demo.

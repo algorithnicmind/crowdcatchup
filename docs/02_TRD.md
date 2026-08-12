@@ -26,7 +26,7 @@ CrowdShield is engineered as a highly scalable, decoupled Monorepo architecture 
 * **Future Scalability:** Kafka for dedicated stream processing.
 
 ### 1.3 AI & Computer Vision Pipeline
-* **Perception Layer:** OpenCV and YOLO-family for high-speed person detection, coupled with tracking algorithms (ByteTrack/BoT-SORT) for maintaining identity tracking across frames.
+* **Perception Layer:** OpenCV and YOLOv8 (Nano) for high-speed person detection, coupled with tracking algorithms (BoT-SORT) for maintaining identity tracking across frames.
 * **Prediction Model:** XGBoost trained on time-series window features (e.g., density gradients over 5 minutes) to predict future risk scores.
 * **Deep Learning:** PyTorch for advanced model development where needed.
 
@@ -215,20 +215,6 @@ audit
 ```
 
 Keep business logic separated.
-
----
-
-## 64. CITIZEN NAVIGATION ALGORITHM
-
-### Modified Dijkstra with Crowd Weights
-
-The route calculation algorithm extends Dijkstra's shortest path with crowd-aware weights:
-
-```python
-def calculate_route_weight(distance, crowd_density, road_width, group_size, group_profile):
-    # Crowd multiplier: more crowded = higher weight
-    crowd_multiplier = 1.0 + (crowd_density / 2.0)  # 1.0 (empty) → 3.0 (dangerous)
-    
     # Width penalty: road too narrow for group = high penalty
     required_width = group_size * 0.5  # 0.5m per person
     if road_width >= required_width:
@@ -295,7 +281,7 @@ def check_reroute_needed(current_route, live_crowd_state, group_profile):
 ### Road Network Data
 - Use OpenStreetMap (OSM) road network for route calculation
 - Import OSM data using `osmnx` Python library
-- Convert road network to graph for Dijkstra/A* algorithms
+- Convert road network to graph for A* algorithm
 - Add CrowdShield operational routes (temporary, emergency) as additional graph edges
 
 ### Geocoding

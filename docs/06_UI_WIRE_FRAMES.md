@@ -95,8 +95,30 @@ CrowdShield emphasizes **Rich Aesthetics and Dynamic Design** using Next.js, Tai
 | [ VIEW SAFE ROUTE ]           |
 | [ REPORT SOS INCIDENT ]       |
 +--------------------------------+
++--------------------------------+
 | Home   Alerts   Profile       |
 +--------------------------------+
+```
+
+### 2.4 Event Owner Map Builders (Desktop PWA)
+
+```
++---------------------------------------------------------------------------------------------------------+
+| CrowdShield     [Event: TechNova 2026]                               [Config] [Organizer]               |
++---------------------------------------------------------------------------------------------------------+
+|  BUILDER TOOLS    |                                                               |  PROPERTIES         |
+|                   |                                                               |                     |
+|  [>] Boundary     |                       INTERACTIVE MAP (Leaflet)               |  Entity: Zone       |
+|  [>] Zones        |                                                               |  Name: Main Stage   |
+|  [ ] Gates        |              +--------------------------+                     |  Type: STAGE        |
+|  [ ] Routes       |              |           ZONE           |                     |  Capacity: 20000    |
+|  [ ] Infra        |              |        Main Stage        |                     |                     |
+|                   |              |                          |                     |                     |
+|                   |              +--------------------------+                     |                     |
+|                   |                                                               |  [ SAVE ZONE ]      |
+|                   |                                                               |                     |
+|                   |                                                               |                     |
++-------------------+---------------------------------------------------------------+---------------------+
 ```
 
 ### 2.4 Event Organizer / Admin (Desktop PWA)

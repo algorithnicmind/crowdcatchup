@@ -45,3 +45,13 @@ class GateDTO(BaseModel):
     type: str
     status: str
     capacity_per_minute: int
+
+
+class RouteDTO(BaseModel):
+    id: str
+    event_id: str
+    name: str
+    path: list[GeoPointDTO]
+    type: str
+    is_active: bool
+    capacity: int

@@ -77,31 +77,31 @@
 
 # PHASE 2 — EVENT MAP (docs/11 §7–11, docs/06, docs/04 §3)
 
-- [ ] **2.1 Leaflet map feature**
+- [x] **2.1 Leaflet map feature**
   `EventMap.tsx` + ZoneLayer, GateLayer, RouteLayer, HeatmapLayer, CrowdOverlay; `useMapEngine`, `useMapLayers`, `geo-utils.ts`.
   → After: 2.2 · ✅ Done when: map renders with base tiles.
-- [ ] **2.2 Venue boundary**
+- [x] **2.2 Venue boundary**
   Draw/edit/save event polygon on the map; backend persistence (PostGIS).
   → After: 2.3 · ✅ Done when: saved polygon reloads on the map.
-- [ ] **2.3 Zone builder**
+- [x] **2.3 Zone builder**
   ZoneEditor — draw zone polygons, name, capacity, warning + critical thresholds (doc 11 §10).
   → After: 2.4 · ✅ Done when: zones persist and thresholds validated (warning < critical).
-- [ ] **2.4 Gate builder**
+- [x] **2.4 Gate builder**
   GateEditor — entry/exit/smart gates, Gate-Zone-Route relationships (LLD §5), SmartGateConfig schema (doc 08 §6).
   → After: 2.5 · ✅ Done when: gate→zone→routes links validated on backend.
-- [ ] **2.5 Route builder**
+- [x] **2.5 Route builder**
   RouteEditor — draw/edit routes; types: one-way, two-way, emergency, police-only, temporary; activate/deactivate; capacity (doc 11 §11).
   → After: 2.6 · ✅ Done when: all route types persist and render.
 - [ ] **2.6 GPS route recording** (P1, LLD §3)
   Walk-a-route capture → trajectory smoothing → editable route; accuracy handling (LLD §3.2).
   → After: 2.7 · ✅ Done when: recorded trajectory becomes a route.
-- [ ] **2.7 Temporary infrastructure**
+- [x] **2.7 Temporary infrastructure**
   Medical camps, police posts, barricades, water stations, restricted zones as map markers + backend models (LLD §4).
   → After: 2.8 · ✅ Done when: markers persist and render per event.
-- [ ] **2.8 Map wiring**
+- [x] **2.8 Map wiring**
   Full venue (boundary + zones + gates + routes + infrastructure) rendered for the seeded event.
   → After: 2.9 · ✅ Done when: demo venue fully visible on the map.
-- [ ] **2.9 Tests + docs ripple**
+- [x] **2.9 Tests + docs ripple**
   Polygon/route validation tests; update docs 06 and 11.
   → After: PHASE 2 GATE · ✅ Done when: tests green and docs updated.
 - [ ] **🚧 PHASE 2 GATE** *(pass before Phase 3)*
@@ -234,7 +234,7 @@
   Create/resolve incident, IncidentCreated event, citizen SOS → command map.
   → After: 7.6 · ✅ Done when: SOS appears on Authority map.
 - [ ] **7.6 Citizen Journey Navigation — backend** (innovation, docs/04 §64, docs/08 §64)
-  `features/navigation/` — Group/Journey/SafeRoute entities; use cases plan_group_journey, navigate, check_reroute; route_engine (modified Dijkstra + crowd weights); navigation_engine (turn-by-turn); osm_adapter; `POST /api/v1/navigation/plan`, `POST /exit-plan`, WS `/api/v1/navigation/live` (NAVIGATION_UPDATE, REROUTE_ALERT, GROUP_MEMBER_ALERT).
+  `features/navigation/` — Group/Journey/SafeRoute entities; use cases plan_group_journey, navigate, check_reroute; route_engine (A* (A-Star) + crowd weights); navigation_engine (turn-by-turn); osm_adapter; `POST /api/v1/navigation/plan`, `POST /exit-plan`, WS `/api/v1/navigation/live` (NAVIGATION_UPDATE, REROUTE_ALERT, GROUP_MEMBER_ALERT).
   → After: 7.7 · ✅ Done when: plan request returns SafeRoutes with gate recommendations (doc 08 §64 schemas).
 - [ ] **7.7 Citizen Journey Navigation — frontend**
   JourneyPlanner, GroupSizeSelector, RouteMap, NavigationPanel, CrowdOverlay, GateRecommendation, GroupTipCard, ExitPlanner; hooks useJourney/useNavigation/useLiveReroute/useGroupCoordination; group profiles SOLO→LARGE_GROUP + special needs priority (PRD §9B).
