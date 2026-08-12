@@ -45,10 +45,10 @@ This document breaks down the high-level delegation plan into a **highly detaile
 - [ ] **Step 3.1:** Implement the `StandardObservation` Pydantic models for data ingestion.
 - [ ] **Step 3.2:** Build the Source Registry API (CRUD for CCTV cameras, Smart Gates, etc.).
 - [ ] **Step 3.7 (Part 1):** Integrate Local Redis for high-frequency Pub/Sub messaging.
-- [ ] **Step 3.7 (Part 2):** Build the robust WebSocket Broadcaster to push updates to the UI.
+- [x] **Step 3.7 (Part 2):** Build the robust WebSocket Broadcaster to push updates to the UI.
 
 ### Day 2: The Data Pipeline (Phase 3)
-- [ ] **Step 3.4:** Build the high-throughput `/api/v1/ingest` endpoint with rate limiting.
+- [x] **Step 3.4:** Build the high-throughput `/api/v1/ingest` endpoint with rate limiting.
 - [ ] **Step 3.5 & 3.6:** Build the Fusion Engine. Write the math to merge data from multiple sources (CCTV + Gates) into a single "Crowd State".
 - [ ] **Step 3.8:** Implement the Source Health Monitor (tracking if a camera goes OFFLINE).
 
@@ -58,8 +58,8 @@ This document breaks down the high-level delegation plan into a **highly detaile
 - [ ] **Step 4.3 & 4.4:** Build the Drone and Mobile GPS adapters. (Implement mock variants as fallbacks if real hardware is unavailable).
 
 ### Day 4: The Simulation Engine (Phase 8)
-- [ ] **Step 3.3 / 8.1:** Write the Python `SyntheticSimulator`.
-- [ ] **Step 8.2:** Program specific scenarios: "Normal Inflow", "Sudden Surge", "Gate Blockage". 
+- [x] **Step 3.3 / 8.1:** Write the Python `SyntheticSimulator`.
+- [x] **Step 8.2:** Program specific scenarios: "Normal Inflow", "Sudden Surge", "Gate Blockage". 
 - *Goal: This simulator is crucial for the Hackathon demo to prove the system works under stress!*
 
 ### Day 5 & 6: Production Database & Optimization
