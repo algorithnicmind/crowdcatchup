@@ -1,24 +1,95 @@
 import logging
-from typing import Dict
-from datetime import datetime
+from typing import Dict, List
+from datetime import datetime, timedelta
+import statistics
 from ..api.schemas import StandardObservation, CrowdStateDTO
 
 logger = logging.getLogger(__name__)
 
 # Temporary in-memory state for hackathon (normally Redis)
 zone_states: Dict[str, CrowdStateDTO] = {}
+# Buffer to store recent observations for fusion
+observation_buffer: Dict[str, List[StandardObservation]] = {}
+
+SOURCE_RELIABILITY = {
+    "CCTV": 0.9,
+    "SMART_GATE": 0.95,
+    "GPS": 0.7,
+    "DRONE": 0.8,
+    "SYNTHETIC": 1.0  # For simulation purposes
+}
 
 class FusionService:
     @staticmethod
+    def get_reliability(source_type: str) -> float:
+        return SOURCE_RELIABILITY.get(source_type, 0.5)
+
+    @staticmethod
+    def detect_disagreement(observations: List[StandardObservation], metric: str):
+        """Detect when sources significantly disagree on a metric."""
+        metric_obs = [o for o in observations if o.metric == metric]
+        if len(metric_obs) < 2:
+            return
+            
+        values = [o.value for o in metric_obs]
+        median = statistics.median(values)
+        if median == 0:
+            return
+            
+        for obs in metric_obs:
+            deviation = abs(obs.value - median) / median
+            if deviation > 0.3:  # 30% deviation threshold
+                logger.warning(
+                    f"[SENSOR_DISAGREEMENT] {obs.source_id} anomaly in {obs.zone_id} for {metric}: "
+                    f"Reported {obs.value} vs Median {median}"
+                )
+
+    @staticmethod
+    def fuse_metric(observations: List[StandardObservation], metric: str, default: float) -> float:
+        """Confidence-weighted estimation for a specific metric."""
+        metric_obs = [o for o in observations if o.metric == metric]
+        if not metric_obs:
+            return default
+            
+        weighted_sum = 0.0
+        total_weight = 0.0
+        
+        for obs in metric_obs:
+            weight = obs.confidence * FusionService.get_reliability(obs.source_type)
+            weighted_sum += obs.value * weight
+            total_weight += weight
+            
+        return weighted_sum / total_weight if total_weight > 0 else default
+
+    @staticmethod
     def process_observation(obs: StandardObservation) -> CrowdStateDTO:
         """
-        Fuses a single observation into the global zone state.
-        In a full implementation, this uses confidence-weighted fusion.
-        For MVP, we update the state directly.
+        Fuses a single observation into the global zone state using confidence-weighted fusion.
         """
         zone_id = obs.zone_id
+        now = datetime.utcnow()
         
-        # Initialize zone state if it doesn't exist
+        # 1. Update Observation Buffer
+        if zone_id not in observation_buffer:
+            observation_buffer[zone_id] = []
+            
+        observation_buffer[zone_id].append(obs)
+        
+        # Clean up old observations (keep last 2 minutes)
+        # Handle naive vs aware datetime depending on how it's sent
+        obs_time = obs.timestamp.replace(tzinfo=None) if obs.timestamp else now
+        cutoff_time = now - timedelta(minutes=2)
+        observation_buffer[zone_id] = [
+            o for o in observation_buffer[zone_id] 
+            if (o.timestamp.replace(tzinfo=None) if o.timestamp else now) > cutoff_time
+        ]
+        
+        recent_obs = observation_buffer[zone_id]
+        
+        # 2. Detect Disagreements
+        FusionService.detect_disagreement(recent_obs, obs.metric)
+        
+        # 3. Initialize zone state if it doesn't exist
         if zone_id not in zone_states:
             zone_states[zone_id] = CrowdStateDTO(
                 event_id=obs.event_id,
@@ -35,24 +106,21 @@ class FusionService:
                 risk_score=0.0,
                 risk_level="LOW",
                 confidence=0.0,
-                timestamp=datetime.utcnow()
+                timestamp=now
             )
             
         state = zone_states[zone_id]
         
-        # Update specific metric based on the observation
-        if obs.metric == "people_count":
-            state.estimated_people = int(obs.value)
-            # Dummy density calculation (assuming 1000 sqm for demo)
-            state.density = state.estimated_people / 1000.0
-        elif obs.metric == "entry_rate":
-            state.entry_rate = obs.value
-        elif obs.metric == "exit_rate":
-            state.exit_rate = obs.value
-        elif obs.metric == "avg_speed":
-            state.average_speed = obs.value
+        # 4. Fuse Metrics
+        state.estimated_people = int(FusionService.fuse_metric(recent_obs, "people_count", state.estimated_people))
+        state.entry_rate = FusionService.fuse_metric(recent_obs, "entry_rate", state.entry_rate)
+        state.exit_rate = FusionService.fuse_metric(recent_obs, "exit_rate", state.exit_rate)
+        state.average_speed = FusionService.fuse_metric(recent_obs, "avg_speed", state.average_speed)
+        
+        # Dummy density calculation (assuming 1000 sqm for demo)
+        state.density = state.estimated_people / 1000.0
             
-        # Update density level
+        # 5. Update density level
         if state.density < 2.0:
             state.density_level = "LOW"
         elif state.density < 3.0:
@@ -62,8 +130,9 @@ class FusionService:
         else:
             state.density_level = "CRITICAL"
             
-        state.timestamp = datetime.utcnow()
-        state.confidence = obs.confidence
+        state.timestamp = now
+        # Overall confidence is max of recent observations for now
+        state.confidence = max((o.confidence for o in recent_obs), default=0.0)
         
         zone_states[zone_id] = state
         return state
