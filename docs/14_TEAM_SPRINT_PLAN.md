@@ -63,9 +63,9 @@ This document breaks down the high-level delegation plan into a **highly detaile
 - *Goal: This simulator is crucial for the Hackathon demo to prove the system works under stress!*
 
 ### Day 5 & 6: Production Database & Optimization
-- [ ] **Step 1.1 (Database):** Ensure PostgreSQL connection pooling is optimized for production.
-- [ ] **Step 1.1 (PostGIS):** Enable PostGIS on PostgreSQL for spatial queries (finding users inside a Zone polygon).
-- [ ] **Day 6:** Load test the WebSocket connections (simulate 10,000 updates/sec).
+- [x] **Step 1.1 (Database):** Ensure PostgreSQL connection pooling is optimized for production.
+- [x] **Step 1.1 (PostGIS):** Enable PostGIS on PostgreSQL for spatial queries (finding users inside a Zone polygon).
+- [x] **Day 6:** Load test the WebSocket connections (simulate 10,000 updates/sec).
 
 ### Day 7: Deployment
 - [ ] Deploy FastAPI to production (e.g., Docker, AWS EC2).

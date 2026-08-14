@@ -14,6 +14,10 @@ settings = get_settings()
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=settings.DEBUG,
+    pool_size=20,
+    max_overflow=10,
+    pool_timeout=30,
+    pool_recycle=1800,
 )
 
 # --- Session Factory ---
@@ -47,6 +51,12 @@ async def get_db() -> AsyncSession:
 async def init_db():
     """Create all tables on startup (dev only; use Alembic in production)."""
     async with engine.begin() as conn:
+        from sqlalchemy import text
+        try:
+            await conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
+        except Exception as e:
+            # Might fail if user doesn't have superuser rights or extension missing on OS
+            pass
         await conn.run_sync(Base.metadata.create_all)
 
 
