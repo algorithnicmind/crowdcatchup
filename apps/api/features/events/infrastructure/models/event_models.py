@@ -80,3 +80,15 @@ class TemporaryInfrastructureModel(Base):
     status = Column(String, nullable=False, default="ACTIVE")
     capacity = Column(Integer, default=0)
     notes = Column(String, default="")
+
+
+class SourceModel(Base):
+    __tablename__ = 'sources'
+
+    id = Column(String, primary_key=True, index=True)
+    event_id = Column(String, ForeignKey('events.id'), nullable=False, index=True)
+    source_type = Column(String, nullable=False)
+    name = Column(String, nullable=False)
+    location_description = Column(String, nullable=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

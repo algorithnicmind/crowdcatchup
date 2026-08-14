@@ -110,10 +110,10 @@
 
 # PHASE 3 — DATA HUB (docs/05, docs/08, docs/02 §3, docs/04 §7, docs/10 Rule 5) — HACKATHON-CRITICAL
 
-- [ ] **3.1 Standard Observation Format**
+- [x] **3.1 Standard Observation Format**
   `packages/types/src/observation.ts` + Pydantic schema — event_id, source_id, source_type, zone_id, timestamp, metric, value, confidence, latency_ms, health (doc 08 §1). ONE contract for real AND simulated sources.
   → After: 3.2 · ✅ Done when: TS + Python types match doc 08 exactly.
-- [ ] **3.2 Source registry**
+- [x] **3.2 Source registry**
   Register sources per event (CCTV, SMART_GATE, GPS, DRONE, BLE, TELECOM, SYNTHETIC); SourceHealth schema (doc 08 §3); strict event isolation (doc 08 §27).
   → After: 3.3 · ✅ Done when: sources CRUD per event, isolated by event_id.
 - [x] **3.3 Synthetic simulator**
@@ -122,16 +122,16 @@
 - [x] **3.4 Ingestion endpoint**
   Production-grade `/api/v1/ingest` replacing the current stub — Pydantic validation, event isolation, rate limiting, source health updates.
   → After: 3.5 · ✅ Done when: invalid observations rejected; valid ones persist.
-- [ ] **3.5 Normalization + validation pipeline**
+- [x] **3.5 Normalization + validation pipeline**
   data_normalization + data_validation modules (HLD §3).
   → After: 3.6 · ✅ Done when: all adapter outputs normalize to one format.
-- [ ] **3.6 Fusion engine**
+- [x] **3.6 Fusion engine**
   Confidence-weighted estimation, timestamp sync, dedup, disagreement detection (LLD §7); Crowd State output per zone (doc 08 §2).
   → After: 3.7 · ✅ Done when: fusion math unit tests pass (LLD §7 formulas).
 - [x] **3.7 Crowd state + events**
   CrowdState entity; publish CrowdStateUpdated domain event → WebSocket `CROWD_STATE_UPDATE` (doc 08 §4.2).
   → After: 3.8 · ✅ Done when: WS delivers crowd state to all roles.
-- [ ] **3.8 Source health monitor**
+- [x] **3.8 Source health monitor**
   ONLINE/DELAYED/OFFLINE tracking, confidence_impact, `SOURCE_HEALTH` WS event (doc 08 §4.7); graceful degradation when a source fails.
   → After: 3.9 · ✅ Done when: killing a source degrades fusion but the system survives.
 - [ ] **3.9 Frontend crowd panels**

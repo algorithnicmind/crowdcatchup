@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from .schemas import StandardObservation
+from ..application.data_normalization import DataNormalizer
+from ..application.source_health_monitor import SourceHealthMonitor
 from ..application.fusion_service import FusionService
 import logging
 
@@ -76,6 +78,8 @@ async def ingest_observation(obs: StandardObservation, background_tasks: Backgro
     try:
         # 1. Basic Validation (handled by Pydantic)
         # 2. Enqueue for processing
+        obs = DataNormalizer.normalize(obs.model_dump())
+        SourceHealthMonitor.update_health(obs)
         observation_queue.append(obs)
         background_tasks.add_task(process_observation_background, obs)
         
