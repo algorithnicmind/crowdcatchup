@@ -11,6 +11,8 @@ import logging
 from core.config import get_settings
 from core.database import init_db, close_db
 from core.redis import close_redis
+from features.fusion.application.redis_subscriber import start_redis_subscriber
+import asyncio
 from shared.infrastructure.websocket_manager import get_ws_manager
 from shared.api.error_handlers import register_error_handlers
 
@@ -29,10 +31,15 @@ async def lifespan(app: FastAPI):
     """Startup and shutdown events."""
     logger.info("Initializing database...")
     await init_db()  # Creates PostgreSQL tables if they don't exist
+
+    # Start background Redis subscriber for fusion engine
+    subscriber_task = asyncio.create_task(start_redis_subscriber())
     yield
+
     logger.info("Closing database...")
     await close_db()
     logger.info("Closing Redis...")
+    subscriber_task.cancel()
     await close_redis()
 
 

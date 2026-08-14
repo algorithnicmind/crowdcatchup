@@ -80,10 +80,15 @@ async def ingest_observation(obs: StandardObservation, background_tasks: Backgro
         # 2. Enqueue for processing
         obs = DataNormalizer.normalize(obs.model_dump())
         SourceHealthMonitor.update_health(obs)
-        observation_queue.append(obs)
-        background_tasks.add_task(process_observation_background, obs)
         
-        return {"status": "success", "message": "Observation ingested", "queue_length": len(observation_queue)}
+        # Push the observation to the Redis Pub/Sub channel
+        redis = await get_redis()
+        # Ensure we publish as a JSON string
+        await redis.publish("crowd_observations", obs.model_dump_json())
+
+        
+        
+        return {"status": "success", "message": "Observation ingested", "queue_length": "Redis PubSub"}
     except Exception as e:
         logger.error(f"Error ingesting observation: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")

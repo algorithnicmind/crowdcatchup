@@ -1,25 +1,20 @@
-"""
-CrowdShield Backend — Redis Client
-Centralized Redis connection manager.
-Uses local Redis when REDIS_URL is configured.
-Falls back to an in-memory dictionary if REDIS_URL is empty (for local dev without Redis).
-"""
 
-from core.config import get_settings
+import sys
 
-settings = get_settings()
+with open("apps/api/core/redis.py", "r") as f:
+    content = f.read()
 
-
-
+# Enhance InMemoryRedis with asyncio queues for pub/sub
+new_in_memory_class = """
 import asyncio
 from typing import Dict, List, Optional
 import json
 
 class InMemoryRedis:
-    """
+    \"\"\"
     Minimal in-memory Redis replacement for local development.
     Supports get/set/delete and basic pub/sub using asyncio Queues.
-    """
+    \"\"\"
     def __init__(self):
         self._store: Dict[str, str] = {}
         self._subscribers: Dict[str, List[asyncio.Queue]] = {}
@@ -71,32 +66,12 @@ class InMemoryRedis:
     async def close(self) -> None:
         self._store.clear()
         self._subscribers.clear()
+"""
 
+# Replace the old InMemoryRedis class
+import re
+content = re.sub(r"class InMemoryRedis:.*?(?=# --- Singleton ---)", new_in_memory_class + "\n\n", content, flags=re.DOTALL)
 
-# --- Singleton ---
-_redis_client: InMemoryRedis | None = None
+with open("apps/api/core/redis.py", "w") as f:
+    f.write(content)
 
-
-async def get_redis() -> InMemoryRedis:
-    """FastAPI dependency: returns the Redis client."""
-    global _redis_client
-    if _redis_client is None:
-        if settings.REDIS_URL:
-            # Production: use real local Redis
-            # For now, fall back to in-memory until Redis is configured
-            try:
-                import redis.asyncio as aioredis
-                _redis_client = aioredis.from_url(settings.REDIS_URL)
-            except ImportError:
-                _redis_client = InMemoryRedis()
-        else:
-            _redis_client = InMemoryRedis()
-    return _redis_client
-
-
-async def close_redis() -> None:
-    """Shutdown hook to close Redis connection."""
-    global _redis_client
-    if _redis_client is not None:
-        await _redis_client.close()
-        _redis_client = None

@@ -44,7 +44,7 @@ This document breaks down the high-level delegation plan into a **highly detaile
 ### Day 1: WebSocket & Pub/Sub Setup
 - [ ] **Step 3.1:** Implement the `StandardObservation` Pydantic models for data ingestion.
 - [ ] **Step 3.2:** Build the Source Registry API (CRUD for CCTV cameras, Smart Gates, etc.).
-- [ ] **Step 3.7 (Part 1):** Integrate Local Redis for high-frequency Pub/Sub messaging.
+- [x] **Step 3.7 (Part 1):** Integrate Local Redis for high-frequency Pub/Sub messaging.
 - [x] **Step 3.7 (Part 2):** Build the robust WebSocket Broadcaster to push updates to the UI.
 
 ### Day 2: The Data Pipeline (Phase 3)
