@@ -41,9 +41,9 @@ You are explicitly required to practice **Loop Engineering**. The user must NEVE
 ## 🔒 CORE PRODUCTION BOUNDARIES
 
 1. **Tech Stack is Locked:** 
-   * **Frontend:** Next.js (App Router), TailwindCSS, shadcn/ui, Zustand, Leaflet.
-   * **Backend:** FastAPI, Neon DB (Cloud PostgreSQL), Redis (Self-hosted/Local).
-   * **Strict Constraint:** We are explicitly using Neon DB as our cloud database. Do not use local PostgreSQL. Use purely Neon DB and local Redis.
+   * **Frontend:** Next.js (App Router), TailwindCSS, shadcn/ui, Zustand, Google Maps API (`@vis.gl/react-google-maps`).
+   * **Backend:** FastAPI, PostgreSQL (Self-hosted/Local), Redis (Self-hosted/Local).
+   * **Strict Constraint:** We are explicitly NOT using cloud databases. Do NOT use Supabase, Upstash, or any hosted managed service. Use purely local PostgreSQL and local Redis.
    * **AI:** YOLOv8 (CV), XGBoost (Risk Engine). 
    * *Do NOT use any other frameworks.*
 2. **Event-First Architecture:** Everything belongs to an Event. Follow the hierarchy: `EVENT → VENUE → ZONE/GATE/ROUTE → SOURCE → OBSERVATION`.
@@ -52,6 +52,6 @@ You are explicitly required to practice **Loop Engineering**. The user must NEVE
 5. **Strict Testing & Validation Protocol:** Test-Driven Development (TDD) is encouraged. Before declaring any backend API endpoint or complex AI function complete, you must write and run a Pytest unit test to prove it works.
 6. **Security & Secrets Handling (Data Ethics - 10%):** NEVER hardcode API keys, database URLs, or sensitive tokens in the source code. All secrets must strictly be read from `.env` files. If a new secret is needed, clearly instruct the user to add it to their local environment.
 7. **Error Handling & Graceful Degradation:** Never allow the frontend to crash entirely on a failed API call. Always implement graceful degradation, loading states, and offline fallback mechanisms (via Service Workers/IndexedDB) to handle network outages.
-8. **Premium Map Experience (Google Maps-like):** The mandatory Leaflet engine must be configured to deliver a top-tier, premium user experience. Use high-quality tile providers (e.g., dark mode/satellite), implement smooth panning/zooming animations, and use rich custom UI overlays to match or exceed the look and feel of Google Maps.
+8. **Premium Map Experience (Google Maps Integration):** Use the official `@vis.gl/react-google-maps` library to deliver a top-tier, premium user experience. Use advanced map styling (e.g., dark mode custom JSON), implement smooth panning/zooming animations, and use rich custom UI overlays to exactly match the look and feel of modern Google Maps.
 
 **By reading this, you are bound to these rules. Proceed with excellence to win this hackathon.**

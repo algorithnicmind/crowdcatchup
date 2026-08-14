@@ -14,7 +14,7 @@ CrowdShield is engineered as a highly scalable, decoupled Monorepo architecture 
 * **Application Foundation:** Next.js (React) operating as a unified Progressive Web App (PWA).
 * **Language & Styling:** TypeScript for strict type safety. Tailwind CSS and `shadcn/ui` for rapid, accessible, and responsive component design.
 * **State Management:** Zustand for lightweight, fast state management across the application.
-* **Map Engine:** Leaflet (via `react-leaflet`) for rendering live geospatial crowd telemetry without API key dependencies.
+* **Map Engine:** Google Maps API (via `@vis.gl/react-google-maps`) for rendering live geospatial crowd telemetry.
 * **Analytics Charts:** Recharts/ECharts for analytics dashboards.
 * **Offline Resilience:** Service Workers and IndexedDB are utilized to cache venue maps, emergency instructions, and offline reporting schemas when cellular networks fail.
 
@@ -289,8 +289,7 @@ def check_reroute_needed(current_route, live_crowd_state, group_profile):
 - Use reverse geocoding for coordinate → address display
 
 ### Map Tiles
-- Use OpenStreetMap tiles for Leaflet (no API key required)
-- Fallback: MapTiler or Stamen tiles
+- Use Google Maps API for rendering map tiles and geometry.
 
 ---
 

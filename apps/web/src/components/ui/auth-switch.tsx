@@ -41,7 +41,7 @@ export default function AuthSwitch({ defaultView = 'login' }: AuthSwitchProps) {
       name: !isLogin && firstName ? `${firstName} ${lastName}`.trim() : email.split('@')[0] || 'User',
       role: role,
     });
-    router.push('/');
+    router.push('/map-demo');
   };
 
   return (

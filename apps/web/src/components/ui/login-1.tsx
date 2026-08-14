@@ -180,7 +180,7 @@ export const LoginOne = () => {
         <div className='hidden lg:block w-1/2 right h-full overflow-hidden'>
             <Image
               src='https://images.pexels.com/photos/7102037/pexels-photo-7102037.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
-              loader={({ src }) => src}
+              loader={({ src }: { src: string }) => src}
               width={1000}
               height={1000}
               priority
