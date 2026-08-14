@@ -1,0 +1,25 @@
+# Environment Variables Template for CrowdShield Backend
+# This file is visible (not hidden) so you can see what variables are needed.
+# DO NOT ADD SECRETS HERE. 
+# Copy this to a new file named `.env` in the same directory and fill in your actual values there.
+
+# --- Database ---
+# Neon DB (Cloud PostgreSQL) - Required for Production:
+# DATABASE_URL=postgresql+asyncpg://<neon_user>:<neon_password>@<neon_host>/<neon_db>?sslmode=require
+
+# Local PostgreSQL (for local development ONLY):
+# DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/crowdshield
+
+# --- Redis ---
+# Leave empty for in-memory fallback (local dev):
+REDIS_URL=
+# Production Local Redis:
+# REDIS_URL=redis://localhost:6379
+
+# --- JWT ---
+JWT_SECRET=crowdshield-dev-secret-change-in-production
+JWT_ALGORITHM=HS256
+JWT_EXPIRY_MINUTES=60
+
+# --- Application ---
+DEBUG=true
