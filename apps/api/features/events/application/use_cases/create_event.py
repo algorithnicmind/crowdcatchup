@@ -20,8 +20,16 @@ class CreateEventUseCase:
         polygon = [
             GeoPoint(lat=pt["lat"], lng=pt["lng"]) for pt in data.get("venue_polygon", [])
         ]
+        from datetime import datetime
+
+        start_date_raw = data.get("start_date")
+        end_date_raw = data.get("end_date")
+        
+        start_date = datetime.fromisoformat(start_date_raw.replace("Z", "+00:00")) if isinstance(start_date_raw, str) else start_date_raw
+        end_date = datetime.fromisoformat(end_date_raw.replace("Z", "+00:00")) if isinstance(end_date_raw, str) else end_date_raw
+
         date_range = DateRange(
-            start_date=data.get("start_date"), end_date=data.get("end_date")
+            start_date=start_date, end_date=end_date
         )
 
         event = Event(

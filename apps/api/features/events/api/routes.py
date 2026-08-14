@@ -12,7 +12,7 @@ from features.events.infrastructure.repositories.event_repository_impl import (
     SQLAlchemyEventRepository,
 )
 from features.events.application.use_cases.create_event import CreateEventUseCase
-from features.events.api.schemas import EventDTO
+from features.events.api.schemas import EventDTO, ZoneDTO, GateDTO
 
 # Protected routes for events
 router = APIRouter(prefix="/api/v1/events", tags=["events"])
@@ -75,7 +75,7 @@ async def update_venue_boundary_endpoint(event_id: str, data: dict, db: AsyncSes
 
 @router.post(
     "/{event_id}/zones",
-    response_model=dict,
+    response_model=ZoneDTO,
     dependencies=[Depends(require_role("EVENT_OWNER", "AUTHORITY"))],
 )
 async def create_zone_endpoint(event_id: str, data: dict, db: AsyncSession = Depends(get_db)):
@@ -90,7 +90,7 @@ async def create_zone_endpoint(event_id: str, data: dict, db: AsyncSession = Dep
 
 @router.post(
     "/{event_id}/gates",
-    response_model=dict,
+    response_model=GateDTO,
     dependencies=[Depends(require_role("EVENT_OWNER", "AUTHORITY"))],
 )
 async def create_gate_endpoint(event_id: str, data: dict, db: AsyncSession = Depends(get_db)):

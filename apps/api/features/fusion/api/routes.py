@@ -3,6 +3,7 @@ from .schemas import StandardObservation
 from ..application.data_normalization import DataNormalizer
 from ..application.source_health_monitor import SourceHealthMonitor
 from ..application.fusion_service import FusionService
+from core.redis import get_redis
 import logging
 
 router = APIRouter(prefix="/v1", tags=["Data Ingestion & Fusion"])

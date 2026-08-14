@@ -10,7 +10,9 @@ class InvalidCredentialsError(DomainError):
         super().__init__("Invalid email or password")
 
 
-class EmailAlreadyExistsError(DomainError):
+from shared.infrastructure.exceptions import ConflictError
+
+class EmailAlreadyExistsError(ConflictError):
     def __init__(self, email: str):
         super().__init__(f"Email '{email}' is already registered")
         self.email = email
