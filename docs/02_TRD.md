@@ -21,7 +21,7 @@ CrowdShield is engineered as a highly scalable, decoupled Monorepo architecture 
 ### 1.2 Core Backend Technologies (API & Data Hub)
 * **API Gateway:** FastAPI (Python) provides high-performance asynchronous REST endpoints and WebSocket connections.
 * **ORM & Validation:** SQLAlchemy for database access. Pydantic for strict request/response validation.
-* **Database (Persistent):** PostgreSQL + PostGIS for spatial queries, event configurations, venue polygons, gate coordinates, and historical analytics.
+* **Database (Persistent):** Neon DB (Cloud PostgreSQL) + PostGIS for spatial queries, event configurations, venue polygons, gate coordinates, and historical analytics.
 * **Cache & State (Live):** Redis for ephemeral state data such as live risk scores, active WebSocket connections, Redis Pub/Sub for real-time event streaming.
 * **Future Scalability:** Kafka for dedicated stream processing.
 

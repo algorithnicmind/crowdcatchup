@@ -15,8 +15,8 @@ class Settings(BaseSettings):
     APP_VERSION: str = "2.0.0"
     DEBUG: bool = False
 
-    # --- Database (Strictly PostgreSQL) ---
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/crowdshield"
+    # --- Database (Neon DB - Cloud PostgreSQL) ---
+    DATABASE_URL: str = "postgresql+asyncpg://<neon_user>:<neon_password>@<neon_host>/<neon_db>?sslmode=require"
 
     # --- Redis (in-memory fallback if not configured) ---
     REDIS_URL: str = ""  # Empty = use in-memory fallback

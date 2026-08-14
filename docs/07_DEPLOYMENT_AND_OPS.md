@@ -24,7 +24,7 @@ graph TB
         ALB[Application Load Balancer]
         API[FastAPI Instances / ECS]
         AI[AI Inference Workers / EC2 GPU]
-        DB[(PostgreSQL / PostGIS)]
+        DB[(Neon DB / PostGIS)]
         CACHE[(Redis)]
     end
 
@@ -47,7 +47,7 @@ graph TB
 * **Frontend (Next.js):** Vercel or AWS Amplify for global edge caching.
 * **Backend API (FastAPI):** AWS ECS or Render with auto-scaling.
 * **AI Inference:** GPU-accelerated EC2 instances (g4dn.xlarge) for YOLOv8.
-* **Database:** PostgreSQL + PostGIS for spatial queries.
+* **Database:** Neon DB (Cloud PostgreSQL) + PostGIS for spatial queries.
 * **Cache:** Redis for live state, Pub/Sub for real-time streaming.
 
 ---
@@ -64,7 +64,7 @@ graph TB
 | Drone unavailable | System continues with ground-level sources. |
 | Telecom/BLE unavailable | Already simulated; adapter returns OFFLINE status. |
 | Redis connection lost | In-memory fallback. WebSocket broadcast degrades. |
-| PostgreSQL connection lost | Cached last-known state served. Writes buffered. |
+| Neon DB connection lost | Cached last-known state served. Writes buffered. |
 
 ### 2.2 Degraded Operation Modes
 

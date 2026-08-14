@@ -279,7 +279,7 @@
   WebSocket load, AI latency, logging, graceful degradation verification.
   → After: 9.5 · ✅ Done when: WS handles demo load; degraded mode verified.
 - [ ] **9.5 Deployment**
-  CI/CD — Vercel (web), Docker/AWS (API), Local PostgreSQL (DB); env config; HTTPS (doc 07).
+  CI/CD — Vercel (web), Docker/AWS (API), Neon DB (Cloud PostgreSQL) (DB); env config; HTTPS (doc 07).
   → After: 9.6 · ✅ Done when: both apps deploy from CI and talk over HTTPS.
 - [ ] **9.6 Docs final sync + README**
   Verify quick-start; docs 01–12 match the code.

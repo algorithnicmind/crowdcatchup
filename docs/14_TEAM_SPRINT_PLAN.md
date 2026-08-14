@@ -40,7 +40,7 @@ This document breaks down the high-level delegation plan into a **highly detaile
 =
 ### Day 7: Deployment
 - [ ] Deploy FastAPI to production (e.g., Docker, AWS EC2).
-- [ ] Ensure local PostgreSQL and Redis connections are stable.
+- [ ] Ensure Neon DB (Cloud PostgreSQL) and local Redis connections are stable.
 
 ---
 
