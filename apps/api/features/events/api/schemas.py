@@ -55,3 +55,18 @@ class RouteDTO(BaseModel):
     type: str
     is_active: bool
     capacity: int
+
+class SourceDTO(BaseModel):
+    id: str
+    event_id: str
+    source_type: str
+    name: str
+    location_description: Optional[str]
+    is_active: bool
+
+class SourceCreateDTO(BaseModel):
+    event_id: str
+    source_type: str
+    name: str
+    location_description: Optional[str]
+    is_active: bool = True
