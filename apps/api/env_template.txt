@@ -4,17 +4,13 @@
 # Copy this to a new file named `.env` in the same directory and fill in your actual values there.
 
 # --- Database ---
-# Neon DB (Cloud PostgreSQL) - Required for Production:
-# DATABASE_URL=postgresql+asyncpg://<neon_user>:<neon_password>@<neon_host>/<neon_db>?sslmode=require
-
-# Local PostgreSQL (for local development ONLY):
-# DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/crowdshield
+# Strict Constraint: We are explicitly using Neon DB as our cloud database. 
+# Do not use local PostgreSQL.
+DATABASE_URL=postgresql+asyncpg://<neon_user>:<neon_password>@<neon_host>/<neon_db>?sslmode=require
 
 # --- Redis ---
-# Leave empty for in-memory fallback (local dev):
-REDIS_URL=
-# Production Local Redis:
-# REDIS_URL=redis://localhost:6379
+# Local Redis (Required as per AGENTS.md):
+REDIS_URL=redis://localhost:6379
 
 # --- JWT ---
 JWT_SECRET=crowdshield-dev-secret-change-in-production
