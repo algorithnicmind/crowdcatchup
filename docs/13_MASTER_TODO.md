@@ -104,7 +104,7 @@
 - [x] **2.9 Tests + docs ripple**
   Polygon/route validation tests; update docs 06 and 11.
   → After: PHASE 2 GATE · ✅ Done when: tests green and docs updated.
-- [ ] **🚧 PHASE 2 GATE** *(pass before Phase 3)*
+- [x] **🚧 PHASE 2 GATE** *(pass before Phase 3)*
   Full demo venue drawn, saved, and rendered on the map.
   → After: Phase 3 starts.
 

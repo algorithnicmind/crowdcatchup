@@ -1,0 +1,52 @@
+/* Custom Leaflet overrides for CrowdShield Dark Mode */
+
+.leaflet-container {
+  background-color: #09090b !important; /* Zinc 950 */
+  font-family: inherit;
+}
+
+/* Glassmorphism Popup */
+.leaflet-popup-content-wrapper {
+  background: rgba(9, 9, 11, 0.7) !important; /* Zinc 950 with opacity */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+.leaflet-popup-tip {
+  background: rgba(9, 9, 11, 0.7) !important;
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Custom Marker Styling base (Tailwind handles the rest in the JS config) */
+.glass-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dark mode overrides for Leaflet Draw toolbar */
+.leaflet-draw-toolbar a {
+  background-color: #18181b !important; /* Zinc 900 */
+  color: #fff !important;
+  border-bottom: 1px solid #27272a !important;
+}
+
+.leaflet-draw-toolbar a:hover {
+  background-color: #27272a !important; /* Zinc 800 */
+}
+
+.leaflet-draw-tooltip {
+  background: rgba(9, 9, 11, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+}
+
+.leaflet-draw-tooltip::before {
+  border-right-color: rgba(9, 9, 11, 0.8) !important;
+}
