@@ -77,15 +77,15 @@ This document breaks down the high-level delegation plan into a **highly detaile
 **Focus:** YOLOv8, BoT-SORT, XGBoost, Predictive Risk Algorithms.
 
 ### Day 1: CV Environment Setup
-- [ ] Set up local PyTorch / OpenCV environment.
-- [ ] **Step 5.1:** Download pre-trained YOLOv8 weights. Run a basic inference script on a sample crowd video to detect people (bounding boxes).
+- [x] Set up local PyTorch / OpenCV environment.
+- [x] **Step 5.1:** Download pre-trained YOLOv8 weights. Run a basic inference script on a sample crowd video to detect people (bounding boxes).
 
 ### Day 2: Object Tracking & Counting (Phase 5)
-- [ ] **Step 5.1 (BoT-SORT):** Integrate BoT-SORT to track individuals across frames, rather than just counting bounding boxes statically.
-- [ ] **Step 5.2:** Implement Line-Crossing logic (counting people walking *IN* vs *OUT* of a frame).
+- [x] **Step 5.1 (BoT-SORT):** Integrate BoT-SORT to track individuals across frames, rather than just counting bounding boxes statically.
+- [x] **Step 5.2:** Implement Line-Crossing logic (counting people walking *IN* vs *OUT* of a frame).
 
 ### Day 3: CV-to-Backend Bridge
-- [ ] **Step 5.4:** Write the Python script that takes the YOLOv8 counting output, formats it into a `StandardObservation` JSON, and POSTs it to Member 2's `/api/v1/ingest` endpoint.
+- [x] **Step 5.4:** Write the Python script that takes the YOLOv8 counting output, formats it into a `StandardObservation` JSON, and POSTs it to Member 2's `/api/v1/ingest` endpoint.
 
 ### Day 4: Risk Prediction Model (Phase 5)
 - [x] **Step 5.5:** Gather synthetic tabular data for crowd density, weather, time of day, and gate flow.
