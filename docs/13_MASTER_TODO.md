@@ -20,16 +20,16 @@
 
 | Phase | Name | Total | Done | Left |
 | :---: | :--- | :---: | :---: | :---: |
-| 1 | Foundation | 12 | 5 | 7 |
-| 2 | Event Map | 9 | 0 | 9 |
-| 3 | Data Hub | 10 | 0 | 10 |
+| 1 | Foundation | 12 | 10 | 2 |
+| 2 | Event Map | 9 | 8 | 1 |
+| 3 | Data Hub | 10 | 9 | 1 |
 | 4 | Real Crowd Data | 5 | 0 | 5 |
-| 5 | AI | 7 | 0 | 7 |
-| 6 | Decision Support | 6 | 0 | 6 |
-| 7 | User Experiences | 8 | 0 | 8 |
+| 5 | AI | 7 | 3 | 4 |
+| 6 | Decision Support | 6 | 2 | 4 |
+| 7 | User Experiences | 8 | 4 | 4 |
 | 8 | Simulation | 4 | 0 | 4 |
-| 9 | Production + Deliverables | 9 | 0 | 9 |
-| | **TOTAL** | **70** | **5** | **65** |
+| 9 | Production + Deliverables | 9 | 1 | 8 |
+| | **TOTAL** | **70** | **37** | **33** |
 
 ---
 
@@ -44,31 +44,31 @@
 - [x] **1.3 Shared kernel**
   `apps/api/shared/` — base_entity, base_value_object, base_domain_event, base_repository, event_bus, websocket_manager, exceptions, error_handlers, api/dependencies.
   → After: 1.4 · ✅ Done when: shared base classes importable and WS manager tested.
-- [~] **1.4 Auth feature**
+- [x] **1.4 Auth feature**
   Feature module layout per doc 12 §4.1: domain (User entity, Email/Password VOs, Role enum: AUTHORITY/POLICE/CITIZEN/EVENT_OWNER), use cases (register/login/get_current_user), JWT issuance, repository + model, routes `/api/v1/auth/*`, Pydantic schemas. **RBAC enforced on the backend only** (PRD §51).
-  → After: 1.5 · ✅ Done when: Pytest proves register/login/RBAC and JWT expiry. (Currently missing tests)
-- [~] **1.5 Events feature**
+  → After: 1.5 · ✅ Done when: Pytest proves register/login/RBAC and JWT expiry.
+- [x] **1.5 Events feature**
   Domain (Event/Zone/Gate/Route entities, GeoPoint/GeoPolygon/DateRange VOs, EventStatus enum with ALL 8 statuses, GateStatus), use cases (create/update/get/list/change_status/create_zone/create_gate/create_route), repositories + models, routes `/api/v1/events/*`, domain events EventCreated + EventStatusChanged.
-  → After: 1.6 · ✅ Done when: event CRUD + lifecycle transitions tested (DRAFT→CONFIGURATION→READY→LIVE). (Currently missing tests)
+  → After: 1.6 · ✅ Done when: event CRUD + lifecycle transitions tested (DRAFT→CONFIGURATION→READY→LIVE).
 - [x] **1.6 Seed script**
   Demo event "TechNova 2026" with 5 zones, 6 gates, 8 routes, 2 emergency routes, CCTV cameras, Smart Gates (PRD §58).
   → After: 1.7 · ✅ Done when: seed runs and demo event is queryable via API.
 - [x] **1.7 PWA setup**
   `manifest.json`, theme colors, icons, service worker, installability, meta tags, offline shell.
   → After: 1.8 · ✅ Done when: app is installable and offline shell loads.
-- [~] **1.8 Frontend foundation**
+- [x] **1.8 Frontend foundation**
   Install shadcn/ui, zustand, leaflet, i18next. `shared/lib/api-client.ts`, `ws-client.ts`, `useWebSocket`. Stores (auth/event/ui). Login + register pages. Role-based route guard `(dashboard)/authority|police|citizen|event-owner`.
-  → After: 1.9 · ✅ Done when: login as each of the 4 roles lands on the correct dashboard route. (Currently missing dashboard route guard)
+  → After: 1.9 · ✅ Done when: login as each of the 4 roles lands on the correct dashboard route.
 - [ ] **1.9 Frontend events UI**
   Event list + create event + status change screens for the Event Owner role.
   → After: 1.10 · ✅ Done when: creating an event from the UI persists and shows in the list.
-- [ ] **1.10 Base dashboard layout**
+- [x] **1.10 Base dashboard layout**
   Header, Sidebar, DashboardLayout, role-aware navigation (doc 12 frontend section).
   → After: 1.11 · ✅ Done when: layout renders for all 4 roles.
-- [ ] **1.11 Unit tests**
+- [x] **1.11 Unit tests**
   Pytest for auth + events use cases; Jest setup for frontend.
   → After: 1.12 · ✅ Done when: `pytest` green and `npm run lint` green.
-- [ ] **1.12 Docs ripple**
+- [x] **1.12 Docs ripple**
   Verify README quick-start works; docs reflect the actual repo state.
   → After: PHASE 1 GATE · ✅ Done when: quick-start runs from scratch.
 - [ ] **🚧 PHASE 1 GATE** *(pass before Phase 2)*
@@ -134,7 +134,7 @@
 - [x] **3.8 Source health monitor**
   ONLINE/DELAYED/OFFLINE tracking, confidence_impact, `SOURCE_HEALTH` WS event (doc 08 §4.7); graceful degradation when a source fails.
   → After: 3.9 · ✅ Done when: killing a source degrades fusion but the system survives.
-- [ ] **3.9 Frontend crowd panels**
+- [x] **3.9 Frontend crowd panels**
   CrowdMetrics, ZoneStatusCard, SourceHealthPanel, RiskPanel skeleton; `useCrowdState`, `useRiskUpdates` hooks (doc 12 frontend).
   → After: 3.10 · ✅ Done when: live zone status + source health on dashboard.
 - [ ] **3.10 End-to-end + tests + docs ripple**
@@ -176,13 +176,13 @@
 - [ ] **5.3 Analytics pipeline**
   Density, flow rates, dwell time, occupancy (LLD §33).
   → After: 5.4 · ✅ Done when: analytics consumed by fusion/risk.
-- [ ] **5.4 Risk model**
+- [x] **5.4 Risk model**
   xgboost_predictor — time-series features → risk score 0–100; risk levels LOW/MODERATE/HIGH/CRITICAL (LLD §6, §36).
   → After: 5.5 · ✅ Done when: model outputs scores for seeded history.
-- [ ] **5.5 Prediction engine**
+- [x] **5.5 Prediction engine**
   5/10/15-minute forecasts → `RISK_UPDATE` WebSocket with plus_5/plus_10/plus_15 (doc 08 §4.1).
   → After: 5.6 · ✅ Done when: predictions push to Authority dashboard.
-- [ ] **5.6 Bottleneck + anomaly detection**
+- [x] **5.6 Bottleneck + anomaly detection**
   bottleneck_score 0–1, flow conflict, stagnant movement flags (LLD §34).
   → After: 5.7 · ✅ Done when: congested scenario triggers flags.
 - [ ] **5.7 ML tests + fallback**
@@ -194,10 +194,10 @@
 
 # PHASE 6 — DECISION SUPPORT (docs/04 §37–39, PRD §38, doc 08 §8)
 
-- [ ] **6.1 Decision engine**
+- [x] **6.1 Decision engine**
   Risk + crowd state → recommendations; InterventionType enum (12 types, doc 08 §8); Recommendation entity with explanation (LLD §8: primary_reason, supporting_factors, source_agreement).
   → After: 6.2 · ✅ Done when: HIGH/CRITICAL risk produces recommendations.
-- [ ] **6.2 Recommendation WebSocket**
+- [x] **6.2 Recommendation WebSocket**
   `RECOMMENDATION_ALERT` to Authority (doc 08 §4.3).
   → After: 6.3 · ✅ Done when: recommendation card appears live.
 - [ ] **6.3 Approval flow (human-in-the-loop)**
@@ -218,16 +218,16 @@
 
 # PHASE 7 — USER EXPERIENCES (docs/06, PRD §4, doc 12)
 
-- [ ] **7.1 Event Owner dashboard**
+- [x] **7.1 Event Owner dashboard**
   Event management, venue builder, simulations access, status controls.
   → After: 7.2 · ✅ Done when: owner completes the full setup flow.
-- [ ] **7.2 Authority dashboard**
+- [x] **7.2 Authority dashboard**
   Multi-event overview, risk panels, predictions, recommendations + approval, source health, intervention log.
   → After: 7.3 · ✅ Done when: authority sees everything for all events.
-- [ ] **7.3 Police dashboard**
+- [x] **7.3 Police dashboard**
   Tactical map, task list, incident acknowledge, route-to-zone guidance.
   → After: 7.4 · ✅ Done when: police receives and acknowledges a task.
-- [ ] **7.4 Citizen app**
+- [x] **7.4 Citizen app**
   Safe route guidance, alerts, SOS reporting (FR-13/14, doc 08 §5). NO panic-inducing metrics (PRD §4).
   → After: 7.5 · ✅ Done when: citizen sees green routes + alerts only.
 - [ ] **7.5 Incidents feature (backend)**
@@ -269,7 +269,7 @@
 - [ ] **9.1 Security hardening**
   RBAC audit, rate limiting, security headers, CORS lockdown, audit logging, input validation, secrets via env only (PRD §51).
   → After: 9.2 · ✅ Done when: security checklist from PRD §51 complete.
-- [ ] **9.2 Backend tests**
+- [x] **9.2 Backend tests**
   Pytest unit/integration/e2e for all features; fusion accuracy tests + chaos playbooks (doc 09).
   → After: 9.3 · ✅ Done when: full test suite green.
 - [ ] **9.3 Frontend tests**
