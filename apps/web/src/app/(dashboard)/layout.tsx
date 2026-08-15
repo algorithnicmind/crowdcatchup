@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { isAuthenticated } = useAuthStore();
   const [mounted, setMounted] = useState(false);
 
@@ -30,6 +31,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
     );
   }
+  
+  // Detect mobile app routes to hide the desktop shell
+  const isMobileApp = pathname?.startsWith('/police') || pathname?.startsWith('/citizen');
 
   return (
     <div className="flex h-screen w-full bg-[#09090b] text-white overflow-hidden">

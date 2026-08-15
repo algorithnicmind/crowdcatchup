@@ -15,17 +15,17 @@ export function Sidebar() {
 
   // Define links based on role
   const links = React.useMemo(() => {
-    const base = [
-      { name: 'Live Map', href: '/map-demo', icon: Map },
-    ];
+    const base = [];
 
     if (role === 'AUTHORITY') {
-      base.push({ name: 'Command Center', href: '/command', icon: BarChart3 });
-      base.push({ name: 'Alerts', href: '/alerts', icon: ShieldAlert });
-    } else if (role === 'EVENT_OWNER') {
-      base.push({ name: 'Venue Builder', href: '/builder', icon: Map });
+      base.push({ name: 'Command Center', href: '/authority', icon: BarChart3 });
+      base.push({ name: 'Live Map', href: '/map-demo', icon: Map });
     } else if (role === 'POLICE' || role === 'MEDICAL') {
-      base.push({ name: 'Tasks', href: '/tasks', icon: CheckSquare });
+      base.push({ name: 'Live Map & Tasks', href: '/police', icon: CheckSquare });
+    } else if (role === 'CITIZEN') {
+      base.push({ name: 'Live Map', href: '/citizen', icon: Map });
+    } else {
+      base.push({ name: 'Live Map', href: '/map-demo', icon: Map });
     }
 
     base.push({ name: 'Settings', href: '/settings', icon: Settings });

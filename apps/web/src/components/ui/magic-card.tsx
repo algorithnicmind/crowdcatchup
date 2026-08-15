@@ -17,6 +17,7 @@ interface MagicCardBaseProps {
   gradientSize?: number
   gradientFrom?: string
   gradientTo?: string
+  innerClassName?: string
 }
 
 interface MagicCardGradientProps extends MagicCardBaseProps {
@@ -64,6 +65,7 @@ export function MagicCard(props: MagicCardProps) {
     gradientFrom = "#9E7AFF",
     gradientTo = "#FE8BBB",
     mode = "gradient",
+    innerClassName,
   } = props
 
   const glowFrom = isOrbMode(props) ? (props.glowFrom ?? "#ee4f27") : "#ee4f27"
@@ -176,7 +178,7 @@ export function MagicCard(props: MagicCardProps) {
         `,
       }}
     >
-      <div className="bg-background absolute inset-px z-20 rounded-[inherit]" />
+      <div className={cn("bg-background absolute inset-px z-20 rounded-[inherit]", innerClassName)} />
 
       {mode === "gradient" && (
         <motion.div
@@ -211,7 +213,7 @@ export function MagicCard(props: MagicCardProps) {
             opacity: orbVisible,
             background: `linear-gradient(${glowAngle}deg, ${glowFrom}, ${glowTo})`,
 
-            mixBlendMode: isDarkTheme ? "screen" : "multiply",
+            mixBlendMode: "screen", // Forced to screen for dark mode app
             willChange: "transform, opacity",
           }}
         />

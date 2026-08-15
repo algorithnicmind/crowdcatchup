@@ -1,0 +1,169 @@
+'use client';
+
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MagicCard } from '@/components/ui/magic-card';
+import { Navigation, Users, ShieldAlert, HeartPulse, Search, MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+export function SafeRoutePanel() {
+  const [isPlanning, setIsPlanning] = useState(false);
+  const [routeFound, setRouteFound] = useState(false);
+
+  return (
+    <div className="absolute bottom-6 left-4 right-4 z-[1000] pointer-events-none">
+      <AnimatePresence>
+        {!routeFound ? (
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            className="pointer-events-auto"
+          >
+            <MagicCard 
+              className="bg-black/80 backdrop-blur-xl border border-emerald-500/30 shadow-2xl overflow-hidden"
+              gradientColor="rgba(16, 185, 129, 0.1)"
+            >
+              <div className="p-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <Navigation className="w-5 h-5 text-emerald-400" />
+                  <h3 className="text-white font-bold tracking-wide">Plan Safe Journey</h3>
+                </div>
+
+                <div className="space-y-3 mb-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
+                    <input 
+                      type="text" 
+                      placeholder="Where do you want to go?" 
+                      className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-9 pr-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 transition-colors"
+                      defaultValue="Maha Kumbh Mela"
+                    />
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <div className="flex-1 bg-white/5 border border-white/10 rounded-lg p-2 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-gray-400" />
+                        <span className="text-sm text-gray-300">Group Size</span>
+                      </div>
+                      <span className="text-white font-bold">4</span>
+                    </div>
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-2 flex items-center justify-center w-12 cursor-pointer hover:bg-emerald-500/20">
+                      <HeartPulse className="w-4 h-4 text-emerald-400" />
+                    </div>
+                  </div>
+                </div>
+
+                <Button 
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg shadow-emerald-500/20"
+                  onClick={() => {
+                    setIsPlanning(true);
+                    setTimeout(() => setRouteFound(true), 1500); // Simulate API call
+                  }}
+                  disabled={isPlanning}
+                >
+                  {isPlanning ? (
+                    <span className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                      FINDING SAFE ROUTE...
+                    </span>
+                  ) : (
+                    "FIND SAFE ROUTE"
+                  )}
+                </Button>
+              </div>
+            </MagicCard>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="pointer-events-auto"
+          >
+            <MagicCard 
+              className="bg-black/90 backdrop-blur-xl border border-emerald-500/50 shadow-2xl overflow-hidden"
+              gradientColor="rgba(16, 185, 129, 0.15)"
+            >
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 to-teal-400" />
+              
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-3 mt-1">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-6 h-6 text-emerald-400" />
+                    <h2 className="text-white font-bold text-lg">SAFE ROUTE FOUND</h2>
+                  </div>
+                  <div className="bg-emerald-500/20 px-2 py-1 rounded text-emerald-300 text-xs font-bold border border-emerald-500/30">
+                    25 MIN
+                  </div>
+                </div>
+
+                <div className="space-y-3 mb-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex flex-col items-center mt-1">
+                      <div className="w-2 h-2 rounded-full bg-blue-500" />
+                      <div className="w-0.5 h-6 bg-white/10" />
+                      <MapPin className="w-4 h-4 text-emerald-400" />
+                    </div>
+                    <div className="flex-1 space-y-3">
+                      <div>
+                        <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Start</p>
+                        <p className="text-sm text-gray-300">Current Location</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Recommended Gate</p>
+                        <p className="text-sm text-emerald-400 font-semibold">Gate G5 (Low Congestion)</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-orange-500/10 border border-orange-500/20 p-2.5 rounded-lg flex gap-2 items-start mt-2">
+                    <ShieldAlert className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
+                    <p className="text-xs text-orange-200">
+                      Avoiding Gate G3 due to heavy congestion. Keep children close in Zone B.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button 
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20 font-semibold"
+                  >
+                    START
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="bg-transparent border-white/20 text-white hover:bg-white/10"
+                    onClick={() => setRouteFound(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </MagicCard>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function CheckCircle(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+      <polyline points="22 4 12 14.01 9 11.01" />
+    </svg>
+  );
+}

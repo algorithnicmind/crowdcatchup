@@ -84,7 +84,71 @@ function RoutePolyline() {
   return null;
 }
 
-export function GoogleEventMap() {
+import { EVENT_ZONES } from '@/lib/constants/zones';
+import { Users, Router } from 'lucide-react';
+
+function LiveMarkers() {
+  const { liveCrowdState, liveRisk } = useMapStore();
+
+  return (
+    <>
+      {Object.entries(EVENT_ZONES).map(([zoneId, coords]) => {
+        const risk = liveRisk[zoneId];
+        const crowd = liveCrowdState[zoneId];
+        
+        const level = risk?.risk_level || crowd?.density_level || 'LOW';
+        
+        let bgColor = 'bg-emerald-500/20';
+        let borderColor = 'border-emerald-500/50';
+        let textColor = 'text-emerald-400';
+        let pulseColor = 'bg-emerald-500';
+        let pulse = false;
+        
+        if (level === 'HIGH' || level === 'CONGESTED') {
+          bgColor = 'bg-amber-500/20';
+          borderColor = 'border-amber-500/50';
+          textColor = 'text-amber-400';
+          pulseColor = 'bg-amber-500';
+          pulse = true;
+        } else if (level === 'CRITICAL') {
+          bgColor = 'bg-red-500/20';
+          borderColor = 'border-red-500/50';
+          textColor = 'text-red-500';
+          pulseColor = 'bg-red-500';
+          pulse = true;
+        } else if (level === 'MODERATE') {
+          bgColor = 'bg-blue-500/20';
+          borderColor = 'border-blue-500/50';
+          textColor = 'text-blue-400';
+        }
+
+        const isGate = zoneId.toLowerCase().includes('gate');
+        const Icon = isGate ? Router : Users;
+
+        return (
+          <AdvancedMarker key={zoneId} position={coords} title={zoneId}>
+            <div className={`relative w-10 h-10 rounded-xl flex items-center justify-center backdrop-blur-md shadow-lg border transition-all duration-300 hover:scale-110 ${bgColor} ${borderColor}`}>
+              {pulse && (
+                <span className="absolute flex h-full w-full left-0 top-0">
+                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-xl opacity-75 ${pulseColor}`}></span>
+                </span>
+              )}
+              <div className={`relative z-10 flex items-center justify-center ${textColor}`}>
+                <Icon className="w-5 h-5" />
+              </div>
+            </div>
+          </AdvancedMarker>
+        );
+      })}
+    </>
+  );
+}
+
+interface GoogleEventMapProps {
+  role?: 'authority' | 'police' | 'citizen' | 'owner';
+}
+
+export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const { mapTypeId } = useMapStore();
 
@@ -113,15 +177,11 @@ export function GoogleEventMap() {
         >
           <TrafficLayer />
           <RoutePolyline />
-          
-          {/* Example Marker */}
-          <AdvancedMarker position={EVENT_CENTER}>
-            <Pin background={"#10b981"} borderColor={"#047857"} glyphColor={"#ffffff"} />
-          </AdvancedMarker>
+          <LiveMarkers />
         </Map>
         
         {/* Floating UI Overlays - Placed AFTER Map so they sit on top in DOM */}
-        <MapOverlayControls />
+        <MapOverlayControls role={role} />
       </APIProvider>
     </div>
   );

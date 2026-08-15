@@ -66,7 +66,7 @@ export function SearchBar() {
   };
 
   return (
-    <div className="absolute top-6 left-6 z-50 w-80 pointer-events-auto" ref={wrapperRef}>
+    <div className="absolute top-4 md:top-6 left-4 md:left-6 z-50 w-[calc(100vw-140px)] md:w-80 pointer-events-auto" ref={wrapperRef}>
       <div className="flex items-center bg-zinc-900/90 backdrop-blur-md border border-zinc-800 rounded-full px-4 py-3 shadow-lg shadow-black/50 transition-all focus-within:ring-2 focus-within:ring-blue-500">
         <Search className={`h-5 w-5 mr-3 ${isLoading ? 'text-blue-500 animate-pulse' : 'text-zinc-400'}`} />
         <input 

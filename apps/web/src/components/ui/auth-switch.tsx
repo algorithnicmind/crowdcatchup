@@ -41,7 +41,18 @@ export default function AuthSwitch({ defaultView = 'login' }: AuthSwitchProps) {
       name: !isLogin && firstName ? `${firstName} ${lastName}`.trim() : email.split('@')[0] || 'User',
       role: role,
     });
-    router.push('/map-demo');
+    
+    if (role === 'AUTHORITY') {
+      router.push('/authority');
+    } else if (role === 'POLICE') {
+      router.push('/police');
+    } else if (role === 'CITIZEN') {
+      router.push('/citizen');
+    } else if (role === 'EVENT_OWNER') {
+      router.push('/owner');
+    } else {
+      router.push('/map-demo');
+    }
   };
 
   return (

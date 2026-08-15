@@ -14,7 +14,7 @@ This document breaks down the high-level delegation plan into a **highly detaile
 - [x] **Step 1.8 (Part 3):** Implement the `useAuthStore` to handle JWTs and Role-based redirects (Authority, Police, Citizen, Event Owner).
 
 ### Day 2: Premium Event Map Foundation (Phase 2)
-- [ ] **Step 1.10:** Build the Base Dashboard Layout (Header, Sidebar, Navigation).
+- [x] **Step 1.10:** Build the Base Dashboard Layout (Header, Sidebar, Navigation).
 - [x] **Step 2.1:** Implement the hero `EventMap.tsx` component using `react-leaflet`.
 - [x] **Step 2.1 (Aesthetic):** Configure CartoDB Dark Matter tiles (or similar) for the "Google Maps-like" premium look.
 - [x] **Step 2.1 (Interactivity):** Add smooth fly-to animations and zoom controls.
@@ -25,15 +25,15 @@ This document breaks down the high-level delegation plan into a **highly detaile
 - [x] **Step 2.8:** Ensure the "TechNova 2026" seeded venue renders perfectly on the map.
 
 ### Day 4: UI Dashboards (Phase 7)
-- [ ] **Step 7.1:** Build the **Authority Command Center** (Desktop). Add Heatmap toggles, CCTV grids, and Alert feeds.
-- [ ] **Step 7.2:** Build the **Event Owner Dashboard** (Desktop) showing infrastructure status and occupancy metrics.
+- [x] **Step 7.1:** Build the **Authority Command Center** (Desktop). Add Heatmap toggles, CCTV grids, and Alert feeds.
+- [x] **Step 7.2:** Build the **Event Owner Dashboard** (Desktop) showing infrastructure status and occupancy metrics.
 
 ### Day 5: Mobile Apps & Citizen Experience (Phase 7)
-- [ ] **Step 7.3:** Build the **Police/Security App** (Mobile-first PWA). Focus on large buttons, GPS tracking, and SOS alerts.
-- [ ] **Step 7.4:** Build the **Citizen App** (Mobile-first PWA). Focus on simple, clean navigation, safe route display, and multilingual support (`i18next`).
+- [x] **Step 7.3:** Build the **Police/Security App** (Mobile-first PWA). Focus on large buttons, GPS tracking, and SOS alerts.
+- [x] **Step 7.4:** Build the **Citizen App** (Mobile-first PWA). Focus on simple, clean navigation, safe route display, and multilingual support (`i18next`).
 
 ### Day 6 & 7: Real-Time Wiring & Polish
-- [ ] **Step 3.9:** Wire up the UI to the WebSockets. Ensure map markers change color (Green -> Amber -> Red) instantly when a WS event fires.
+- [x] **Step 3.9:** Wire up the UI to the WebSockets. Ensure map markers change color (Green -> Amber -> Red) instantly when a WS event fires.
 - [ ] **Day 7:** Final UI Polish, responsive testing on mobile devices, and recording the pitch demo.
 
 ---
