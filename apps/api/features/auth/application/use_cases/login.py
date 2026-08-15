@@ -16,9 +16,9 @@ class LoginUseCase:
         self._verify = password_verifier
         self._create_token = token_creator
 
-    async def execute(self, email: str, password: str) -> dict:
+    async def execute(self, identifier: str, password: str) -> dict:
         # 1. Find user
-        user = await self._repo.get_by_email(email)
+        user = await self._repo.get_by_identifier(identifier)
         if user is None:
             raise InvalidCredentialsError()
 

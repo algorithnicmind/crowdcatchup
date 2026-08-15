@@ -16,7 +16,8 @@ class User(BaseEntity):
     Identity is the UUID inherited from BaseEntity.
     """
 
-    email: str = ""
+    email: str | None = None
+    phone_number: str | None = None
     hashed_password: str = ""
     role: Role = Role.CITIZEN
     full_name: str = ""

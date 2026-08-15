@@ -40,6 +40,7 @@ async def register(request: RegisterRequest, db: AsyncSession = Depends(get_db))
     )
     user_dto = await use_case.execute(
         email=request.email,
+        phone_number=request.phone_number,
         password=request.password,
         full_name=request.full_name,
         role=request.role,
@@ -47,6 +48,7 @@ async def register(request: RegisterRequest, db: AsyncSession = Depends(get_db))
     return UserResponse(
         id=user_dto.id,
         email=user_dto.email,
+        phone_number=user_dto.phone_number,
         full_name=user_dto.full_name,
         role=user_dto.role,
         is_active=user_dto.is_active,
@@ -62,7 +64,7 @@ async def login(request: LoginRequest, db: AsyncSession = Depends(get_db)):
         password_verifier=verify_password,
         token_creator=create_access_token,
     )
-    result = await use_case.execute(email=request.email, password=request.password)
+    result = await use_case.execute(identifier=request.identifier, password=request.password)
     return TokenResponse(**result)
 
 
@@ -78,6 +80,7 @@ async def get_me(
     return UserResponse(
         id=user_dto.id,
         email=user_dto.email,
+        phone_number=user_dto.phone_number,
         full_name=user_dto.full_name,
         role=user_dto.role,
         is_active=user_dto.is_active,

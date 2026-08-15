@@ -5,7 +5,7 @@ Doc 12 §3.3: Infrastructure implements interfaces from domain.
 """
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from features.auth.domain.entities.user import User
 from features.auth.domain.enums.role import Role
 from features.auth.infrastructure.models.user_model import UserModel
@@ -23,6 +23,7 @@ class SQLAlchemyUserRepository(BaseRepository[User]):
         return User(
             id=model.id,
             email=model.email,
+            phone_number=model.phone_number,
             hashed_password=model.hashed_password,
             role=Role(model.role),
             full_name=model.full_name,
@@ -36,6 +37,7 @@ class SQLAlchemyUserRepository(BaseRepository[User]):
         return UserModel(
             id=entity.id,
             email=entity.email,
+            phone_number=entity.phone_number,
             hashed_password=entity.hashed_password,
             role=entity.role.value,
             full_name=entity.full_name,
@@ -53,6 +55,19 @@ class SQLAlchemyUserRepository(BaseRepository[User]):
         """Find a user by email address."""
         result = await self._session.execute(
             select(UserModel).where(UserModel.email == email)
+        )
+        model = result.scalar_one_or_none()
+        return self._to_entity(model) if model else None
+
+    async def get_by_identifier(self, identifier: str) -> User | None:
+        """Find a user by email or phone number."""
+        result = await self._session.execute(
+            select(UserModel).where(
+                or_(
+                    UserModel.email == identifier,
+                    UserModel.phone_number == identifier
+                )
+            )
         )
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None

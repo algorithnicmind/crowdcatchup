@@ -12,7 +12,8 @@ class UserDTO:
     """Data Transfer Object for user information."""
 
     id: str
-    email: str
+    email: str | None
+    phone_number: str | None
     full_name: str
     role: str
     is_active: bool
