@@ -19,20 +19,24 @@ export default function AuthorityDashboard() {
   const updateSourceHealth = useMapStore((state) => state.updateSourceHealth);
 
   useEffect(() => {
-    const unsubCrowd = subscribe('CROWD_STATE_UPDATE', (payload: any) => {
-      if (payload.state) updateCrowdState(payload.state.zone_id, payload.state as CrowdState);
+    const unsubCrowd = subscribe('CROWD_STATE_UPDATE', (payload: unknown) => {
+      const data = payload as { state?: CrowdState };
+      if (data.state) updateCrowdState(data.state.zone_id, data.state);
     });
 
-    const unsubRisk = subscribe('RISK_UPDATE', (payload: any) => {
-      if (payload.risk) updateRisk(payload.risk.zone_id, payload.risk as RiskUpdate);
+    const unsubRisk = subscribe('RISK_UPDATE', (payload: unknown) => {
+      const data = payload as { risk?: RiskUpdate };
+      if (data.risk) updateRisk(data.risk.zone_id, data.risk);
     });
 
-    const unsubRec = subscribe('RECOMMENDATION_ALERT', (payload: any) => {
-      if (payload.recommendation) addRecommendation(payload.recommendation as ActionPlan);
+    const unsubRec = subscribe('RECOMMENDATION_ALERT', (payload: unknown) => {
+      const data = payload as { recommendation?: ActionPlan };
+      if (data.recommendation) addRecommendation(data.recommendation);
     });
     
-    const unsubHealth = subscribe('SOURCE_HEALTH', (payload: any) => {
-      if (payload.health) updateSourceHealth(payload.health as SourceHealth);
+    const unsubHealth = subscribe('SOURCE_HEALTH', (payload: unknown) => {
+      const data = payload as { health?: SourceHealth };
+      if (data.health) updateSourceHealth(data.health);
     });
 
     return () => {

@@ -24,15 +24,16 @@ function NominatimInput({
   onSelect: (result: NominatimResult | null) => void 
 }) {
   const [query, setQuery] = useState(value ? value.display_name : '');
+  const [prevValue, setPrevValue] = useState(value);
   const [results, setResults] = useState<NominatimResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (value) {
-      setQuery(value.display_name);
-    }
-  }, [value]);
+  // Sync state with props during render to avoid cascading updates
+  if (value !== prevValue) {
+    setPrevValue(value);
+    setQuery(value ? value.display_name : '');
+  }
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -46,8 +47,9 @@ function NominatimInput({
 
   useEffect(() => {
     if (!query.trim() || (value && query === value.display_name)) {
-      setResults([]);
-      return;
+      // Defer state update to avoid synchronous React warning
+      const t = setTimeout(() => setResults([]), 0);
+      return () => clearTimeout(t);
     }
 
     const delayFn = setTimeout(async () => {

@@ -10,14 +10,15 @@ export type WebSocketEvent =
   | 'CITIZEN_ALERT';
 
 export function useWebSocket(eventId: string) {
-  const { token, role } = useAuthStore();
+  const { token, user } = useAuthStore();
+  const role = user?.role;
   const ws = useRef<WebSocket | null>(null);
   
   // A dictionary to store callbacks for each event type
-  const callbacks = useRef<Record<string, ((payload: any) => void)[]>>({});
+  const callbacks = useRef<Record<string, ((payload: unknown) => void)[]>>({});
 
   // Forward declaration via ref to break circular dependency in useCallback
-  const connectRef = useRef<() => void>();
+  const connectRef = useRef<(() => void) | null>(null);
 
   const connect = useCallback(() => {
     if (!token || !eventId || !role) return;
@@ -65,7 +66,7 @@ export function useWebSocket(eventId: string) {
     }
   }, []);
 
-  const subscribe = useCallback((eventType: WebSocketEvent, callback: (payload: any) => void) => {
+  const subscribe = useCallback((eventType: WebSocketEvent, callback: (payload: unknown) => void) => {
     if (!callbacks.current[eventType]) {
       callbacks.current[eventType] = [];
     }

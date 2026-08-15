@@ -15,13 +15,13 @@ interface EventConfigState {
   setDraftBoundary: (points: GeoPoint[]) => void;
   
   draftZone: { name: string; polygon: GeoPoint[]; capacity: number; type: string } | null;
-  setDraftZone: (zone: any) => void;
+  setDraftZone: (zone: EventConfigState['draftZone']) => void;
   
   draftGate: { name: string; location: GeoPoint | null; type: string; status: string } | null;
-  setDraftGate: (gate: any) => void;
+  setDraftGate: (gate: EventConfigState['draftGate']) => void;
   
   draftRoute: { name: string; path: GeoPoint[]; type: string } | null;
-  setDraftRoute: (route: any) => void;
+  setDraftRoute: (route: EventConfigState['draftRoute']) => void;
 }
 
 export const useEventConfigStore = create<EventConfigState>((set) => ({

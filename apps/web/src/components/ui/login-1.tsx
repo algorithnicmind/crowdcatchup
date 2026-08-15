@@ -1,20 +1,14 @@
 'use client'
 
 import * as React from 'react'
-import { Children,
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState, } from 'react'
+import { useState } from 'react'
 import Image from 'next/image';
 
 interface InputProps {
   label?: string;
   placeholder?: string;
   icon?: React.ReactNode;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const AppInput = (props: InputProps) => {

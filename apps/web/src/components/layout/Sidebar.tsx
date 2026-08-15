@@ -20,7 +20,7 @@ export function Sidebar() {
     if (role === 'AUTHORITY') {
       base.push({ name: 'Command Center', href: '/authority', icon: BarChart3 });
       base.push({ name: 'Live Map', href: '/map-demo', icon: Map });
-    } else if (role === 'POLICE' || role === 'MEDICAL') {
+    } else if (role === 'POLICE') {
       base.push({ name: 'Live Map & Tasks', href: '/police', icon: CheckSquare });
     } else if (role === 'CITIZEN') {
       base.push({ name: 'Live Map', href: '/citizen', icon: Map });

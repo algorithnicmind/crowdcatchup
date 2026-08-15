@@ -13,6 +13,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -33,7 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
   
   // Detect mobile app routes to hide the desktop shell
-  const isMobileApp = pathname?.startsWith('/police') || pathname?.startsWith('/citizen');
+  // const isMobileApp = pathname?.startsWith('/police') || pathname?.startsWith('/citizen');
 
   return (
     <div className="flex h-screen w-full bg-[#09090b] text-white overflow-hidden">

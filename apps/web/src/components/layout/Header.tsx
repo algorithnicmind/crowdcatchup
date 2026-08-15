@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -69,15 +70,17 @@ export function Header() {
               </Button>
             }
           />
-          <DropdownMenuContent className="w-56 border-zinc-800 bg-zinc-950 text-zinc-200" align="end" forceMount>
-            <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none text-white">{user?.name || 'Guest User'}</p>
-                <p className="text-xs leading-none text-zinc-500">
-                  {user?.role || 'CITIZEN'}
-                </p>
-              </div>
-            </DropdownMenuLabel>
+          <DropdownMenuContent className="w-56 border-zinc-800 bg-zinc-950 text-zinc-200" align="end">
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none text-white">{user?.name || 'Guest User'}</p>
+                  <p className="text-xs leading-none text-zinc-500">
+                    {user?.role || 'CITIZEN'}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator className="bg-zinc-800" />
             <DropdownMenuItem className="focus:bg-zinc-800 focus:text-white cursor-pointer">
               Profile

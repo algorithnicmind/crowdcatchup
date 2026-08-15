@@ -16,12 +16,13 @@ export default function PoliceDashboard() {
   const addTask = useMapStore((state) => state.addTask);
 
   useEffect(() => {
-    const unsubTask = subscribe('SECURITY_TASK', (payload: any) => {
-      if (payload.task) addTask(payload.task as SecurityTask);
+    const unsubscribeTasks = subscribe('SECURITY_TASK', (payload: unknown) => {
+      const data = payload as { task?: SecurityTask };
+      if (data.task) addTask(data.task);
     });
 
     return () => {
-      unsubTask();
+      unsubscribeTasks();
     };
   }, [subscribe, addTask]);
 

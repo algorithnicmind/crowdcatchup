@@ -2,12 +2,10 @@
 
 import React from 'react';
 import { Layers, Map as MapIcon, Image as ImageIcon, Mountain, Car } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useMapStore } from '@/stores/map-store';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,

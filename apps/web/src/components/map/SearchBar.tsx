@@ -33,9 +33,11 @@ export function SearchBar() {
   // Debounced search fetch
   useEffect(() => {
     if (!query.trim()) {
-      setResults([]);
-      setIsOpen(false);
-      return;
+      const t = setTimeout(() => {
+        setResults([]);
+        setIsOpen(false);
+      }, 0);
+      return () => clearTimeout(t);
     }
 
     const delayDebounceFn = setTimeout(async () => {
