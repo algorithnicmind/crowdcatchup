@@ -1,4 +1,5 @@
 import pytest
+import pytest_asyncio
 import asyncio
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
@@ -21,7 +22,7 @@ def event_loop():
     yield loop
     loop.close()
 
-@pytest.fixture(autouse=True, scope="session")
+@pytest_asyncio.fixture(autouse=True, scope="session")
 async def prepare_database():
     """Ensure tables exist before running tests."""
     async with test_engine.begin() as conn:
@@ -34,7 +35,7 @@ async def prepare_database():
         await conn.run_sync(Base.metadata.create_all)
     yield
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def client():
     """Fixture that provides an AsyncClient pointing to the FastAPI app, with DB overridden."""
     async def override_get_db():

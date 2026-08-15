@@ -1,7 +1,7 @@
 import pytest
 from httpx import AsyncClient
 from unittest.mock import patch, AsyncMock
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 @pytest.mark.asyncio
@@ -16,7 +16,7 @@ async def test_ingest_observation_success(client: AsyncClient):
             "source_id": "CCTV-01",
             "source_type": "CCTV",
             "zone_id": "zone-main-stage",
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
             "metric": "people_count",
             "value": 150.0,
             "confidence": 0.95,
