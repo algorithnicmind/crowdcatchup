@@ -13,15 +13,23 @@ import {
   DropdownMenuTrigger,
   DropdownMenuGroup,
 } from '@/components/ui/dropdown-menu';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function LayerMenu() {
   const { mapTypeId, setMapTypeId, trafficEnabled, setTrafficEnabled } = useMapStore();
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900/90 backdrop-blur-md border border-zinc-800 shadow-lg hover:bg-zinc-800 text-white">
-        <Layers className="h-5 w-5" />
-      </DropdownMenuTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900/90 backdrop-blur-md border border-zinc-800 shadow-lg hover:bg-zinc-800 text-white">
+            <Layers className="h-5 w-5" />
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent side="left" className="bg-zinc-900 border-zinc-800 text-zinc-300">
+          <p>Map Layers</p>
+        </TooltipContent>
+      </Tooltip>
       
       <DropdownMenuContent align="end" className="w-56 bg-zinc-900 border-zinc-800 text-zinc-300 z-[100]">
         <DropdownMenuGroup>

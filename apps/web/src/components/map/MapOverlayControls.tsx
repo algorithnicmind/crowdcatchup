@@ -6,6 +6,8 @@ import { CompassButton } from './CompassButton';
 import { ShieldAlert, Users, Navigation2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MapControl, ControlPosition } from '@vis.gl/react-google-maps';
+import { MagicCard } from '@/components/ui/magic-card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function MapOverlayControls() {
   return (
@@ -23,18 +25,30 @@ export function MapOverlayControls() {
           
           <CompassButton />
           
-          <Button size="icon" className="h-12 w-12 rounded-full bg-zinc-900/90 backdrop-blur-md border border-zinc-800 shadow-lg hover:bg-zinc-800 text-blue-400">
-            <ShieldAlert className="h-5 w-5" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon" className="h-12 w-12 rounded-full bg-zinc-900/90 backdrop-blur-md border border-zinc-800 shadow-lg hover:bg-zinc-800 text-blue-400">
+                <ShieldAlert className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="bg-zinc-900 border-zinc-800 text-zinc-300">
+              <p>Report Incident</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </MapControl>
 
       {/* Risk Summary Widget - Bottom Left Overlay */}
-      <div className="absolute bottom-8 left-6 z-50 w-72">
-        <div className="bg-zinc-900/90 backdrop-blur-md border border-zinc-800 rounded-2xl p-5 shadow-2xl shadow-black/50 pointer-events-auto">
+      <div className="absolute bottom-8 left-6 z-50 w-72 pointer-events-auto">
+        <MagicCard
+          mode="orb"
+          glowFrom="#ef4444" // red-500
+          glowTo="#3b82f6" // blue-500
+          className="bg-zinc-900/90 backdrop-blur-xl border-white/10 rounded-2xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.5)]"
+        >
           <h3 className="text-sm font-semibold text-zinc-300 uppercase tracking-wider mb-4">Event Status</h3>
           
-          <div className="space-y-4">
+          <div className="space-y-4 relative z-10">
             <div className="flex items-center justify-between">
               <span className="text-sm text-zinc-400 flex items-center gap-2">
                 <Users className="h-4 w-4" /> Density
@@ -46,7 +60,7 @@ export function MapOverlayControls() {
               <span className="text-sm text-zinc-400 flex items-center gap-2">
                 <Navigation2 className="h-4 w-4" /> Flow Conflict
               </span>
-              <span className="text-sm font-bold text-red-400">DETECTED</span>
+              <span className="text-sm font-bold text-red-400 animate-pulse">DETECTED</span>
             </div>
             
             <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden mt-2">
@@ -57,7 +71,7 @@ export function MapOverlayControls() {
               <span>Warning</span>
             </div>
           </div>
-        </div>
+        </MagicCard>
       </div>
     </>
   );
