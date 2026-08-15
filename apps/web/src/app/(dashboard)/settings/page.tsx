@@ -2,11 +2,13 @@
 
 import React from 'react';
 import { useAuthStore } from '@/stores/auth-store';
-import { Settings as SettingsIcon, User, Bell, Shield, Paintbrush } from 'lucide-react';
+import { useUser } from '@clerk/nextjs';
+import { Settings as SettingsIcon, User, Shield, Paintbrush } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function SettingsPage() {
-  const { user } = useAuthStore();
+  const { role } = useAuthStore();
+  const { user } = useUser();
 
   return (
     <div className="h-[calc(100vh-64px)] w-full overflow-y-auto bg-black p-6 md:p-12">
@@ -32,14 +34,14 @@ export default function SettingsPage() {
               <div>
                 <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Name</label>
                 <div className="mt-1 text-sm text-zinc-300 bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2">
-                  {user?.name || 'Unknown User'}
+                  {user?.fullName || user?.primaryEmailAddress?.emailAddress || 'Loading...'}
                 </div>
               </div>
               <div>
                 <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Role</label>
                 <div className="mt-1 text-sm text-zinc-300 bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2 flex items-center gap-2">
                   <Shield className="h-4 w-4 text-emerald-500" />
-                  {user?.role || 'CITIZEN'}
+                  {role || 'CITIZEN'}
                 </div>
               </div>
             </div>

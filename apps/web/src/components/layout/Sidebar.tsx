@@ -9,9 +9,7 @@ import { cn } from '@/lib/utils';
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { user, logout } = useAuthStore();
-
-  const role = user?.role || 'CITIZEN';
+  const { role } = useAuthStore();
 
   // Define links based on role
   const links = React.useMemo(() => {
@@ -70,16 +68,7 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Footer Area */}
-      <div className="p-4 border-t border-zinc-800/50">
-        <button
-          onClick={() => logout()}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
-        >
-          <LogOut className="h-5 w-5" />
-          Sign Out
-        </button>
-      </div>
+
     </div>
   );
 }

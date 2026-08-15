@@ -1,5 +1,9 @@
-import AuthSwitch from '@/components/ui/auth-switch';
+import { SignIn } from "@clerk/nextjs";
 
 export default function LoginPage() {
-  return <AuthSwitch defaultView="login" />;
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#09090b]">
+      <SignIn routing="hash" />
+    </div>
+  );
 }

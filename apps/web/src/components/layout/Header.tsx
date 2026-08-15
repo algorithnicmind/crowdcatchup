@@ -1,24 +1,15 @@
 'use client';
 
 import React from 'react';
-import { useAuthStore } from '@/stores/auth-store';
+import { useAuthStore, UserRole } from '@/stores/auth-store';
 import { Bell, Menu, Search } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { UserButton } from "@clerk/nextjs";
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Sidebar } from './Sidebar';
 
 export function Header() {
-  const { user, logout } = useAuthStore();
+  const { role, setRole } = useAuthStore();
 
   return (
     <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-zinc-800 bg-zinc-950/80 px-4 shadow-sm backdrop-blur-md md:px-6">
@@ -56,47 +47,28 @@ export function Header() {
           <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
         </Button>
 
+        {/* Role Toggle for Demo */}
+        <select 
+          value={role} 
+          onChange={(e) => setRole(e.target.value as UserRole)}
+          className="bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 rounded-md px-2 py-1 outline-none focus:border-emerald-500 transition-colors"
+        >
+          <option value="AUTHORITY">Authority</option>
+          <option value="POLICE">Police</option>
+          <option value="CITIZEN">Citizen</option>
+          <option value="EVENT_OWNER">Owner</option>
+        </select>
+
         {/* Profile Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                <Avatar className="h-9 w-9 border border-zinc-800">
-                  <AvatarImage src={`https://api.dicebear.com/7.x/notionists/svg?seed=${user?.name || 'User'}`} alt="Avatar" />
-                  <AvatarFallback className="bg-zinc-800 text-zinc-200">
-                    {user?.name?.substring(0, 2).toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            }
+        <div className="h-9 w-9 rounded-full overflow-hidden border border-zinc-800 flex items-center justify-center bg-zinc-900">
+          <UserButton 
+            appearance={{
+              elements: {
+                userButtonAvatarBox: "h-9 w-9"
+              }
+            }}
           />
-          <DropdownMenuContent className="w-56 border-zinc-800 bg-zinc-950 text-zinc-200" align="end">
-            <DropdownMenuGroup>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none text-white">{user?.name || 'Guest User'}</p>
-                  <p className="text-xs leading-none text-zinc-500">
-                    {user?.role || 'CITIZEN'}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator className="bg-zinc-800" />
-            <DropdownMenuItem className="focus:bg-zinc-800 focus:text-white cursor-pointer">
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem className="focus:bg-zinc-800 focus:text-white cursor-pointer">
-              Settings
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-zinc-800" />
-            <DropdownMenuItem 
-              onClick={() => logout()}
-              className="text-red-400 focus:bg-red-500/10 focus:text-red-300 cursor-pointer"
-            >
-              Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        </div>
       </div>
     </header>
   );

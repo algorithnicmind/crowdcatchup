@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useAuth } from '@clerk/nextjs';
 
 export type WebSocketEvent = 
   | 'CROWD_STATE_UPDATE'
@@ -10,8 +11,8 @@ export type WebSocketEvent =
   | 'CITIZEN_ALERT';
 
 export function useWebSocket(eventId: string) {
-  const { token, user } = useAuthStore();
-  const role = user?.role;
+  const { role } = useAuthStore();
+  const { getToken, userId } = useAuth();
   const ws = useRef<WebSocket | null>(null);
   
   // A dictionary to store callbacks for each event type
@@ -20,17 +21,21 @@ export function useWebSocket(eventId: string) {
   // Forward declaration via ref to break circular dependency in useCallback
   const connectRef = useRef<(() => void) | null>(null);
 
-  const connect = useCallback(() => {
-    if (!token || !eventId || !role) return;
+  const connect = useCallback(async () => {
+    if (!eventId || !role || !userId) return;
 
-    // Use ws:// localhost for development
-    const wsUrl = `ws://localhost:8000/ws?token=${token}&event_id=${eventId}&role=${role}&user_id=user123`;
-    
-    ws.current = new WebSocket(wsUrl);
+    try {
+      const token = await getToken();
+      if (!token) return;
 
-    ws.current.onopen = () => {
-      console.log(`[WS] Connected to event ${eventId} as ${role}`);
-    };
+      // Use ws:// localhost for development
+      const wsUrl = `ws://localhost:8000/ws?token=${token}&event_id=${eventId}&role=${role}&user_id=${userId}`;
+      
+      ws.current = new WebSocket(wsUrl);
+
+      ws.current.onopen = () => {
+        console.log(`[WS] Connected to event ${eventId} as ${role}`);
+      };
 
     ws.current.onmessage = (event) => {
       try {
@@ -46,14 +51,17 @@ export function useWebSocket(eventId: string) {
     };
 
     ws.current.onclose = () => {
-      console.log(`[WS] Disconnected from event ${eventId}`);
-      setTimeout(() => {
-        if (ws.current?.readyState === WebSocket.CLOSED) {
-          if (connectRef.current) connectRef.current();
-        }
-      }, 5000);
-    };
-  }, [eventId, token, role]);
+        console.log(`[WS] Disconnected from event ${eventId}`);
+        setTimeout(() => {
+          if (ws.current?.readyState === WebSocket.CLOSED) {
+            if (connectRef.current) connectRef.current();
+          }
+        }, 5000);
+      };
+    } catch (error) {
+      console.error("[WS] Failed to connect", error);
+    }
+  }, [eventId, role, userId, getToken]);
 
   useEffect(() => {
     connectRef.current = connect;

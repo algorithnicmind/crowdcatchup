@@ -35,6 +35,7 @@ export const viewport: Viewport = {
 };
 
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -43,9 +44,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <TooltipProvider>
-          {children}
-        </TooltipProvider>
+        <ClerkProvider>
+          <TooltipProvider>
+            {children}
+          </TooltipProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

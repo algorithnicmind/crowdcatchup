@@ -2,14 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useAuthStore } from '@/stores/auth-store';
+
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated } = useAuthStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -17,15 +16,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    // Auth Guard
-    if (mounted && !isAuthenticated) {
-      router.push('/login');
-    }
-  }, [mounted, isAuthenticated, router]);
+  // Clerk middleware handles auth guarding
 
-  // Prevent flash of unauthenticated content
-  if (!mounted || !isAuthenticated) {
+  // Prevent flash of hydration
+  if (!mounted) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#09090b]">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent"></div>
