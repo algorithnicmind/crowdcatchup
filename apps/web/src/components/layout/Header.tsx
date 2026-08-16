@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useAuthStore, UserRole } from '@/stores/auth-store';
 import { Bell, Menu, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UserButton } from "@clerk/nextjs";
@@ -9,7 +8,6 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Sidebar } from './Sidebar';
 
 export function Header() {
-  const { role, setRole } = useAuthStore();
 
   return (
     <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-zinc-800 bg-zinc-950/80 px-4 shadow-sm backdrop-blur-md md:px-6">
@@ -46,18 +44,6 @@ export function Header() {
           <Bell className="h-5 w-5" />
           <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
         </Button>
-
-        {/* Role Toggle for Demo */}
-        <select 
-          value={role} 
-          onChange={(e) => setRole(e.target.value as UserRole)}
-          className="bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 rounded-md px-2 py-1 outline-none focus:border-emerald-500 transition-colors"
-        >
-          <option value="AUTHORITY">Authority</option>
-          <option value="POLICE">Police</option>
-          <option value="CITIZEN">Citizen</option>
-          <option value="EVENT_OWNER">Owner</option>
-        </select>
 
         {/* Profile Dropdown */}
         <div className="h-9 w-9 rounded-full overflow-hidden border border-zinc-800 flex items-center justify-center bg-zinc-900">

@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { APIProvider, Map, AdvancedMarker, Pin, useMap } from '@vis.gl/react-google-maps';
 import { useMapStore } from '@/stores/map-store';
 import { MapOverlayControls } from './MapOverlayControls';
+import { MapDrawingManager } from './MapDrawingManager';
 
 // Coordinates for the event (e.g., Kalinga Stadium)
 const EVENT_CENTER = { lat: 20.2886, lng: 85.8178 };
@@ -165,7 +166,7 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
 
   return (
     <div className="h-full w-full relative">
-      <APIProvider apiKey={apiKey}>
+      <APIProvider apiKey={apiKey} libraries={['drawing']}>
         <Map
           defaultCenter={EVENT_CENTER}
           defaultZoom={16}
@@ -182,6 +183,9 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
         
         {/* Floating UI Overlays - Placed AFTER Map so they sit on top in DOM */}
         <MapOverlayControls role={role} />
+        
+        {/* Drawing Tools for Owner */}
+        {role === 'owner' && <MapDrawingManager />}
       </APIProvider>
     </div>
   );

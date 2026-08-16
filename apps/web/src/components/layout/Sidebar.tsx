@@ -22,6 +22,8 @@ export function Sidebar() {
       base.push({ name: 'Live Map & Tasks', href: '/police', icon: CheckSquare });
     } else if (role === 'CITIZEN') {
       base.push({ name: 'Live Map', href: '/citizen', icon: Map });
+    } else if (role === 'EVENT_OWNER') {
+      base.push({ name: 'Event Management', href: '/owner', icon: Map });
     } else {
       base.push({ name: 'Live Map', href: '/map-demo', icon: Map });
     }

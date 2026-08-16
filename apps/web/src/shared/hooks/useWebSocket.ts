@@ -25,6 +25,12 @@ export function useWebSocket(eventId: string) {
     if (!eventId || !role || !userId) return;
 
     try {
+      // Prevent Clerk offline error by checking connection state first
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        console.warn('[WS] Browser is offline, skipping connection.');
+        return;
+      }
+
       const token = await getToken();
       if (!token) return;
 
@@ -88,7 +94,22 @@ export function useWebSocket(eventId: string) {
 
   useEffect(() => {
     connect();
-    return () => disconnect();
+
+    const handleOnline = () => {
+      console.log('[WS] Network reconnected. Re-establishing WebSocket...');
+      connect();
+    };
+    
+    if (typeof window !== 'undefined') {
+      window.addEventListener('online', handleOnline);
+    }
+
+    return () => {
+      disconnect();
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('online', handleOnline);
+      }
+    };
   }, [connect, disconnect]);
 
   return { subscribe, disconnect };

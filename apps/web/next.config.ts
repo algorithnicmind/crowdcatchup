@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 // @ts-expect-error: next-pwa missing types
 import withPWAInit from '@ducanh2912/next-pwa';
+import { withReticle } from '@reticlehq/next';
 
 const withPWA = withPWAInit({
   dest: 'public',
@@ -19,4 +20,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withPWA(nextConfig);
+export default withReticle(withPWA(nextConfig));
