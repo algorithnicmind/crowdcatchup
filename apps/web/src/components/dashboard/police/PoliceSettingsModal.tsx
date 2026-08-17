@@ -30,7 +30,7 @@ interface PoliceSettingsModalProps {
 export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl bg-[#0b101e] border-[#1e293b] text-white p-0 gap-0 overflow-hidden shadow-2xl">
+      <DialogContent className="max-w-4xl sm:max-w-4xl w-[90vw] md:w-full bg-[#0b101e] border-[#1e293b] text-white p-0 gap-0 overflow-hidden shadow-2xl">
         
         {/* Header */}
         <div className="px-8 py-6 flex items-start justify-between border-b border-[#1e293b]/50">
