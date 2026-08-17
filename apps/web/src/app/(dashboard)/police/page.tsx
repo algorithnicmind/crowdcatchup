@@ -35,19 +35,7 @@ export default function PoliceDashboard() {
         {/* 2. Police Specific Overlays */}
         <TaskCard />
         
-        {/* 3. Header/Badge */}
-        <div className="absolute top-4 right-4 z-[1000] pointer-events-none">
-          <div className="bg-zinc-900/90 backdrop-blur-xl border border-blue-500/30 px-4 py-2 rounded-xl text-white text-xs font-bold tracking-widest flex items-center gap-3 shadow-[0_0_20px_rgba(59,130,246,0.3)]">
-            <div className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] text-zinc-400">CALLSIGN</span>
-              <span className="text-blue-400">OFFICER-4</span>
-            </div>
-          </div>
-        </div>
+
 
         {/* 4. Bottom Tactical Bar */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] pointer-events-auto">
