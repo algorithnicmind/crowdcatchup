@@ -146,7 +146,7 @@
 
 # PHASE 4 — REAL CROWD DATA (docs/05 §18–24, docs/10 Rule 5 & 11)
 
-- [ ] **4.1 CCTV adapter**
+- [x] **4.1 CCTV adapter**
   Real (RTSP/MP4) + clearly-marked mock implementation of the IDataSource interface (doc 10 §6 — never pretend a simulator is a real connection).
   → After: 4.2 · ✅ Done when: adapter emits observations; mock labeled SIMULATED.
 - [ ] **4.2 Smart Gate adapter**
@@ -167,10 +167,10 @@
 
 # PHASE 5 — AI (docs/04 §6 & §32–36, `ai/` folder)
 
-- [ ] **5.1 AI package scaffold**
+- [x] **5.1 AI package scaffold**
   `ai/domain/interfaces` (IDetector, ITracker, IRiskPredictor), Detection entity, pipelines folder.
   → After: 5.2 · ✅ Done when: `ai/` imports cleanly and requirements install.
-- [ ] **5.2 CV pipeline**
+- [x] **5.2 CV pipeline**
   yolo_detector (YOLOv8), bot_sort_tracker (BoT-SORT), cv_pipeline → people count, density, speed, direction per zone.
   → After: 5.3 · ✅ Done when: processed video frame → per-zone metrics.
 - [ ] **5.3 Analytics pipeline**
