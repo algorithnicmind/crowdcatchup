@@ -282,6 +282,29 @@ This allows the system to predict downstream crowd impact.
 
 ---
 
+## 17. USER & OFFICER PROFILES
+
+### User Profile
+Every user in the system (Citizen, Authority, Police, Event Owner) has a basic profile consisting of:
+* User ID
+* Full Name
+* Email / Phone Number
+* Role
+
+### Officer Settings Profile
+A Police Officer has an extended profile for tactical settings:
+* `callsign`: e.g. "Alpha-1"
+* `assigned_zone`: e.g. "ZONE-B"
+* `priority_alert_override`: boolean
+* `tactical_haptics`: boolean
+* `radio_chatter_transcription`: boolean
+* `alert_volume`: int
+* `map_mode`: "Dark Tactical" | "Light" | "Satellite"
+* `building_geometry_3d`: boolean
+* `unit_radar_overlay`: boolean
+
+---
+
 ## 44. MAP REQUIREMENTS
 
 The map is a core system component.

@@ -352,13 +352,6 @@ type InterventionType =
   | "RECOMMEND_MEDICAL";
 ```
 
-
----
-
-## 26. STANDARD OBSERVATION FORMAT
-
-Every source should produce a standardized observation.
-
 Example:
 
 ```json

@@ -242,6 +242,9 @@
 - [ ] **7.8 PWA polish**
   Push notifications, offline map cache (Service Worker + IndexedDB), mobile install.
   → After: PHASE 7 GATE · ✅ Done when: all mobile flows work offline-aware.
+- [x] **7.9 User Profile & Police Settings**
+  User profile management (`/settings`) and Police Officer tactical settings modal.
+  → ✅ Done when: Settings persist to DB and reflect in UI.
 - [ ] **🚧 PHASE 7 GATE** *(pass before Phase 8)*
   All 4 roles complete a live walkthrough.
   → After: Phase 8 starts.
