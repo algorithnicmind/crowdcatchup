@@ -37,6 +37,7 @@ export const viewport: Viewport = {
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from 'sonner';
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ClerkProvider>
           <TooltipProvider>
             {children}
+            <Toaster theme="dark" position="top-right" />
           </TooltipProvider>
         </ClerkProvider>
       </body>
