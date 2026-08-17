@@ -1,18 +1,93 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { useUser } from '@clerk/nextjs';
-import { Settings as SettingsIcon, User, Shield, Paintbrush } from 'lucide-react';
+import {
+  Settings as SettingsIcon,
+  User,
+  Shield,
+  Paintbrush,
+  Save,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+
+type SaveStatus = 'idle' | 'saving' | 'success' | 'error';
 
 export default function SettingsPage() {
   const { role } = useAuthStore();
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
+
+  const [fullName, setFullName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  // Pre-fill form from Clerk data on load
+  useEffect(() => {
+    if (isLoaded && user) {
+      setFullName(user.fullName ?? '');
+      setPhoneNumber(user.phoneNumbers?.[0]?.phoneNumber ?? '');
+    }
+  }, [isLoaded, user]);
+
+  const handleSave = async () => {
+    const email = user?.primaryEmailAddress?.emailAddress;
+    if (!email) {
+      setErrorMsg('Could not determine your account email. Please try again.');
+      setSaveStatus('error');
+      return;
+    }
+    if (!fullName.trim()) {
+      setErrorMsg('Name cannot be empty.');
+      setSaveStatus('error');
+      return;
+    }
+
+    setSaveStatus('saving');
+    setErrorMsg('');
+
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/auth/me/profile`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Email': email,
+        },
+        body: JSON.stringify({
+          full_name: fullName.trim(),
+          phone_number: phoneNumber.trim() || null,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.detail ?? `Server error: ${res.status}`);
+      }
+
+      setSaveStatus('success');
+      setTimeout(() => setSaveStatus('idle'), 3000);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An unexpected error occurred.';
+      setErrorMsg(message);
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 5000);
+    }
+  };
+
+  const isDirty =
+    fullName !== (user?.fullName ?? '') ||
+    phoneNumber !== (user?.phoneNumbers?.[0]?.phoneNumber ?? '');
 
   return (
     <div className="h-[calc(100vh-64px)] w-full overflow-y-auto bg-black p-6 md:p-12">
       <div className="max-w-4xl mx-auto">
+        {/* Header */}
         <div className="flex items-center gap-3 mb-8">
           <div className="h-10 w-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center">
             <SettingsIcon className="h-5 w-5 text-emerald-500" />
@@ -23,27 +98,104 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Toast / status banner */}
+        {saveStatus === 'success' && (
+          <div className="mb-6 flex items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-emerald-400 text-sm animate-in fade-in slide-in-from-top-2 duration-300">
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+            Profile saved successfully!
+          </div>
+        )}
+        {saveStatus === 'error' && (
+          <div className="mb-6 flex items-center gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-red-400 text-sm animate-in fade-in slide-in-from-top-2 duration-300">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {errorMsg}
+          </div>
+        )}
+
         <div className="grid gap-6 md:grid-cols-2">
-          {/* Profile Settings */}
+          {/* Profile Settings — editable */}
           <div className="bg-zinc-950 border border-zinc-800/50 rounded-2xl p-6 shadow-xl">
             <div className="flex items-center gap-3 mb-6">
               <User className="h-5 w-5 text-blue-400" />
               <h2 className="text-lg font-semibold text-white">Profile</h2>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-5">
+              {/* Full Name */}
               <div>
-                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Name</label>
-                <div className="mt-1 text-sm text-zinc-300 bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2">
-                  {user?.fullName || user?.primaryEmailAddress?.emailAddress || 'Loading...'}
-                </div>
+                <label
+                  htmlFor="setting-full-name"
+                  className="text-xs font-semibold text-zinc-500 uppercase tracking-wider"
+                >
+                  Full Name
+                </label>
+                <input
+                  id="setting-full-name"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => { setFullName(e.target.value); setSaveStatus('idle'); }}
+                  placeholder="Enter your full name"
+                  className="mt-1 w-full text-sm text-zinc-100 bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2
+                             focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50
+                             transition-colors placeholder:text-zinc-600"
+                />
               </div>
+
+              {/* Email — read-only, comes from Clerk */}
               <div>
-                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Role</label>
-                <div className="mt-1 text-sm text-zinc-300 bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2 flex items-center gap-2">
+                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                  Email
+                </label>
+                <div className="mt-1 text-sm text-zinc-400 bg-zinc-900/30 border border-zinc-800/60 rounded-lg px-3 py-2 select-none cursor-not-allowed">
+                  {user?.primaryEmailAddress?.emailAddress ?? 'Loading…'}
+                </div>
+                <p className="mt-1 text-xs text-zinc-600">Managed by your sign-in provider.</p>
+              </div>
+
+              {/* Phone Number */}
+              <div>
+                <label
+                  htmlFor="setting-phone"
+                  className="text-xs font-semibold text-zinc-500 uppercase tracking-wider"
+                >
+                  Phone Number
+                </label>
+                <input
+                  id="setting-phone"
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => { setPhoneNumber(e.target.value); setSaveStatus('idle'); }}
+                  placeholder="+91 98765 43210"
+                  className="mt-1 w-full text-sm text-zinc-100 bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2
+                             focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50
+                             transition-colors placeholder:text-zinc-600"
+                />
+              </div>
+
+              {/* Role — read-only */}
+              <div>
+                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                  Role
+                </label>
+                <div className="mt-1 text-sm text-zinc-300 bg-zinc-900/30 border border-zinc-800/60 rounded-lg px-3 py-2 flex items-center gap-2 cursor-not-allowed">
                   <Shield className="h-4 w-4 text-emerald-500" />
                   {role || 'CITIZEN'}
                 </div>
               </div>
+
+              {/* Save button */}
+              <Button
+                id="save-profile-button"
+                onClick={handleSave}
+                disabled={saveStatus === 'saving' || !isDirty}
+                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold
+                           disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+              >
+                {saveStatus === 'saving' ? (
+                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Saving…</>
+                ) : (
+                  <><Save className="h-4 w-4 mr-2" />Save Changes</>
+                )}
+              </Button>
             </div>
           </div>
 
@@ -82,7 +234,11 @@ export default function SettingsPage() {
                 <h2 className="text-lg font-semibold text-white mb-1">Danger Zone</h2>
                 <p className="text-sm text-zinc-400">Permanently delete your account and all associated data.</p>
               </div>
-              <Button variant="destructive" className="bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-colors">
+              <Button
+                variant="destructive"
+                id="delete-account-button"
+                className="bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-colors"
+              >
                 Delete Account
               </Button>
             </div>
