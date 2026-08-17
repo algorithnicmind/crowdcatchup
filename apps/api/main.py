@@ -20,6 +20,7 @@ from shared.api.error_handlers import register_error_handlers
 from features.auth.api.routes import router as auth_router
 from features.events.api.routes import router as events_router
 from features.fusion.api.routes import router as fusion_router
+from features.auth.api.officer_routes import router as officer_router
 
 settings = get_settings()
 logging.basicConfig(level=logging.INFO if not settings.DEBUG else logging.DEBUG)
@@ -65,6 +66,7 @@ register_error_handlers(app)
 app.include_router(auth_router)
 app.include_router(events_router)
 app.include_router(fusion_router)
+app.include_router(officer_router)
 
 
 @app.get("/")

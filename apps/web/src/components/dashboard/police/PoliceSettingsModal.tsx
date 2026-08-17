@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,8 @@ import {
   Image as ImageIcon 
 } from "lucide-react";
 import Image from "next/image";
+import { useUser } from '@clerk/nextjs';
+import { toast } from 'sonner';
 
 interface PoliceSettingsModalProps {
   open: boolean;
@@ -28,6 +30,87 @@ interface PoliceSettingsModalProps {
 }
 
 export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalProps) {
+  const { user } = useUser();
+  const email = user?.primaryEmailAddress?.emailAddress;
+  const fullName = user?.fullName || "Officer";
+
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
+
+  const [callsign, setCallsign] = useState("Bravo-Actual");
+  const [assignedZone, setAssignedZone] = useState("Sector 7G (Downtown)");
+  const [priorityAlert, setPriorityAlert] = useState(true);
+  const [tacticalHaptics, setTacticalHaptics] = useState(true);
+  const [radioChatter, setRadioChatter] = useState(false);
+  const [alertVolume, setAlertVolume] = useState(80);
+  const [mapMode, setMapMode] = useState("Dark Tactical");
+  const [buildingGeometry, setBuildingGeometry] = useState(true);
+  const [unitRadar, setUnitRadar] = useState(true);
+
+  // Fetch settings when modal opens
+  useEffect(() => {
+    if (open && email) {
+      setFetching(true);
+      fetch(`http://localhost:8000/api/v1/officers/settings/${email}`)
+        .then(res => {
+          if (!res.ok) throw new Error("Failed to fetch");
+          return res.json();
+        })
+        .then(data => {
+          if (data && data.settings) {
+            setCallsign(data.settings.callsign || "Bravo-Actual");
+            setAssignedZone(data.settings.assigned_zone || "Sector 7G (Downtown)");
+            setPriorityAlert(data.settings.priority_alert_override ?? true);
+            setTacticalHaptics(data.settings.tactical_haptics ?? true);
+            setRadioChatter(data.settings.radio_chatter_transcription ?? false);
+            setAlertVolume(data.settings.alert_volume ?? 80);
+            setMapMode(data.settings.map_mode || "Dark Tactical");
+            setBuildingGeometry(data.settings.building_geometry_3d ?? true);
+            setUnitRadar(data.settings.unit_radar_overlay ?? true);
+          }
+        })
+        .catch(err => console.error("Error loading settings:", err))
+        .finally(() => setFetching(false));
+    }
+  }, [open, email]);
+
+  const handleSave = async () => {
+    if (!email) return;
+    setLoading(true);
+    
+    try {
+      const res = await fetch(`http://localhost:8000/api/v1/officers/settings/${email}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          callsign,
+          assigned_zone: assignedZone,
+          priority_alert_override: priorityAlert,
+          tactical_haptics: tacticalHaptics,
+          radio_chatter_transcription: radioChatter,
+          alert_volume: alertVolume,
+          map_mode: mapMode,
+          building_geometry_3d: buildingGeometry,
+          unit_radar_overlay: unitRadar,
+        })
+      });
+
+      if (!res.ok) throw new Error("Failed to save");
+      
+      toast.success("Settings saved successfully", {
+        description: "Your tactical preferences have been updated."
+      });
+      onOpenChange(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save settings", {
+        description: "Please check your connection and try again."
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl sm:max-w-4xl w-[90vw] md:w-full bg-[#0b101e] border-[#1e293b] text-white p-0 gap-0 overflow-hidden shadow-2xl">
@@ -43,7 +126,7 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
         </div>
 
         {/* Content */}
-        <div className="flex px-8 py-6 gap-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+        <div className={`flex px-8 py-6 gap-6 max-h-[70vh] overflow-y-auto custom-scrollbar transition-opacity ${fetching ? 'opacity-50' : 'opacity-100'}`}>
           
           {/* Left Column */}
           <div className="flex-1 flex flex-col gap-6">
@@ -60,8 +143,8 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
                   <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=200&auto=format&fit=crop')] bg-cover bg-center" />
                 </div>
                 <div>
-                  <div className="text-lg font-bold text-white">Officer-4</div>
-                  <div className="text-xs text-zinc-500 font-mono mt-0.5">ID: CSD-8924-X</div>
+                  <div className="text-lg font-bold text-white">{fullName}</div>
+                  <div className="text-xs text-zinc-500 font-mono mt-0.5">ID: {user?.id.substring(0, 10).toUpperCase()}</div>
                 </div>
               </div>
 
@@ -69,14 +152,16 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
                 <div className="space-y-1.5">
                   <label className="text-xs text-zinc-400 font-medium">Callsign</label>
                   <Input 
-                    defaultValue="Bravo-Actual" 
+                    value={callsign}
+                    onChange={(e) => setCallsign(e.target.value)}
                     className="bg-[#1e293b]/50 border-transparent focus-visible:ring-1 focus-visible:ring-[#3b82f6] text-white h-9 text-sm"
                   />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs text-zinc-400 font-medium">Assigned Zone</label>
                   <Input 
-                    defaultValue="Sector 7G (Downtown)" 
+                    value={assignedZone}
+                    onChange={(e) => setAssignedZone(e.target.value)}
                     className="bg-[#1e293b]/50 border-transparent focus-visible:ring-1 focus-visible:ring-[#3b82f6] text-white h-9 text-sm"
                   />
                 </div>
@@ -144,7 +229,11 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
                     <div className="text-sm font-semibold text-white mb-1">Priority Alert Override</div>
                     <div className="text-xs text-zinc-400">Allow SOS and Tier 1 alerts to bypass silent mode.</div>
                   </div>
-                  <Switch defaultChecked className="data-[state=checked]:bg-[#3b82f6]" />
+                  <Switch 
+                    checked={priorityAlert} 
+                    onCheckedChange={setPriorityAlert}
+                    className="data-[state=checked]:bg-[#3b82f6]" 
+                  />
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -152,7 +241,11 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
                     <div className="text-sm font-semibold text-white mb-1">Tactical Haptics</div>
                     <div className="text-xs text-zinc-400">Vibrate device on proximity warnings.</div>
                   </div>
-                  <Switch defaultChecked className="data-[state=checked]:bg-[#3b82f6]" />
+                  <Switch 
+                    checked={tacticalHaptics} 
+                    onCheckedChange={setTacticalHaptics}
+                    className="data-[state=checked]:bg-[#3b82f6]" 
+                  />
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -160,12 +253,21 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
                     <div className="text-sm font-semibold text-white mb-1">Radio Chatter Transcription</div>
                     <div className="text-xs text-zinc-400">Display live captions for encrypted comms.</div>
                   </div>
-                  <Switch className="data-[state=checked]:bg-[#3b82f6]" />
+                  <Switch 
+                    checked={radioChatter} 
+                    onCheckedChange={setRadioChatter}
+                    className="data-[state=checked]:bg-[#3b82f6]" 
+                  />
                 </div>
 
                 <div className="pt-2">
                   <div className="text-xs text-zinc-400 mb-3">Alert Volume</div>
-                  <Slider defaultValue={[80]} max={100} step={1} className="[&_[role=slider]]:bg-[#93c5fd] [&_[role=slider]]:border-none" />
+                  <Slider 
+                    value={[alertVolume]} 
+                    onValueChange={(val) => setAlertVolume(val[0])}
+                    max={100} step={1} 
+                    className="[&_[role=slider]]:bg-[#93c5fd] [&_[role=slider]]:border-none" 
+                  />
                 </div>
               </div>
             </div>
@@ -178,11 +280,17 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
               </div>
               
               <div className="flex gap-3 mb-6">
-                <button className="flex-1 flex flex-col items-center justify-center gap-2 py-4 rounded bg-[#1e293b]/50 border border-[#4b5563] text-[#93c5fd] hover:bg-[#1e293b] transition-colors">
+                <button 
+                  onClick={() => setMapMode("Dark Tactical")}
+                  className={`flex-1 flex flex-col items-center justify-center gap-2 py-4 rounded transition-colors ${mapMode === "Dark Tactical" ? "bg-[#1e293b]/50 border border-[#4b5563] text-[#93c5fd]" : "bg-[#0b101e] border border-[#1e293b] text-zinc-400 hover:bg-[#1e293b]/30 hover:text-white"}`}
+                >
                   <Layers className="w-5 h-5" />
                   <span className="text-xs font-medium">Dark Tactical (Default)</span>
                 </button>
-                <button className="flex-1 flex flex-col items-center justify-center gap-2 py-4 rounded bg-[#0b101e] border border-[#1e293b] text-zinc-400 hover:bg-[#1e293b]/30 hover:text-white transition-colors">
+                <button 
+                  onClick={() => setMapMode("Satellite Overlay")}
+                  className={`flex-1 flex flex-col items-center justify-center gap-2 py-4 rounded transition-colors ${mapMode === "Satellite Overlay" ? "bg-[#1e293b]/50 border border-[#4b5563] text-[#93c5fd]" : "bg-[#0b101e] border border-[#1e293b] text-zinc-400 hover:bg-[#1e293b]/30 hover:text-white"}`}
+                >
                   <ImageIcon className="w-5 h-5" />
                   <span className="text-xs font-medium">Satellite Overlay</span>
                 </button>
@@ -194,7 +302,11 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
                     <div className="text-sm font-semibold text-white mb-1">3D Building Geometry</div>
                     <div className="text-xs text-zinc-400">Render structural depth in dense urban sectors.</div>
                   </div>
-                  <Switch defaultChecked className="data-[state=checked]:bg-[#3b82f6]" />
+                  <Switch 
+                    checked={buildingGeometry} 
+                    onCheckedChange={setBuildingGeometry}
+                    className="data-[state=checked]:bg-[#3b82f6]" 
+                  />
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -202,7 +314,11 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
                     <div className="text-sm font-semibold text-white mb-1">Unit Radar Overlay</div>
                     <div className="text-xs text-zinc-400">Show allied units within 500m radius.</div>
                   </div>
-                  <Switch defaultChecked className="data-[state=checked]:bg-[#3b82f6]" />
+                  <Switch 
+                    checked={unitRadar} 
+                    onCheckedChange={setUnitRadar}
+                    className="data-[state=checked]:bg-[#3b82f6]" 
+                  />
                 </div>
               </div>
             </div>
@@ -215,8 +331,12 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
           <Button variant="ghost" onClick={() => onOpenChange(false)} className="text-[#fca5a5] hover:text-[#f87171] hover:bg-[#7f1d1d]/20">
             Cancel
           </Button>
-          <Button onClick={() => onOpenChange(false)} className="bg-[#93c5fd] text-black font-semibold hover:bg-[#60a5fa]">
-            Save Configuration
+          <Button 
+            onClick={handleSave} 
+            disabled={loading}
+            className="bg-[#93c5fd] text-black font-semibold hover:bg-[#60a5fa] disabled:opacity-50"
+          >
+            {loading ? "Saving..." : "Save Configuration"}
           </Button>
         </div>
 

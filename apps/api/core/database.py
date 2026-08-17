@@ -8,6 +8,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.orm import DeclarativeBase
 from core.config import get_settings
 
+# Import models to ensure they are registered with Base.metadata before create_all is called
+import features.auth.infrastructure.models.officer_profile_model
+
 settings = get_settings()
 
 # --- Engine ---
