@@ -21,3 +21,10 @@ class EmailAlreadyExistsError(ConflictError):
 class WeakPasswordError(DomainError):
     def __init__(self, reason: str):
         super().__init__(f"Weak password: {reason}")
+
+
+from shared.infrastructure.exceptions import NotFoundError
+
+class UserNotFoundError(NotFoundError):
+    def __init__(self, identifier: str):
+        super().__init__("User", identifier)
