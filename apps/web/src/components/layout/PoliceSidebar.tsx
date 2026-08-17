@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutGrid, 
@@ -75,25 +76,34 @@ export function PoliceSidebar() {
         {/* Tactical Buttons */}
         <div className="flex flex-col gap-3">
           {/* SOS Button */}
-          <button className="w-full relative flex flex-col items-center justify-center gap-1.5 rounded-md bg-gradient-to-b from-[#3a0a1a] to-[#250810] border border-[#E11D48]/20 py-4 shadow-[inset_0_0_20px_rgba(225,29,72,0.1),_0_0_15px_rgba(225,29,72,0.15)] hover:bg-[#320b15] hover:border-[#E11D48]/40 transition-all cursor-pointer group overflow-hidden">
+          <button 
+            onClick={() => toast.error('EMERGENCY SOS SIGNAL BROADCASTED', { description: 'All nearby units and command have been alerted.', duration: 5000 })}
+            className="w-full relative flex flex-col items-center justify-center gap-1.5 rounded-md bg-gradient-to-b from-[#3a0a1a] to-[#250810] border border-[#E11D48]/20 py-4 shadow-[inset_0_0_20px_rgba(225,29,72,0.1),_0_0_15px_rgba(225,29,72,0.15)] hover:bg-[#320b15] hover:border-[#E11D48]/40 transition-all cursor-pointer group overflow-hidden"
+          >
             <div className="absolute top-0 left-0 w-full h-full bg-[#E11D48]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
             <Asterisk className="h-6 w-6 text-[#E11D48]" />
-            <span className="text-[#E11D48] text-[10px] font-bold tracking-widest uppercase">SOS EMERGENCY</span>
+            <span className="text-[#E11D48] text-[10px] font-bold tracking-widest uppercase font-sans">SOS EMERGENCY</span>
           </button>
 
           {/* Quick Actions (Row) */}
           <div className="flex gap-3">
-            <button className="flex-1 flex flex-col items-center justify-center gap-2 rounded-md bg-[#121827] border border-transparent hover:border-[#EAB308]/20 py-3 transition-all cursor-pointer shadow-sm">
+            <button 
+              onClick={() => toast.warning('INCIDENT REPORT INITIATED', { description: 'Opening rapid report interface...' })}
+              className="flex-1 flex flex-col items-center justify-center gap-2 rounded-md bg-[#121827] border border-transparent hover:border-[#EAB308]/20 py-3 transition-all cursor-pointer shadow-sm"
+            >
               <div className="w-6 h-6 rounded-full border border-[#EAB308] flex items-center justify-center mb-0.5">
                 <AlertCircle className="h-3.5 w-3.5 text-[#EAB308]" />
               </div>
-              <span className="text-[#EAB308] text-[9px] font-bold tracking-wider">Incident</span>
+              <span className="text-[#EAB308] text-[9px] font-bold tracking-wider font-sans">Incident</span>
             </button>
-            <button className="flex-1 flex flex-col items-center justify-center gap-2 rounded-md bg-[#121827] border border-transparent hover:border-[#00E5FF]/20 py-3 transition-all cursor-pointer shadow-sm">
+            <button 
+              onClick={() => toast.message('BACKUP REQUESTED', { description: 'Authority Command has been notified of your request.' })}
+              className="flex-1 flex flex-col items-center justify-center gap-2 rounded-md bg-[#121827] border border-transparent hover:border-[#00E5FF]/20 py-3 transition-all cursor-pointer shadow-sm"
+            >
               <div className="w-6 h-6 rounded-full border border-[#00E5FF] flex items-center justify-center mb-0.5">
                 <Shield className="h-3.5 w-3.5 text-[#00E5FF]" />
               </div>
-              <span className="text-[#00E5FF] text-[9px] font-bold tracking-wider">Backup</span>
+              <span className="text-[#00E5FF] text-[9px] font-bold tracking-wider font-sans">Backup</span>
             </button>
           </div>
         </div>
