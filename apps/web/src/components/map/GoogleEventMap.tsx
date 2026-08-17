@@ -241,7 +241,6 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
           mapId="DEMO_MAP_ID"
           mapTypeId={mapTypeId}
           disableDefaultUI={true}
-          styles={mapTypeId === 'roadmap' ? darkMapStyle : undefined}
           gestureHandling="greedy"
         >
           <TrafficLayer />
