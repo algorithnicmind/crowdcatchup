@@ -44,7 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">{process.env.NODE_ENV === 'development' ? <ReticleDev /> : null}
+      <body className="min-h-full flex flex-col bg-background text-foreground">
         <ClerkProvider>
           <TooltipProvider>
             {children}
