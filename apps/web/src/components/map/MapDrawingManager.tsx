@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useMap } from '@vis.gl/react-google-maps';
 import { Button } from '@/components/ui/button';
 import { Map, Edit3, Save, Trash2, MapPin } from 'lucide-react';
