@@ -154,27 +154,31 @@ function HeatmapOverlay() {
     if (!map) return;
 
     if (!heatmapLayerRef.current && window.google?.maps?.visualization) {
-      const HeatmapLayerClass = window.google.maps.visualization.HeatmapLayer as any;
-      heatmapLayerRef.current = new HeatmapLayerClass({
-        radius: 40,
-        opacity: 0.8,
-        gradient: [
-          'rgba(0, 255, 255, 0)',
-          'rgba(0, 255, 255, 1)',
-          'rgba(0, 191, 255, 1)',
-          'rgba(0, 127, 255, 1)',
-          'rgba(0, 63, 255, 1)',
-          'rgba(0, 0, 255, 1)',
-          'rgba(0, 0, 223, 1)',
-          'rgba(0, 0, 191, 1)',
-          'rgba(0, 0, 159, 1)',
-          'rgba(0, 0, 127, 1)',
-          'rgba(63, 0, 91, 1)',
-          'rgba(127, 0, 63, 1)',
-          'rgba(191, 0, 31, 1)',
-          'rgba(255, 0, 0, 1)'
-        ]
-      });
+      try {
+        const HeatmapLayerClass = window.google.maps.visualization.HeatmapLayer as any;
+        heatmapLayerRef.current = new HeatmapLayerClass({
+          radius: 40,
+          opacity: 0.8,
+          gradient: [
+            'rgba(0, 255, 255, 0)',
+            'rgba(0, 255, 255, 1)',
+            'rgba(0, 191, 255, 1)',
+            'rgba(0, 127, 255, 1)',
+            'rgba(0, 63, 255, 1)',
+            'rgba(0, 0, 255, 1)',
+            'rgba(0, 0, 223, 1)',
+            'rgba(0, 0, 191, 1)',
+            'rgba(0, 0, 159, 1)',
+            'rgba(0, 0, 127, 1)',
+            'rgba(63, 0, 91, 1)',
+            'rgba(127, 0, 63, 1)',
+            'rgba(191, 0, 31, 1)',
+            'rgba(255, 0, 0, 1)'
+          ]
+        });
+      } catch (err) {
+        console.warn("HeatmapLayer could not be initialized:", err);
+      }
     }
 
     if (heatmapEnabled && heatmapLayerRef.current) {
@@ -234,7 +238,7 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
 
   return (
     <div className="h-full w-full relative">
-      <APIProvider apiKey={apiKey} libraries={['drawing', 'visualization']}>
+      <APIProvider apiKey={apiKey} libraries={['drawing', 'visualization']} version="3.64">
         <Map
           defaultCenter={EVENT_CENTER}
           defaultZoom={16}
