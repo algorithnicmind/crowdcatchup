@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
@@ -19,9 +19,11 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { PoliceSettingsModal } from '../dashboard/police/PoliceSettingsModal';
 
 export function PoliceSidebar() {
   const pathname = usePathname();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const navItems = [
     { name: 'Dashboard', href: '/police', icon: LayoutGrid },
@@ -159,11 +161,15 @@ export function PoliceSidebar() {
           <HelpCircle className="h-4 w-4" />
           Support
         </Link>
-        <Link href="/settings" className="flex items-center gap-3 px-2 py-2 rounded-md text-[11px] font-semibold text-zinc-400 hover:text-white hover:bg-white/5 transition-all">
+        <button 
+          onClick={() => setSettingsOpen(true)}
+          className="flex items-center gap-3 px-2 py-2 rounded-md text-[11px] font-semibold text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
+        >
           <Settings className="h-4 w-4" />
           Settings
-        </Link>
+        </button>
       </div>
+      <PoliceSettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
   );
 }
