@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
 
 import { Sidebar } from '@/components/layout/Sidebar';
+import { PoliceSidebar } from '@/components/layout/PoliceSidebar';
 import { Header } from '@/components/layout/Header';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -38,14 +39,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     );
   }
   
-  // Detect mobile app routes to hide the desktop shell
-  // const isMobileApp = pathname?.startsWith('/police') || pathname?.startsWith('/citizen');
+  const isPolice = pathname?.startsWith('/police');
 
   return (
     <div className="flex h-screen w-full bg-[#09090b] text-white overflow-hidden">
       {/* Desktop Sidebar */}
       <div className="hidden md:block">
-        <Sidebar />
+        {isPolice ? <PoliceSidebar /> : <Sidebar />}
       </div>
 
       <div className="flex flex-1 flex-col overflow-hidden">
