@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Layers, Map as MapIcon, Image as ImageIcon, Mountain, Car } from 'lucide-react';
+import { Layers, Map as MapIcon, Image as ImageIcon, Mountain, Car, Flame } from 'lucide-react';
 import { useMapStore } from '@/stores/map-store';
 import {
   DropdownMenu,
@@ -14,7 +14,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function LayerMenu() {
-  const { mapTypeId, setMapTypeId, trafficEnabled, setTrafficEnabled } = useMapStore();
+  const { mapTypeId, setMapTypeId, trafficEnabled, setTrafficEnabled, heatmapEnabled, setHeatmapEnabled } = useMapStore();
 
   return (
     <DropdownMenu>
@@ -66,13 +66,20 @@ export function LayerMenu() {
           <DropdownMenuLabel className="text-xs uppercase text-zinc-500">Map Details</DropdownMenuLabel>
           
           <div className="grid grid-cols-3 gap-2 p-2">
-          <button 
-            onClick={() => setTrafficEnabled(!trafficEnabled)}
-            className={`flex flex-col items-center justify-center p-2 rounded-lg border-2 ${trafficEnabled ? 'border-emerald-500 bg-emerald-500/10' : 'border-transparent hover:bg-zinc-800'}`}
-          >
-            <Car className={`h-6 w-6 mb-1 ${trafficEnabled ? 'text-emerald-400' : 'text-zinc-400'}`} />
-            <span className="text-[10px]">Traffic</span>
-          </button>
+            <button 
+              onClick={() => setTrafficEnabled(!trafficEnabled)}
+              className={`flex flex-col items-center justify-center p-2 rounded-lg border-2 ${trafficEnabled ? 'border-emerald-500 bg-emerald-500/10' : 'border-transparent hover:bg-zinc-800'}`}
+            >
+              <Car className={`h-6 w-6 mb-1 ${trafficEnabled ? 'text-emerald-400' : 'text-zinc-400'}`} />
+              <span className="text-[10px]">Traffic</span>
+            </button>
+            <button 
+              onClick={() => setHeatmapEnabled(!heatmapEnabled)}
+              className={`flex flex-col items-center justify-center p-2 rounded-lg border-2 ${heatmapEnabled ? 'border-orange-500 bg-orange-500/10' : 'border-transparent hover:bg-zinc-800'}`}
+            >
+              <Flame className={`h-6 w-6 mb-1 ${heatmapEnabled ? 'text-orange-400' : 'text-zinc-400'}`} />
+              <span className="text-[10px]">Heatmap</span>
+            </button>
           </div>
         </DropdownMenuGroup>
       </DropdownMenuContent>

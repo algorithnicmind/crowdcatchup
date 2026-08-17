@@ -57,11 +57,21 @@ export function AlertsPanel() {
                   </div>
 
                   <div className="pt-2 border-t border-white/10 flex gap-2">
-                    <Button variant="destructive" size="sm" className="w-full font-semibold shadow-lg shadow-red-500/20">
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      className="w-full font-semibold shadow-lg shadow-red-500/20"
+                      onClick={() => useMapStore.getState().removeRecommendation(rec.recommendation_id)}
+                    >
                       <ShieldAlert className="w-4 h-4 mr-2" />
                       Approve Plan
                     </Button>
-                    <Button variant="outline" size="sm" className="w-full bg-transparent border-white/20 text-white hover:bg-white/10">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full bg-transparent border-white/20 text-white hover:bg-white/10"
+                      onClick={() => useMapStore.getState().removeRecommendation(rec.recommendation_id)}
+                    >
                       Dismiss
                     </Button>
                   </div>

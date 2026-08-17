@@ -58,6 +58,7 @@ export interface SourceHealth {
 interface MapState {
   mapTypeId: string;
   trafficEnabled: boolean;
+  heatmapEnabled: boolean;
   routeCoordinates: { lat: number; lng: number }[] | null;
   liveCrowdState: Record<string, CrowdState>; // keyed by zone_id
   liveRisk: Record<string, RiskUpdate>; // keyed by zone_id
@@ -67,6 +68,7 @@ interface MapState {
   
   setMapTypeId: (id: string) => void;
   setTrafficEnabled: (enabled: boolean) => void;
+  setHeatmapEnabled: (enabled: boolean) => void;
   setRouteCoordinates: (coords: { lat: number; lng: number }[] | null) => void;
   updateCrowdState: (zone_id: string, state: CrowdState) => void;
   updateRisk: (zone_id: string, risk: RiskUpdate) => void;
@@ -80,6 +82,7 @@ interface MapState {
 export const useMapStore = create<MapState>((set) => ({
   mapTypeId: 'roadmap',
   trafficEnabled: false,
+  heatmapEnabled: false,
   routeCoordinates: null,
   liveCrowdState: {},
   liveRisk: {},
@@ -112,6 +115,7 @@ export const useMapStore = create<MapState>((set) => ({
   
   setMapTypeId: (id) => set({ mapTypeId: id }),
   setTrafficEnabled: (enabled) => set({ trafficEnabled: enabled }),
+  setHeatmapEnabled: (enabled) => set({ heatmapEnabled: enabled }),
   setRouteCoordinates: (coords) => set({ routeCoordinates: coords }),
   
   updateCrowdState: (zone_id, state) => set((prev) => ({

@@ -53,12 +53,31 @@ export function MapOverlayControls({ role = 'authority' }: MapOverlayControlsPro
           
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button size="icon" className="h-12 w-12 rounded-full bg-zinc-900/90 backdrop-blur-md border border-zinc-800 shadow-lg hover:bg-zinc-800 text-blue-400">
+              <Button 
+                size="icon" 
+                className="h-12 w-12 rounded-full bg-zinc-900/90 backdrop-blur-md border border-zinc-800 shadow-lg hover:bg-zinc-800 text-blue-400"
+                onClick={() => {
+                  const useMapStoreAPI = useMapStore.getState();
+                  useMapStoreAPI.addRecommendation({
+                    recommendation_id: `rec-${Date.now()}`,
+                    zone_id: 'Zone A (Gate 1)',
+                    risk_score: 92,
+                    actions: ['Dispatch rapid response team', 'Divert incoming traffic to Gate 2', 'Send emergency broadcast'],
+                    explanation: {
+                      primary_reason: 'Sudden critical density spike and flow conflict detected at Gate 1.',
+                      supporting_factors: ['Multiple CCTV anomalies', 'Social media panic indicators'],
+                      source_agreement: 0.95,
+                      prediction_confidence: 0.91
+                    },
+                    confidence: 0.93
+                  });
+                }}
+              >
                 <ShieldAlert className="h-5 w-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="left" className="bg-zinc-900 border-zinc-800 text-zinc-300">
-              <p>Report Incident</p>
+              <p>Simulate AI Incident</p>
             </TooltipContent>
           </Tooltip>
         </div>

@@ -145,6 +145,73 @@ function LiveMarkers() {
   );
 }
 
+function HeatmapOverlay() {
+  const map = useMap();
+  const { heatmapEnabled, liveCrowdState } = useMapStore();
+  const heatmapLayerRef = useRef<google.maps.visualization.HeatmapLayer | null>(null);
+
+  useEffect(() => {
+    if (!map) return;
+
+    if (!heatmapLayerRef.current && window.google?.maps?.visualization) {
+      heatmapLayerRef.current = new google.maps.visualization.HeatmapLayer({
+        radius: 40,
+        opacity: 0.8,
+        gradient: [
+          'rgba(0, 255, 255, 0)',
+          'rgba(0, 255, 255, 1)',
+          'rgba(0, 191, 255, 1)',
+          'rgba(0, 127, 255, 1)',
+          'rgba(0, 63, 255, 1)',
+          'rgba(0, 0, 255, 1)',
+          'rgba(0, 0, 223, 1)',
+          'rgba(0, 0, 191, 1)',
+          'rgba(0, 0, 159, 1)',
+          'rgba(0, 0, 127, 1)',
+          'rgba(63, 0, 91, 1)',
+          'rgba(127, 0, 63, 1)',
+          'rgba(191, 0, 31, 1)',
+          'rgba(255, 0, 0, 1)'
+        ]
+      });
+    }
+
+    if (heatmapEnabled && heatmapLayerRef.current) {
+      // Generate synthetic points based on EVENT_ZONES and current crowd state
+      const heatmapData: google.maps.LatLng[] = [];
+      
+      Object.entries(EVENT_ZONES).forEach(([zoneId, coords]) => {
+        const crowd = liveCrowdState[zoneId];
+        const numPoints = crowd?.density_level === 'CRITICAL' ? 100 : 
+                          crowd?.density_level === 'HIGH' ? 60 : 
+                          crowd?.density_level === 'MODERATE' ? 20 : 5;
+        
+        // Spread points around the zone center
+        for (let i = 0; i < numPoints; i++) {
+          const latOffset = (Math.random() - 0.5) * 0.002;
+          const lngOffset = (Math.random() - 0.5) * 0.002;
+          heatmapData.push(
+            new google.maps.LatLng(coords.lat + latOffset, coords.lng + lngOffset)
+          );
+        }
+      });
+      
+      heatmapLayerRef.current.setData(heatmapData);
+      heatmapLayerRef.current.setMap(map);
+    } else if (heatmapLayerRef.current) {
+      heatmapLayerRef.current.setMap(null);
+    }
+
+    return () => {
+      if (heatmapLayerRef.current) {
+        heatmapLayerRef.current.setMap(null);
+      }
+    };
+  }, [map, heatmapEnabled, liveCrowdState]);
+
+  return null;
+}
+
 interface GoogleEventMapProps {
   role?: 'authority' | 'police' | 'citizen' | 'owner';
 }
@@ -166,7 +233,7 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
 
   return (
     <div className="h-full w-full relative">
-      <APIProvider apiKey={apiKey} libraries={['drawing']}>
+      <APIProvider apiKey={apiKey} libraries={['drawing', 'visualization']}>
         <Map
           defaultCenter={EVENT_CENTER}
           defaultZoom={16}
@@ -178,6 +245,7 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
         >
           <TrafficLayer />
           <RoutePolyline />
+          <HeatmapOverlay />
           <LiveMarkers />
         </Map>
         
