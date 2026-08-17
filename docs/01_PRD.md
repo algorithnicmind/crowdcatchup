@@ -76,6 +76,7 @@ CrowdShield utilizes a **Role-Based Access Control (RBAC)** architecture. All us
 ### Persona A: Authority / Command Center
 * **Goal:** Monitor multiple events, oversee overall risk, approve interventions, deploy resources.
 * **Interface:** Full map visibility, AI risk metrics, 5/10/15-min predictions, data source health, recommendation approval.
+* **Authentication:** Hardcoded Super Admin credentials (`admin@crowdshield.local` / `SuperAdmin123!`). The Authority is responsible for manually creating IDs and passwords for Police and Event Managers via the Staff Management Dashboard.
 * **Key Question:** "What is happening right now, and what should I do?"
 
 ### Persona B: Security / Police Staff

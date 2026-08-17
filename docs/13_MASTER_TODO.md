@@ -45,7 +45,7 @@
   `apps/api/shared/` — base_entity, base_value_object, base_domain_event, base_repository, event_bus, websocket_manager, exceptions, error_handlers, api/dependencies.
   → After: 1.4 · ✅ Done when: shared base classes importable and WS manager tested.
 - [x] **1.4 Auth feature**
-  Feature module layout per doc 12 §4.1: domain (User entity, Email/Password VOs, Role enum: AUTHORITY/POLICE/CITIZEN/EVENT_OWNER), use cases (register/login/get_current_user), JWT issuance, repository + model, routes `/api/v1/auth/*`, Pydantic schemas. **RBAC enforced on the backend only** (PRD §51).
+  Feature module layout per doc 12 §4.1: domain (User entity, Email/Password VOs, Role enum: AUTHORITY/POLICE/CITIZEN/EVENT_OWNER). We use Clerk for frontend Citizen authentication, but RBAC is strictly enforced via Clerk's Backend SDK. The Authority (`admin@crowdshield.local`) manually creates POLICE/EVENT_OWNER roles which are stored in Clerk `publicMetadata.role`. Backend JWT validation may still apply to raw API calls if needed.
   → After: 1.5 · ✅ Done when: Pytest proves register/login/RBAC and JWT expiry.
 - [x] **1.5 Events feature**
   Domain (Event/Zone/Gate/Route entities, GeoPoint/GeoPolygon/DateRange VOs, EventStatus enum with ALL 8 statuses, GateStatus), use cases (create/update/get/list/change_status/create_zone/create_gate/create_route), repositories + models, routes `/api/v1/events/*`, domain events EventCreated + EventStatusChanged.

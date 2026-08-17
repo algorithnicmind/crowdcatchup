@@ -19,8 +19,8 @@ This specification is designed for automated AI Coding Assistants and human coll
 * **Backend API Code:** `/apps/api/` — FastAPI, Pydantic, SQLAlchemy, PostgreSQL/PostGIS, Redis.
 * **AI Pipelines:** `/ai/` — YOLOv8, BoT-SORT, XGBoost, OpenCV.
 
-### 2.2 Rule 2: Single PWA Principle
-Do NOT create separate web apps for different roles. All users log into the same Next.js application. RBAC via JWT conditionally renders the appropriate dashboard.
+### 2.2 Rule 2: Single PWA Principle & Clerk Auth
+Do NOT create separate web apps for different roles. All users log into the same Next.js application. We use Clerk for frontend authentication. Citizens self-register via Clerk's default flow. However, to strictly enforce RBAC, Police and Event Owner accounts MUST be manually created by the hardcoded Authority super admin (`admin@crowdshield.local` / `SuperAdmin123!`) using the Clerk Backend SDK. RBAC is enforced by reading Clerk's `publicMetadata.role`.
 
 ### 2.3 Rule 3: WebSocket Real-Time Synchronization
 Do NOT use HTTP Polling for live updates. All live telemetry must use WebSockets managed in a centralized React Context.
