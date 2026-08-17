@@ -52,4 +52,3 @@ class UpdateProfileRequest(BaseModel):
     """Request body for PATCH /api/v1/auth/me/profile."""
     full_name: str | None = Field(default=None, min_length=1, max_length=200)
     phone_number: str | None = Field(default=None, max_length=20)
-
