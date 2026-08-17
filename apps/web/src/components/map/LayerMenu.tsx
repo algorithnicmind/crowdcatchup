@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Layers, Map as MapIcon, Image as ImageIcon, Mountain, Car, Flame } from 'lucide-react';
+import { Layers, Map as MapIcon, Image as ImageIcon, Mountain, Car, Activity } from 'lucide-react';
 import { useMapStore } from '@/stores/map-store';
 import {
   DropdownMenu,
@@ -77,7 +77,7 @@ export function LayerMenu() {
               onClick={() => setHeatmapEnabled(!heatmapEnabled)}
               className={`flex flex-col items-center justify-center p-2 rounded-lg border-2 ${heatmapEnabled ? 'border-orange-500 bg-orange-500/10' : 'border-transparent hover:bg-zinc-800'}`}
             >
-              <Flame className={`h-6 w-6 mb-1 ${heatmapEnabled ? 'text-orange-400' : 'text-zinc-400'}`} />
+              <Activity className={`h-6 w-6 mb-1 ${heatmapEnabled ? 'text-orange-400' : 'text-zinc-400'}`} />
               <span className="text-[10px]">Heatmap</span>
             </button>
           </div>
