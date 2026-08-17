@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
-import { Map, ShieldAlert, BarChart3, Settings, LogOut, CheckSquare } from 'lucide-react';
+import { Map, ShieldAlert, BarChart3, Settings, LogOut, CheckSquare, Radio, FileWarning } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function Sidebar() {
@@ -71,6 +71,28 @@ export function Sidebar() {
       </nav>
 
 
+      {role === 'POLICE' && (
+        <div className="p-4 border-t border-zinc-800 bg-black/20">
+          <div className="mb-3 px-2 text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
+            TACTICAL CONTROLS
+          </div>
+          <div className="flex flex-col gap-2">
+            <button className="w-full group relative flex items-center justify-center gap-2 rounded-lg bg-red-600 hover:bg-red-500 px-4 py-3 text-sm font-bold text-white transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:shadow-[0_0_30px_rgba(220,38,38,0.6)] overflow-hidden">
+              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+              <ShieldAlert className="h-5 w-5 animate-pulse" />
+              EMERGENCY SOS
+            </button>
+            <button className="w-full flex items-center gap-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 px-3 py-2.5 text-sm font-semibold text-amber-500 transition-colors">
+              <Radio className="h-4 w-4" />
+              Request Backup
+            </button>
+            <button className="w-full flex items-center gap-2 rounded-lg hover:bg-zinc-800/50 px-3 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors">
+              <FileWarning className="h-4 w-4" />
+              Report Incident
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

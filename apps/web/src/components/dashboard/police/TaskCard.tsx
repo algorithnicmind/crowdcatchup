@@ -19,7 +19,7 @@ export function TaskCard() {
   const currentTask = activeTasks[0];
 
   return (
-    <div className="absolute top-4 left-4 right-4 z-[1000] pointer-events-none">
+    <div className="absolute top-20 right-4 w-96 max-w-[calc(100vw-2rem)] z-[1000] pointer-events-none">
       <AnimatePresence>
         <motion.div
           key={currentTask.task_id}
