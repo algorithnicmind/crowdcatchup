@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
-import { getUserRole } from "@/lib/rbac";
+import { getUserRoleFromEmail } from "@/lib/rbac";
 
 export async function POST(req: Request) {
   try {
@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     }
 
     const primaryEmail = user.emailAddresses.find(e => e.id === user.primaryEmailAddressId)?.emailAddress;
-    const role = getUserRole(primaryEmail, user.publicMetadata);
+    const role = getUserRoleFromEmail(primaryEmail);
 
     if (role !== "AUTHORITY") {
       return new NextResponse("Forbidden: Only Authority can create staff users", { status: 403 });
