@@ -9,7 +9,7 @@ export function MapDrawingManager() {
   const map = useMap();
   const [isDrawing, setIsDrawing] = useState(false);
   const [points, setPoints] = useState<google.maps.LatLngLiteral[]>([]);
-  const [polygon, setPolygon] = useState<google.maps.Polygon | null>(null);
+  const polygonRef = useRef<google.maps.Polygon | null>(null);
 
   useEffect(() => {
     if (!map || typeof window === 'undefined' || !window.google) return;
@@ -24,19 +24,21 @@ export function MapDrawingManager() {
       map: map
     });
 
-    setPolygon(poly);
+    polygonRef.current = poly;
 
     return () => {
       poly.setMap(null);
+      polygonRef.current = null;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map]);
 
   // Update polygon path when points change
   useEffect(() => {
-    if (polygon) {
-      polygon.setPath(points);
+    if (polygonRef.current) {
+      polygonRef.current.setPath(points);
     }
-  }, [points, polygon]);
+  }, [points]);
 
   // Handle map clicks when drawing mode is active
   useEffect(() => {

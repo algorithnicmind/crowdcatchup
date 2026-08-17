@@ -148,13 +148,14 @@ function LiveMarkers() {
 function HeatmapOverlay() {
   const map = useMap();
   const { heatmapEnabled, liveCrowdState } = useMapStore();
-  const heatmapLayerRef = useRef<google.maps.visualization.HeatmapLayer | null>(null);
+  const heatmapLayerRef = useRef<any>(null);
 
   useEffect(() => {
     if (!map) return;
 
     if (!heatmapLayerRef.current && window.google?.maps?.visualization) {
-      heatmapLayerRef.current = new google.maps.visualization.HeatmapLayer({
+      const HeatmapLayerClass = window.google.maps.visualization.HeatmapLayer as any;
+      heatmapLayerRef.current = new HeatmapLayerClass({
         radius: 40,
         opacity: 0.8,
         gradient: [
