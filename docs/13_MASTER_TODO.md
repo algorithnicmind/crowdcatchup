@@ -149,10 +149,10 @@
 - [x] **4.1 CCTV adapter**
   Real (RTSP/MP4) + clearly-marked mock implementation of the IDataSource interface (doc 10 §6 — never pretend a simulator is a real connection).
   → After: 4.2 · ✅ Done when: adapter emits observations; mock labeled SIMULATED.
-- [ ] **4.2 Smart Gate adapter**
+- [x] **4.2 Smart Gate adapter**
   Entry/exit counts, flow rate, queue estimate, confidence (LLD §2 + gate status thresholds).
   → After: 4.3 · ✅ Done when: gate observations flow through the same pipeline.
-- [ ] **4.3 GPS adapter**
+- [x] **4.3 GPS adapter**
   Citizen device telemetry → zone_device_count per zone.
   → After: 4.4 · ✅ Done when: GPS observations fuse with other sources.
 - [ ] **4.4 Drone / BLE / Telecom adapters** (simulated for MVP)
@@ -173,7 +173,7 @@
 - [x] **5.2 CV pipeline**
   yolo_detector (YOLOv8), bot_sort_tracker (BoT-SORT), cv_pipeline → people count, density, speed, direction per zone.
   → After: 5.3 · ✅ Done when: processed video frame → per-zone metrics.
-- [ ] **5.3 Analytics pipeline**
+- [x] **5.3 Analytics pipeline**
   Density, flow rates, dwell time, occupancy (LLD §33).
   → After: 5.4 · ✅ Done when: analytics consumed by fusion/risk.
 - [x] **5.4 Risk model**
