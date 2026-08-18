@@ -200,13 +200,13 @@
 - [x] **6.2 Recommendation WebSocket**
   `RECOMMENDATION_ALERT` to Authority (doc 08 §4.3).
   → After: 6.3 · ✅ Done when: recommendation card appears live.
-- [ ] **6.3 Approval flow (human-in-the-loop)**
+- [x] **6.3 Approval flow (human-in-the-loop)**
   Authority approves → `EXECUTE_ACTION` WS (doc 08 §4.4) → InterventionApproved event → state recorded → broadcast.
   → After: 6.4 · ✅ Done when: approve → intervention recorded → UI updates.
-- [ ] **6.4 Police deployment**
+- [x] **6.4 Police deployment**
   `SECURITY_TASK` WebSocket (doc 08 §4.5) — zone, distance, required_officers, instructions.
   → After: 6.5 · ✅ Done when: police receive task on approval.
-- [ ] **6.5 Announcements**
+- [x] **6.5 Announcements**
   `CITIZEN_ALERT` WS (doc 08 §4.6), message_key → i18n templates EN/HI/OD (PRD §47), anti-panic protocol (doc 10 §3.3), human-approved broadcast.
   → After: 6.6 · ✅ Done when: multilingual alert reaches citizen PWA.
 - [ ] **6.6 Explainability UI**
@@ -233,7 +233,7 @@
 - [ ] **7.5 Incidents feature (backend)**
   Create/resolve incident, IncidentCreated event, citizen SOS → command map.
   → After: 7.6 · ✅ Done when: SOS appears on Authority map.
-- [ ] **7.6 Citizen Journey Navigation — backend** (innovation, docs/04 §64, docs/08 §64)
+- [x] **7.6 Citizen Journey Navigation — backend** (innovation, docs/04 §64, docs/08 §64)
   `features/navigation/` — Group/Journey/SafeRoute entities; use cases plan_group_journey, navigate, check_reroute; route_engine (A* (A-Star) + crowd weights); navigation_engine (turn-by-turn); osm_adapter; `POST /api/v1/navigation/plan`, `POST /exit-plan`, WS `/api/v1/navigation/live` (NAVIGATION_UPDATE, REROUTE_ALERT, GROUP_MEMBER_ALERT).
   → After: 7.7 · ✅ Done when: plan request returns SafeRoutes with gate recommendations (doc 08 §64 schemas).
 - [ ] **7.7 Citizen Journey Navigation — frontend**

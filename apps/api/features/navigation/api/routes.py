@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from ....core.database import get_db
-from .schemas import RouteRequest, SafeRoute
+from core.database import get_db
 from ..application.navigation_service import NavigationService
 
 # Re-using the domain entities as schemas for simplicity, 

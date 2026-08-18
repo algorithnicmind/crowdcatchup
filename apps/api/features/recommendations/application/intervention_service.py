@@ -7,8 +7,8 @@ import uuid
 from .rules_engine import RecommendationEngine
 from ..domain.entities.intervention import InterventionStatus, InterventionType
 from ..infrastructure.models.intervention_models import InterventionModel
-from ....fusion.api.schemas import CrowdStateDTO
-from ....shared.infrastructure.websocket_manager import ws_manager
+from features.fusion.api.schemas import CrowdStateDTO
+from shared.infrastructure.websocket_manager import get_ws_manager
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class InterventionService:
     def __init__(self, db: Session):
         self.db = db
 
-    def evaluate_and_store_recommendations(self, state: CrowdStateDTO):
+    async def evaluate_and_store_recommendations(self, state: CrowdStateDTO):
         """
         Runs the rules engine on the crowd state and persists any new recommendations
         that don't already have an active pending intervention for that zone/type.
@@ -44,12 +44,16 @@ class InterventionService:
                 self.db.add(new_intervention)
                 
                 # Broadcast recommendation alert
-                ws_manager.broadcast_sync("RECOMMENDATION_ALERT", {
-                    "intervention_id": new_intervention.id,
-                    "event_id": new_intervention.event_id,
-                    "target_zone": new_intervention.target_zone,
-                    "type": new_intervention.intervention_type.value,
-                    "message": new_intervention.message
+                ws_manager = get_ws_manager()
+                await ws_manager.broadcast_to_event(new_intervention.event_id, {
+                    "type": "RECOMMENDATION_ALERT",
+                    "payload": {
+                        "intervention_id": new_intervention.id,
+                        "event_id": new_intervention.event_id,
+                        "target_zone": new_intervention.target_zone,
+                        "intervention_type": new_intervention.intervention_type.value,
+                        "message": new_intervention.message
+                    }
                 })
                 
         self.db.commit()
@@ -60,7 +64,7 @@ class InterventionService:
             InterventionModel.status == InterventionStatus.PENDING
         ).all()
 
-    def approve_intervention(self, intervention_id: str) -> InterventionModel:
+    async def approve_intervention(self, intervention_id: str) -> InterventionModel:
         intervention = self.db.query(InterventionModel).filter(InterventionModel.id == intervention_id).first()
         if not intervention:
             raise ValueError("Intervention not found")
@@ -70,24 +74,35 @@ class InterventionService:
         self.db.commit()
         self.db.refresh(intervention)
         
+        ws_manager = get_ws_manager()
+        
         # Broadcast execution/task WebSocket events
         payload = {
             "intervention_id": intervention.id,
             "target_zone": intervention.target_zone,
             "message": intervention.message,
-            "type": intervention.intervention_type.value
+            "intervention_type": intervention.intervention_type.value
         }
         
         if intervention.intervention_type == InterventionType.DEPLOY_POLICE:
-            ws_manager.broadcast_sync("SECURITY_TASK", payload)
+            await ws_manager.broadcast_to_role(intervention.event_id, "POLICE", {
+                "type": "SECURITY_TASK",
+                "payload": payload
+            })
         elif intervention.intervention_type == InterventionType.BROADCAST_MESSAGE:
-            ws_manager.broadcast_sync("CITIZEN_ALERT", payload)
+            await ws_manager.broadcast_to_event(intervention.event_id, {
+                "type": "CITIZEN_ALERT",
+                "payload": payload
+            })
         else:
-            ws_manager.broadcast_sync("EXECUTE_ACTION", payload)
+            await ws_manager.broadcast_to_event(intervention.event_id, {
+                "type": "EXECUTE_ACTION",
+                "payload": payload
+            })
             
         return intervention
 
-    def reject_intervention(self, intervention_id: str) -> InterventionModel:
+    async def reject_intervention(self, intervention_id: str) -> InterventionModel:
         intervention = self.db.query(InterventionModel).filter(InterventionModel.id == intervention_id).first()
         if not intervention:
             raise ValueError("Intervention not found")
