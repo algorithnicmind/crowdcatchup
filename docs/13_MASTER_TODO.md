@@ -251,16 +251,16 @@
 
 # PHASE 8 — SIMULATION (FR-15/16, PRD §57, doc 10 Rule 10)
 
-- [ ] **8.1 Digital Twin**
+- [x] **8.1 Digital Twin**
   Event map + live crowd state + risk as a virtual replica.
   → After: 8.2 · ✅ Done when: twin renders current state.
-- [ ] **8.2 Scenario engine**
+- [x] **8.2 Scenario engine**
   Pre-scripted scenarios — normal arrival, sudden inflow, route blocked, gate unavailable, crowd surge; manual controls for demo control.
   → After: 8.3 · ✅ Done when: each scenario changes crowd state on demand.
-- [ ] **8.3 What-if analysis**
+- [x] **8.3 What-if analysis**
   E.g. "close Gate C?" → predicted ripple effects on zones and routes.
   → After: 8.4 · ✅ Done when: what-if output visible on Authority dashboard.
-- [ ] **8.4 Post-event reports**
+- [x] **8.4 Post-event reports**
   Event summary, risk timeline, intervention history (reports module, HLD §3).
   → After: PHASE 8 GATE · ✅ Done when: report generated from a completed event.
 - [ ] **🚧 PHASE 8 GATE** *(pass before Phase 9)*
