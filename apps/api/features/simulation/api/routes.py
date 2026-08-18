@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from core.database import get_db
 
-from features.fusion.application.fusion_service import get_zone_states
+from features.fusion.application.fusion_service import zone_states
 from .schemas import WhatIfRequest, WhatIfResponse, ScenarioRequest
 from ..application.simulation_service import SimulationService
 
@@ -20,7 +20,7 @@ def run_what_if_analysis(
     Given a zone and a hypothetical action (like closing a gate), 
     run the XGBoost ML model to predict the ripple effects and new risk score.
     """
-    states = get_zone_states(request.event_id)
+    states = zone_states
     if request.zone_id not in states:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 

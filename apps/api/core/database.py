@@ -51,9 +51,6 @@ async def get_db() -> AsyncSession:
 async def init_db():
     """Create all tables on startup (dev only; use Alembic in production)."""
     # Import models to ensure they are registered with Base.metadata before create_all is called
-    import features.auth.infrastructure.models.officer_profile_model
-    import features.events.infrastructure.models.event_models
-    import features.recommendations.infrastructure.models.intervention_models
     
     async with engine.begin() as conn:
         from sqlalchemy import text
