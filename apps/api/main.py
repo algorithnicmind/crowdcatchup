@@ -21,6 +21,8 @@ from features.auth.api.routes import router as auth_router
 from features.events.api.routes import router as events_router
 from features.fusion.api.routes import router as fusion_router
 from features.auth.api.officer_routes import router as officer_router
+from features.recommendations.api.routes import router as recommendations_router
+from features.navigation.api.routes import router as navigation_router
 
 settings = get_settings()
 logging.basicConfig(level=logging.INFO if not settings.DEBUG else logging.DEBUG)
@@ -67,6 +69,8 @@ app.include_router(auth_router)
 app.include_router(events_router)
 app.include_router(fusion_router)
 app.include_router(officer_router)
+app.include_router(recommendations_router)
+app.include_router(navigation_router)
 
 
 @app.get("/")
