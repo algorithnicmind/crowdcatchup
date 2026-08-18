@@ -1,22 +1,18 @@
 import pandas as pd
 import numpy as np
 import os
-import random
 
 def calculate_risk(row):
     """
-    Deterministic function to assign ground-truth risk score based on features.
+    Deterministic function to assign ground-truth risk score based on 4 features.
     Simulates a physical crowd safety model.
     """
     density = row['density']
-    density_growth = row['density_growth_rate']
-    speed = row['speed']
-    speed_decline = row['speed_decline_rate']
-    imbalance = row['entry_exit_imbalance']
-    bottleneck = row['bottleneck_score']
+    entry = row['entry_rate']
+    exit = row['exit_rate']
+    speed = row['average_speed']
     
-    # Base risk purely from density (0 to 60 points)
-    # Density >= 4.5 is extremely dangerous
+    # Base risk from density (0 to 60 points)
     if density <= 1.0:
         base_risk = density * 10
     elif density <= 2.5:
@@ -26,19 +22,14 @@ def calculate_risk(row):
     else:
         base_risk = 50 + (density - 4.0) * 20     # up to 60+
         
-    # Penalty for high growth rate (0 to 15 points)
-    growth_penalty = max(0, density_growth * 15)
+    # Penalty for net inflow (0 to 20 points)
+    net_inflow = max(0, entry - exit)
+    inflow_penalty = min(20, net_inflow * 0.5)
     
-    # Penalty for low speed (0 to 15 points)
-    speed_penalty = max(0, (1.5 - speed) * 10)
+    # Penalty for low speed (0 to 20 points)
+    speed_penalty = max(0, (1.5 - speed) * 13.33)
     
-    # Penalty for entry/exit imbalance (0 to 10 points)
-    imbalance_penalty = max(0, (imbalance / 100.0) * 5)
-    
-    # Penalty for bottlenecks (0 to 10 points)
-    bottleneck_penalty = bottleneck * 10
-    
-    total_risk = base_risk + growth_penalty + speed_penalty + imbalance_penalty + bottleneck_penalty
+    total_risk = base_risk + inflow_penalty + speed_penalty
     
     # Add a tiny bit of noise
     total_risk += np.random.normal(0, 2)
@@ -49,9 +40,7 @@ def get_risk_level(score):
     if score <= 40:
         return 'LOW'
     elif score <= 65:
-        return 'MODERATE'
-    elif score <= 85:
-        return 'HIGH'
+        return 'WARNING'
     else:
         return 'CRITICAL'
 
@@ -65,40 +54,30 @@ def generate_dataset(num_samples=10000):
         
         if scenario == 'NORMAL':
             density = np.random.uniform(0.1, 2.0)
-            density_growth = np.random.uniform(-0.2, 0.2)
+            entry = np.random.uniform(10, 50)
+            exit = np.random.uniform(10, 50)
             speed = np.random.uniform(1.0, 1.5)
-            speed_decline = np.random.uniform(-0.1, 0.1)
-            imbalance = np.random.uniform(-10, 20)
-            bottleneck = np.random.uniform(0.0, 0.2)
         elif scenario == 'CONGESTED':
             density = np.random.uniform(2.0, 3.5)
-            density_growth = np.random.uniform(0.0, 0.5)
+            entry = np.random.uniform(30, 80)
+            exit = np.random.uniform(20, 60)
             speed = np.random.uniform(0.5, 1.0)
-            speed_decline = np.random.uniform(0.0, 0.3)
-            imbalance = np.random.uniform(10, 50)
-            bottleneck = np.random.uniform(0.2, 0.6)
         elif scenario == 'SURGE':
             density = np.random.uniform(3.0, 4.0)
-            density_growth = np.random.uniform(0.5, 1.5)
+            entry = np.random.uniform(80, 150)
+            exit = np.random.uniform(10, 40)
             speed = np.random.uniform(0.2, 0.6)
-            speed_decline = np.random.uniform(0.2, 0.8)
-            imbalance = np.random.uniform(40, 150)
-            bottleneck = np.random.uniform(0.5, 0.8)
         else: # CRITICAL
             density = np.random.uniform(4.0, 6.0)
-            density_growth = np.random.uniform(0.5, 2.0)
+            entry = np.random.uniform(150, 300)
+            exit = np.random.uniform(0, 20)
             speed = np.random.uniform(0.0, 0.3)
-            speed_decline = np.random.uniform(0.1, 0.5)
-            imbalance = np.random.uniform(100, 300)
-            bottleneck = np.random.uniform(0.8, 1.0)
             
         row = {
             'density': density,
-            'density_growth_rate': density_growth,
-            'speed': speed,
-            'speed_decline_rate': speed_decline,
-            'entry_exit_imbalance': imbalance,
-            'bottleneck_score': bottleneck
+            'entry_rate': entry,
+            'exit_rate': exit,
+            'average_speed': speed
         }
         
         score = calculate_risk(row)

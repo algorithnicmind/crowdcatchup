@@ -2,10 +2,8 @@ import pandas as pd
 import numpy as np
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score, accuracy_score, classification_report
+from sklearn.metrics import mean_squared_error, r2_score
 import os
-import joblib
-import json
 
 def train_model():
     data_path = 'ai/data/crowd_data_synthetic.csv'
@@ -17,20 +15,17 @@ def train_model():
     print("Loading synthetic data...")
     df = pd.read_csv(data_path)
     
+    # Must perfectly match the RiskService in the backend
     features = [
         'density',
-        'density_growth_rate',
-        'speed',
-        'speed_decline_rate',
-        'entry_exit_imbalance',
-        'bottleneck_score'
+        'entry_rate',
+        'exit_rate',
+        'average_speed'
     ]
     
     X = df[features]
     y_reg = df['risk_score']
-    y_cls = df['risk_level'].astype('category').cat.codes  # For classification if needed
     
-    # We will train a Regression model to output the raw 0-100 score
     X_train, X_test, y_train, y_test = train_test_split(X, y_reg, test_size=0.2, random_state=42)
     
     print(f"Training XGBoost Regressor on {len(X_train)} samples...")
@@ -53,11 +48,18 @@ def train_model():
     print(f"Mean Squared Error: {mse:.4f}")
     print(f"R-squared: {r2:.4f}")
     
-    # Save the model
+    # Save the model to the local AI folder
     os.makedirs('ai/models', exist_ok=True)
-    model_path = 'ai/models/xgboost_risk_model.json'
-    model.save_model(model_path)
-    print(f"Model saved to {model_path}")
+    local_path = 'ai/models/xgboost_risk_model.json'
+    model.save_model(local_path)
+    print(f"Model saved to {local_path}")
+
+    # Save the model directly into the Backend Risk Service so it can use it immediately!
+    backend_ml_dir = 'apps/api/features/risk/infrastructure/ml'
+    os.makedirs(backend_ml_dir, exist_ok=True)
+    backend_path = os.path.join(backend_ml_dir, 'bottleneck_model.json')
+    model.save_model(backend_path)
+    print(f"Model deployed to backend at {backend_path} 🚀")
 
 if __name__ == "__main__":
     train_model()
