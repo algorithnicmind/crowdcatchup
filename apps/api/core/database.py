@@ -8,9 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.orm import DeclarativeBase
 from core.config import get_settings
 
-# Import models to ensure they are registered with Base.metadata before create_all is called
-import features.auth.infrastructure.models.officer_profile_model
-
 settings = get_settings()
 
 # --- Engine ---
@@ -53,6 +50,11 @@ async def get_db() -> AsyncSession:
 # --- Lifecycle ---
 async def init_db():
     """Create all tables on startup (dev only; use Alembic in production)."""
+    # Import models to ensure they are registered with Base.metadata before create_all is called
+    import features.auth.infrastructure.models.officer_profile_model
+    import features.events.infrastructure.models.event_models
+    import features.recommendations.infrastructure.models.intervention_models
+    
     async with engine.begin() as conn:
         from sqlalchemy import text
         try:

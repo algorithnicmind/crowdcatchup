@@ -7,6 +7,14 @@ from datetime import datetime, timezone
 from rich.console import Console
 from rich.table import Table
 from rich.live import Live
+import sys
+import os
+
+# Add the root directory to sys.path to allow importing from ai.adapters
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from ai.adapters.drone_adapter import DroneAdapter
+from ai.adapters.telecom_adapter import TelecomAdapter
+from ai.adapters.ble_adapter import BleAdapter
 
 console = Console()
 
@@ -206,8 +214,27 @@ if __name__ == "__main__":
     sim_thread = threading.Thread(target=simulation_loop, args=(API_URL,))
     sim_thread.daemon = True
     sim_thread.start()
+    # Initialize and start adapters
+    base_api_url = API_URL.replace("/ingest", "")
+    adapters = [
+        DroneAdapter(source_id="SIM-DRONE-01", api_url=base_api_url),
+        TelecomAdapter(source_id="SIM-TELCO-01", api_url=base_api_url),
+        BleAdapter(source_id="SIM-BLE-01", api_url=base_api_url)
+    ]
+    
+    adapter_threads = []
+    for adapter in adapters:
+        t = threading.Thread(target=adapter.run)
+        t.daemon = True
+        t.start()
+        adapter_threads.append(t)
+        
+    console.print("[bold green]Multi-source adapters started (Drone, Telecom, BLE).[/bold green]")
     
     # Run interactive prompt in main thread
     interactive_prompt()
     
+    for adapter in adapters:
+        adapter.stop()
+        
     console.print("[bold yellow]Simulator stopped.[/bold yellow]")

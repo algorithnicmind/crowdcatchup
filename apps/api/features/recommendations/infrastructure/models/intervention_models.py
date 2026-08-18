@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, DateTime, Enum, Integer
-from .....core.database import Base
+from core.database import Base
 from datetime import datetime
 from ...domain.entities.intervention import InterventionStatus, InterventionType
 import uuid
