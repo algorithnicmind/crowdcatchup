@@ -86,12 +86,15 @@ CrowdShield utilizes a **Role-Based Access Control (RBAC)** architecture. All us
 
 ### Persona C: Citizen / Festival Attendee
 * **Goal:** Navigate safely through massive gatherings.
-* **Interface:** Simplified mobile PWA. Current location, green safe routes, localized alerts. **No panic-inducing metrics.**
+* **Interface:** Simplified mobile PWA with premium Google Maps experience.
+* **Authentication:** Requires self-registration (Phone number, Email, Password) and standard login.
+* **Navigation Flow:** Current GPS location detection → Select Destination Event → View multiple paths with explicitly highlighted **shortest/safest route** → View available Entry/Exit gates dynamically. **No panic-inducing metrics.**
 * **Key Question:** "Where should I go, and what should I avoid?"
 
 ### Persona D: Event Organizer / Admin
 * **Goal:** Create events, configure venue topology, manage infrastructure, run simulations.
 * **Interface:** Venue configuration tools (draw zones, gates, routes, cameras, Smart Gates), pre-event simulation.
+* **Custom Routing (Innovation):** Ability to manually draw/define **Custom Routes** (e.g., dirt paths, temporary shortcuts) that do not exist on standard Google Maps. These custom polylines are seamlessly overlaid onto the citizen map.
 * **Key Question:** "How do I configure this event for the AI Engine?"
 
 ---
@@ -145,7 +148,7 @@ Event statuses: **Draft** → **Configuration** → **Ready** → **Live** → *
 | **Advanced** | Drone, BLE/proximity, Telecom, Wearables/IoT | Simulated (MVP), Real later |
 | **Development** | Synthetic data, Historical datasets, Replay data | Always available |
 
-All sources enter through the same data-ingestion architecture. Real and simulated sources produce the same standardized observation format.
+**Data Simulator (Hackathon Innovation):** Since physical sensors (CCTV, Drone, Telecom) are not available for the demo, a robust synthetic simulator will generate real-time metrics (e.g., "50 people entered via Gate 1") mimicking these physical devices. The AI and Backend will treat this synthetic data exactly as if it were real hardware, proving the ingestion and fusion architecture.
 
 ---
 
