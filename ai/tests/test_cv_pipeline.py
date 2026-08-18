@@ -13,4 +13,3 @@ def test_cv_pipeline_blank_frame():
     assert flow_in == 0
     assert flow_out == 0
     assert annotated_frame is not None
- 
