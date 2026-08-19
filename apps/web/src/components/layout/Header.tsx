@@ -6,8 +6,19 @@ import { Button } from '@/components/ui/button';
 import { UserButton } from "@clerk/nextjs";
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Sidebar } from './Sidebar';
+import { PoliceSidebar } from './PoliceSidebar';
+import { AuthorityLayoutSidebar } from './AuthorityLayoutSidebar';
+import { OwnerLayoutSidebar } from './OwnerLayoutSidebar';
+import { CitizenLayoutSidebar } from './CitizenLayoutSidebar';
+import { useAuthStore } from '@/stores/auth-store';
+import { usePathname } from 'next/navigation';
 
 export function Header() {
+  const pathname = usePathname();
+  const isPolice = pathname?.startsWith('/police');
+  const isAuthority = pathname?.startsWith('/authority');
+  const isOwner = pathname?.startsWith('/owner');
+  const isCitizen = pathname?.startsWith('/citizen');
 
   return (
     <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-zinc-800 bg-zinc-950/80 px-4 shadow-sm backdrop-blur-md md:px-6">
@@ -23,7 +34,11 @@ export function Header() {
             }
           />
           <SheetContent side="left" className="p-0 w-[260px] border-zinc-800 bg-zinc-950">
-            <Sidebar />
+            {isPolice && <PoliceSidebar />}
+            {isAuthority && <AuthorityLayoutSidebar />}
+            {isOwner && <OwnerLayoutSidebar />}
+            {isCitizen && <CitizenLayoutSidebar />}
+            {(!isPolice && !isAuthority && !isOwner && !isCitizen) && <Sidebar />}
           </SheetContent>
         </Sheet>
 

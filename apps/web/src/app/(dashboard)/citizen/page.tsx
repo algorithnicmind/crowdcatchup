@@ -3,7 +3,7 @@
 import React from 'react';
 import { GoogleEventMap } from '@/components/map/GoogleEventMap';
 import { SafeRoutePanel } from '@/components/dashboard/citizen/SafeRoutePanel';
-import { ShieldAlert, BellRing } from 'lucide-react';
+import { ShieldAlert, BellRing, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function CitizenDashboard() {

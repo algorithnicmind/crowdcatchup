@@ -6,6 +6,9 @@ import { useAuthStore } from '@/stores/auth-store';
 
 import { Sidebar } from '@/components/layout/Sidebar';
 import { PoliceSidebar } from '@/components/layout/PoliceSidebar';
+import { AuthorityLayoutSidebar } from '@/components/layout/AuthorityLayoutSidebar';
+import { OwnerLayoutSidebar } from '@/components/layout/OwnerLayoutSidebar';
+import { CitizenLayoutSidebar } from '@/components/layout/CitizenLayoutSidebar';
 import { Header } from '@/components/layout/Header';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -40,12 +43,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
   
   const isPolice = pathname?.startsWith('/police');
+  const isAuthority = pathname?.startsWith('/authority');
+  const isOwner = pathname?.startsWith('/owner');
+  const isCitizen = pathname?.startsWith('/citizen');
 
   return (
     <div className="flex h-screen w-full bg-[#09090b] text-white overflow-hidden">
       {/* Desktop Sidebar */}
       <div className="hidden md:block">
-        {isPolice ? <PoliceSidebar /> : <Sidebar />}
+        {isPolice && <PoliceSidebar />}
+        {isAuthority && <AuthorityLayoutSidebar />}
+        {isOwner && <OwnerLayoutSidebar />}
+        {isCitizen && <CitizenLayoutSidebar />}
+        {(!isPolice && !isAuthority && !isOwner && !isCitizen) && <Sidebar />}
       </div>
 
       <div className="flex flex-1 flex-col overflow-hidden">

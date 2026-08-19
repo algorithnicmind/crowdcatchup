@@ -11,7 +11,7 @@ export function SafeRoutePanel() {
   const [routeFound, setRouteFound] = useState(false);
 
   return (
-    <div className="absolute bottom-6 left-4 right-4 z-[1000] pointer-events-none">
+    <div className="absolute bottom-24 md:bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-96 z-[1000] pointer-events-none">
       <AnimatePresence>
         {!routeFound ? (
           <motion.div

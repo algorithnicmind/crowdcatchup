@@ -15,12 +15,12 @@ export function AlertsPanel() {
   }
 
   return (
-    <div className="absolute top-24 left-4 md:left-6 z-[1000] w-[calc(100vw-32px)] md:w-80 space-y-4 pointer-events-none">
+    <div className="absolute top-24 right-4 md:right-6 z-[1000] w-[calc(100vw-32px)] md:w-80 space-y-4 pointer-events-none">
       <AnimatePresence>
         {activeRecommendations.map((rec) => (
           <motion.div
             key={rec.recommendation_id}
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}

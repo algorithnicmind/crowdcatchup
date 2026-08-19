@@ -55,14 +55,6 @@ export default function AuthorityDashboard() {
       {/* 2. Authority Specific Overlays */}
       <AlertsPanel />
       <CctvGrid />
-      
-      {/* 3. Global Header/Title (Optional, if we want to reinforce the role) */}
-      <div className="absolute top-4 right-4 z-[1000] pointer-events-none">
-        <div className="bg-black/60 backdrop-blur-sm border border-white/10 px-4 py-2 rounded-full text-white/70 text-xs font-semibold tracking-widest flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          AUTHORITY COMMAND
-        </div>
-      </div>
     </div>
   );
 }

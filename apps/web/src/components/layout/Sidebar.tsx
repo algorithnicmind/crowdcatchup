@@ -6,10 +6,13 @@ import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
 import { Map, ShieldAlert, BarChart3, Settings, LogOut, CheckSquare, Radio, FileWarning } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { DotPattern } from '@/components/ui/dot-pattern';
 
 export function Sidebar() {
   const pathname = usePathname();
   const { role } = useAuthStore();
+
+  const logout = useAuthStore((state) => state.logout);
 
   // Define links based on role
   const links = React.useMemo(() => {
@@ -33,9 +36,20 @@ export function Sidebar() {
   }, [role]);
 
   return (
-    <div className="flex h-full w-[260px] flex-col border-r border-zinc-800 bg-zinc-950 text-white shadow-xl backdrop-blur-xl">
+    <div className="flex h-full w-[260px] flex-col border-r border-zinc-800 bg-black text-white shadow-xl backdrop-blur-xl overflow-hidden relative">
+      <DotPattern
+        width={20}
+        height={20}
+        cx={1}
+        cy={1}
+        cr={1.5}
+        className={cn(
+          "text-white/40 [mask-image:radial-gradient(400px_circle_at_center,white,transparent)]",
+        )}
+      />
+
       {/* Logo Area */}
-      <div className="flex h-16 items-center px-6 border-b border-zinc-800/50">
+      <div className="flex h-16 items-center px-6 border-b border-zinc-800/50 relative z-10">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center">
             <ShieldAlert className="h-5 w-5 text-emerald-500" />
@@ -45,7 +59,7 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
+      <nav className="flex-1 space-y-1 p-4 overflow-y-auto relative z-10">
         <div className="mb-4 px-2 text-xs font-semibold tracking-widest text-zinc-500 uppercase">
           {role} DASHBOARD
         </div>
@@ -70,29 +84,16 @@ export function Sidebar() {
         })}
       </nav>
 
-
-      {role === 'POLICE' && (
-        <div className="p-4 border-t border-zinc-800 bg-black/20">
-          <div className="mb-3 px-2 text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
-            TACTICAL CONTROLS
-          </div>
-          <div className="flex flex-col gap-2">
-            <button className="w-full group relative flex items-center justify-center gap-2 rounded-lg bg-red-600 hover:bg-red-500 px-4 py-3 text-sm font-bold text-white transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:shadow-[0_0_30px_rgba(220,38,38,0.6)] overflow-hidden">
-              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
-              <ShieldAlert className="h-5 w-5 animate-pulse" />
-              EMERGENCY SOS
-            </button>
-            <button className="w-full flex items-center gap-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 px-3 py-2.5 text-sm font-semibold text-amber-500 transition-colors">
-              <Radio className="h-4 w-4" />
-              Request Backup
-            </button>
-            <button className="w-full flex items-center gap-2 rounded-lg hover:bg-zinc-800/50 px-3 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors">
-              <FileWarning className="h-4 w-4" />
-              Report Incident
-            </button>
-          </div>
-        </div>
-      )}
+      {/* User Area */}
+      <div className="border-t border-zinc-800/50 p-4 relative z-10">
+        <button 
+          onClick={logout}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
+        >
+          <LogOut className="h-4 w-4" />
+          Logout
+        </button>
+      </div>
     </div>
   );
 }

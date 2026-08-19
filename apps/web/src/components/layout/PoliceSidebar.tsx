@@ -21,6 +21,8 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { PoliceSettingsModal } from '../dashboard/police/PoliceSettingsModal';
 
+import { DotPattern } from '@/components/ui/dot-pattern';
+
 export function PoliceSidebar() {
   const pathname = usePathname();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -42,9 +44,20 @@ export function PoliceSidebar() {
   };
 
   return (
-    <div className="flex h-full w-[260px] flex-col bg-[#0A111E] text-white border-r border-[#1a253a] shadow-xl font-sans overflow-hidden">
+    <div className="flex h-full w-[260px] flex-col bg-black text-white border-r border-[#1a253a] shadow-xl font-sans overflow-hidden relative">
+      <DotPattern
+        width={20}
+        height={20}
+        cx={1}
+        cy={1}
+        cr={1.5}
+        className={cn(
+          "text-white/40 [mask-image:radial-gradient(400px_circle_at_center,white,transparent)]",
+        )}
+      />
+      
       {/* Header */}
-      <div className="flex h-16 items-center justify-between px-5 border-b border-[#1a253a]">
+      <div className="flex h-16 items-center justify-between px-5 border-b border-[#1a253a] relative z-10">
         <span className="font-bold tracking-widest text-[#00E5FF] text-lg uppercase">CROWDSHIELD</span>
         <div className="flex items-center gap-1.5 cursor-pointer hover:bg-white/5 p-1.5 rounded">
           <LayoutDashboard className="h-4 w-4 text-[#00E5FF]" />
@@ -52,7 +65,7 @@ export function PoliceSidebar() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col px-4 py-5 gap-6">
+      <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col px-4 py-5 gap-6 relative z-10">
         
         {/* Profile Block */}
         <div className="flex items-center justify-between">
@@ -80,7 +93,7 @@ export function PoliceSidebar() {
           {/* SOS Button */}
           <button 
             onClick={() => toast.error('EMERGENCY SOS SIGNAL BROADCASTED', { description: 'All nearby units and command have been alerted.', duration: 5000 })}
-            className="w-full relative flex flex-col items-center justify-center gap-1.5 rounded-md bg-gradient-to-b from-[#3a0a1a] to-[#250810] border border-[#E11D48]/20 py-4 shadow-[inset_0_0_20px_rgba(225,29,72,0.1),_0_0_15px_rgba(225,29,72,0.15)] hover:bg-[#320b15] hover:border-[#E11D48]/40 transition-all cursor-pointer group overflow-hidden"
+            className="w-full relative flex flex-col items-center justify-center gap-1.5 rounded-md bg-black border border-[#E11D48]/30 py-4 shadow-[inset_0_0_20px_rgba(225,29,72,0.1),_0_0_15px_rgba(225,29,72,0.15)] hover:bg-[#E11D48]/10 hover:border-[#E11D48]/50 transition-all cursor-pointer group overflow-hidden"
           >
             <div className="absolute top-0 left-0 w-full h-full bg-[#E11D48]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
             <Asterisk className="h-6 w-6 text-[#E11D48]" />
@@ -91,7 +104,7 @@ export function PoliceSidebar() {
           <div className="flex gap-3">
             <button 
               onClick={() => toast.warning('INCIDENT REPORT INITIATED', { description: 'Opening rapid report interface...' })}
-              className="flex-1 flex flex-col items-center justify-center gap-2 rounded-md bg-[#121827] border border-transparent hover:border-[#EAB308]/20 py-3 transition-all cursor-pointer shadow-sm"
+              className="flex-1 flex flex-col items-center justify-center gap-2 rounded-md bg-black/40 border border-white/5 hover:border-[#EAB308]/30 hover:bg-[#EAB308]/5 py-3 transition-all cursor-pointer shadow-sm backdrop-blur-sm"
             >
               <div className="w-6 h-6 rounded-full border border-[#EAB308] flex items-center justify-center mb-0.5">
                 <AlertCircle className="h-3.5 w-3.5 text-[#EAB308]" />
@@ -100,7 +113,7 @@ export function PoliceSidebar() {
             </button>
             <button 
               onClick={() => toast.message('BACKUP REQUESTED', { description: 'Authority Command has been notified of your request.' })}
-              className="flex-1 flex flex-col items-center justify-center gap-2 rounded-md bg-[#121827] border border-transparent hover:border-[#00E5FF]/20 py-3 transition-all cursor-pointer shadow-sm"
+              className="flex-1 flex flex-col items-center justify-center gap-2 rounded-md bg-black/40 border border-white/5 hover:border-[#00E5FF]/30 hover:bg-[#00E5FF]/5 py-3 transition-all cursor-pointer shadow-sm backdrop-blur-sm"
             >
               <div className="w-6 h-6 rounded-full border border-[#00E5FF] flex items-center justify-center mb-0.5">
                 <Shield className="h-3.5 w-3.5 text-[#00E5FF]" />
@@ -121,10 +134,10 @@ export function PoliceSidebar() {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-2.5 rounded-md text-[11px] font-semibold transition-all",
+                  "flex items-center gap-3 px-4 py-2.5 rounded-md text-[11px] font-semibold transition-all backdrop-blur-sm",
                   isActive 
-                    ? "bg-[#00E5FF]/10 text-[#00E5FF]" 
-                    : "text-zinc-400 hover:text-white hover:bg-white/5"
+                    ? "bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/20" 
+                    : "text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent"
                 )}
               >
                 <Icon className={cn("h-4 w-4", isActive ? "text-[#00E5FF]" : "text-zinc-400")} />
@@ -140,7 +153,7 @@ export function PoliceSidebar() {
             <span className="text-zinc-500 font-black text-[10px]">!</span>
             <span className="text-zinc-500 font-bold text-[9px] tracking-widest uppercase">CURRENT OBJECTIVE</span>
           </div>
-          <div className="bg-[#121827] rounded-md border-l-4 border-l-[#E11D48] p-3 shadow-lg relative border-y border-r border-[#1a253a]">
+          <div className="bg-black/60 backdrop-blur-md rounded-md border-l-4 border-l-[#E11D48] p-3 shadow-lg relative border-y border-r border-white/10">
             <div className="flex justify-between items-center mb-2">
               <div className="bg-[#E11D48]/20 px-1.5 py-0.5 rounded-sm">
                 <span className="text-[#E11D48] text-[8px] font-black tracking-wider uppercase">HIGH PRIORITY</span>
@@ -156,7 +169,7 @@ export function PoliceSidebar() {
       </div>
 
       {/* Footer */}
-      <div className="mt-auto px-4 py-4 border-t border-[#1a253a] flex flex-col gap-1">
+      <div className="mt-auto px-4 py-4 border-t border-[#1a253a] flex flex-col gap-1 relative z-10">
         <Link href="/support" className="flex items-center gap-3 px-2 py-2 rounded-md text-[11px] font-semibold text-zinc-400 hover:text-white hover:bg-white/5 transition-all">
           <HelpCircle className="h-4 w-4" />
           Support
