@@ -18,136 +18,91 @@ CrowdShield emphasizes **Rich Aesthetics and Dynamic Design** using Next.js, Tai
 
 ---
 
-## 2. Role-Based Wireframes
+## 2. Role-Based Wireframes (Unified Global Sidebar Architecture)
+
+All user roles (Authority, Police, Citizen, Organizer) now share a unified **Global Sidebar** on the left, featuring a high-tech `DotPattern` background, with the interactive Leaflet Map occupying the main right-hand canvas. This eliminates floating panels and maximizes map visibility.
 
 ### 2.1 Authority Command Center (Desktop PWA)
 
-```
-+---------------------------------------------------------------------------------------------------------+
-| CrowdShield     [Event: Rath Festival 2026]                          [Alerts] [Cmdr. Sharma]          |
-+---------------------------------------------------------------------------------------------------------+
-|  CONTROLS         |                                                               |  AI ALERTS          |
-|                   |                                                               |                     |
-|  [X] Heatmap      |                       LIVE VENUE MAP                          |  Zone C - CRITICAL  |
-|  [X] CCTV Cams    |                                                               |  Risk: 87/100       |
-|  [X] Smart Gates  |                GREEN              YELLOW                      |  ETA: 8 min         |
-|  [X] Police       |                                                               |                     |
-|  [X] Routes       |                           RED                                 |  RECOMMENDATION     |
-|  [ ] Incidents    |                                                               |                     |
-|  [ ] Source Health |                                                               |  Restrict Gate G3   |
-|                   |                                                               |  Open Gate G5       |
-|                   |                                                               |  Deploy 6 Police    |
-|                   |                                                               |                     |
-|                   |                                                               |  [ APPROVE PLAN ]   |
-+-------------------+---------------------------------------------------------------+---------------------+
-| Density: 4.2 p/m2 | Flow Conflict: YES | Active Police: 142/150 | Sources: 5/6 ONLINE              |
-+---------------------------------------------------------------------------------------------------------+
+```text
++-------------------------+-------------------------------------------------------------------------------+
+| CROWDSHIELD (Cmdr)      |  [Search venue, gates, zones...]                                [Alerts] [U]  |
+| . . . . . . . . . . .   +-------------------------------------------------------------------------------+
+| [ ] Command Center      |                                                                               |
+| [ ] Live Map            |                                                                               |
+| . . . . . . . . . . .   |                                LIVE VENUE MAP                                 |
+| MAP CONTROLS            |                                                                               |
+| [X] Crowd Heatmap       |                                                                               |
+| [X] CCTV Cameras        |               GREEN                               YELLOW                      |
+| [X] Police Units        |                                                                               |
+| [ ] Smart Gates         |                                                                               |
+| . . . . . . . . . . .   |                                     RED                                       |
+| [ ] Settings            |                                                                               |
+| [ ] Logout              |                                                                               |
+|                         |                                                                               |
++-------------------------+-------------------------------------------------------------------------------+
 ```
 
-### 2.2 Police / Security Staff (Mobile PWA)
+### 2.2 Police / Security Staff (Mobile/Desktop PWA)
 
-```
-+--------------------------------+
-| Security Mode       [Off. 4]   |
-+--------------------------------+
-| PRIORITY ALERT                |
-|                               |
-| Zone C                        |
-| 120m away                     |
-| Risk: CRITICAL                |
-|                               |
-| TASK                          |
-| Control crowd near Gate 3.    |
-|                               |
-| Required: 6 officers          |
-| Assigned: 4                   |
-|                               |
-| [ NAVIGATE TO ZONE ]          |
-| [ MARK ARRIVED ]              |
-+--------------------------------+
-|       +----------------+       |
-|       | YOU       ^    |       |
-|       |          |120m |       |
-|       |     ZONE C     |       |
-|       +----------------+       |
-+--------------------------------+
+```text
++-------------------------+-------------------------------------------------------------------------------+
+| CROWDSHIELD (Off. 4)    |  [Search TechNova 2026...]                                      [Alerts] [U]  |
+| . . . . . . . . . . .   +-------------------------------------------------------------------------------+
+| [ * ] SOS EMERGENCY     |                                                                               |
+| [ ! ] Incident  [U] B/U |  +--------------------------------+                                           |
+| . . . . . . . . . . .   |  | PRIORITY ALERT                 |                                           |
+| [ ] Dashboard           |  | Zone: Zone B (Gate 3)          |            LIVE VENUE MAP                 |
+| [ ] Map View            |  |                                |                                           |
+| [ ] Active Tasks        |  | Proceed to Gate 3 to manage    |                                           |
+| [ ] Unit Radar          |  | crowd bottleneck.              |                                           |
+| [ ] Incident Logs       |  |                                |                                           |
+| . . . . . . . . . . .   |  | [ NAVIGATE TO ZONE ]           |                                           |
+| ! CURRENT OBJECTIVE     |  | [ MARK ARRIVED ]               |                                           |
+| Control crowd Gate 3    |  +--------------------------------+                                           |
++-------------------------+-------------------------------------------------------------------------------+
 ```
 
-### 2.3 Citizen / Festival Attendee (Mobile PWA)
+### 2.3 Citizen / Festival Attendee (Mobile/Desktop PWA)
 
-```
-+--------------------------------+
-| CrowdShield           [User]   |
-+--------------------------------+
-| You are here                   |
-| YOUR AREA IS SAFE              |
-|                               |
-|       +----------------+       |
-|       |    MAP         |       |
-|       |     GREEN      |       |
-|       |         YELLOW |       |
-|       +----------------+       |
-|                               |
-| Congestion ahead              |
-| Gate 3 is currently busy.     |
-| Please use Gate 4.            |
-|                               |
-| [ VIEW SAFE ROUTE ]           |
-| [ REPORT SOS INCIDENT ]       |
-+--------------------------------+
-+--------------------------------+
-| Home   Alerts   Profile       |
-+--------------------------------+
+```text
++-------------------------+-------------------------------------------------------------------------------+
+| CROWDSHIELD (Citizen)   |  [Search venue, gates, zones...]                                [Alerts] [U]  |
+| . . . . . . . . . . .   +-------------------------------------------------------------------------------+
+| PUBLIC DASHBOARD        |                                                                               |
+| [ ] Live Map            |                                                                               |
+| [ ] Alerts              |                                                                               |
+| [ ] Profile             |                                LIVE VENUE MAP                                 |
+| . . . . . . . . . . .   |                                                                               |
+| JOURNEY PLANNER         |                                                                               |
+| Where to? [Search]      |                                                                               |
+| Group [4]  [Heart]      |                                                                               |
+| [ FIND SAFE ROUTE ]     |                                                                               |
+| . . . . . . . . . . .   |                                                                               |
+| [ ] Settings            |                                                                               |
+| [ ] Logout              |                                                                               |
++-------------------------+-------------------------------------------------------------------------------+
 ```
 
-### 2.4 Event Owner Map Builders (Desktop PWA)
+### 2.4 Event Organizer / Map Builder (Desktop PWA)
 
-```
-+---------------------------------------------------------------------------------------------------------+
-| CrowdShield     [Event: TechNova 2026]                               [Config] [Organizer]               |
-+---------------------------------------------------------------------------------------------------------+
-|  BUILDER TOOLS    |                                                               |  PROPERTIES         |
-|                   |                                                               |                     |
-|  [>] Boundary     |                       INTERACTIVE MAP (Leaflet)               |  Entity: Zone       |
-|  [>] Zones        |                                                               |  Name: Main Stage   |
-|  [ ] Gates        |              +--------------------------+                     |  Type: STAGE        |
-|  [ ] Routes       |              |           ZONE           |                     |  Capacity: 20000    |
-|  [ ] Infra        |              |        Main Stage        |                     |                     |
-|                   |              |                          |                     |                     |
-|                   |              +--------------------------+                     |                     |
-|                   |                                                               |  [ SAVE ZONE ]      |
-|                   |                                                               |                     |
-|                   |                                                               |                     |
-+-------------------+---------------------------------------------------------------+---------------------+
-```
-
-### 2.4 Event Organizer / Admin (Desktop PWA)
-
-```
-+---------------------------------------------------------------------------------------------------------+
-| CrowdShield Admin                                                     [Event Manager]                   |
-+---------------------------------------------------------------------------------------------------------+
-|  CONFIGURE EVENT: Rath Festival 2026                                                                    |
-|                                                                                                         |
-|  [ EVENT DETAILS ]  [ VENUE MAP ]  [ ZONES & GATES ]  [ ROUTES ]  [ CAMERAS ]  [ SMART GATES ]         |
-|                                                                                                         |
-|       +-------------------------------------------------------------+                                   |
-|       |                               G1                            |  +-----------------------------+  |
-|       |                               ↓                             |  | EDIT ZONE C                 |  |
-|       |                     +--------------------+                  |  |                             |  |
-|       |                 G2 ->|      ZONE A        |<- G3            |  | Max Capacity: 1500          |  |
-|       |                     |                    |                  |  | Connected Cams: C1, C4      |  |
-|       |                     +----------+---------+                  |  | Smart Gate: SG-03           |  |
-|       |                     | ZONE B   | ZONE C  |                  |  | Connected Routes: R1, R4    |  |
-|       |                     |          |         |                  |  |                             |  |
-|       |                     +----------+---------+                  |  | [ SAVE ] [ DELETE ]         |  |
-|       |                     |      ZONE D        |                  |  +-----------------------------+  |
-|       |                     +--------------------+                  |                                   |
-|       |                     └───G4──────────G5───┘                  |                                   |
-|  +----+----+                                                                              +----------+ |
-|  | GPS ROUTE RECORDER                                                                     | SIMULATE | |
-|  | [Start Recording] [Stop] [Edit Route]                                                  | [RUN]    | |
-+---------------------------------------------------------------------+----------------------+----------+-+
+```text
++-------------------------+-------------------------------------------------------------------------------+
+| CROWDSHIELD (Admin)     |  [Search venue, gates, zones...]                                [Alerts] [U]  |
+| . . . . . . . . . . .   +-------------------------------------------------------------------------------+
+| ORGANIZER DASHBOARD     |                                                                               |
+| [ ] Event Management    |                                                                               |
+| . . . . . . . . . . .   |                                LIVE VENUE MAP                                 |
+| BUILDER TOOLS           |                                                                               |
+| [ ] Venue Boundary      |                                                                               |
+| [ ] Crowd Zones         |                                                                               |
+| [ ] Smart Gates         |                                                                               |
+| [ ] Flow Routes         |                                                                               |
+| [ ] Infrastructure      |                                                                               |
+| . . . . . . . . . . .   |                                                                               |
+| [ ] Settings            |                                                                               |
+| [ ] Logout              |                                                                               |
++-------------------------+-------------------------------------------------------------------------------+
 ```
 
 ---
@@ -276,102 +231,37 @@ Do not expose sensitive operational information.
 
 ---
 
-## 64. CITIZEN JOURNEY PLANNER WIREFRAME
+## 64. CITIZEN JOURNEY PLANNER WIREFRAME (Sidebar Integrated)
 
-### Journey Input Screen
-```
-+--------------------------------+
-| CrowdShield           [User]   |
-+--------------------------------+
-| 🛡️ Plan Your Safe Journey     |
-+--------------------------------+
-| FROM:                           |
-| [📍 My Location (GPS)]         |
-|                                 |
-| TO:                             |
-| [🏛️ Maha Kumbh Mela]          |
-|                                 |
-| 👥 Group Size:                  |
-| [-] [ 4 ] [+]                  |
-| ○ Solo  ○ Couple  ● Family     |
-| ○ Group  ○ Large Group          |
-|                                 |
-| Special Needs:                  |
-| [ ] Elderly members             |
-| [✓] Children (under 10)         |
-| [ ] Wheelchair/mobility         |
-|                                 |
-| Preferred Time:                 |
-| [📅 Tomorrow] [⏰ 6:00 AM]     |
-|                                 |
-| Transport:                      |
-| [🚗 Drive] [🚶 Walk] [🚌 Bus]  |
-+--------------------------------+
-| [🔍 Find Safe Route]            |
-+--------------------------------+
+### Journey Input State (Inside Global Sidebar)
+```text
++-------------------------+
+| JOURNEY PLANNER         |
+|                         |
+| Where to?               |
+| [🔍 Maha Kumbh Mela  ]  |
+|                         |
+| Group          [Heart]  |
+| [👥 4]         [Pulse]  |
+|                         |
+| [ FIND SAFE ROUTE ]     |
++-------------------------+
 ```
 
-### Route Results Screen
-```
-+--------------------------------+
-| CrowdShield           [User]   |
-+--------------------------------+
-| 🗺️ Recommended Route           |
-+--------------------------------+
-| 🟢 SAFE ROUTE SELECTED         |
-|                                 |
-| Route: NH-27 → Ring Rd → G5    |
-| Distance: 3.2 km               |
-| Time: 25 min (walk)            |
-| Safety Score: 8.5/10           |
-|                                 |
-| ┌──────────────────────────┐   |
-| │ MAP                      │   |
-| │ 📍 You ─── 🟢 ─── 🏛️    │   |
-| │         (green route)    │   |
-| └──────────────────────────┘   |
-|                                 |
-| 🚪 RECOMMENDED GATE: G5        |
-| Queue: 3 min (12 people)       |
-| Width: Wide (suitable for 4)   |
-|                                 |
-| ⚠️ AVOID: Gate G3 (congested)  |
-| ⚠️ AVOID: Zone B (crowded)     |
-|                                 |
-| 👨‍👩‍👧‍👦 FAMILY TIPS:              |
-| • Designate meeting point      |
-| • Share location with group    |
-| • Keep children close          |
-|                                 |
-| [🧭 Start Navigation]          |
-+--------------------------------+
-```
-
-### Navigation Screen
-```
-+--------------------------------+
-| CrowdShield           [User]   |
-+--------------------------------+
-| 🧭 NAVIGATING                  |
-+--------------------------------+
-| ┌──────────────────────────┐   |
-| │ MAP                      │   |
-| │ 📍 You → 🟢 → 🏛️ Gate 5 │   |
-| │ (live position)          │   |
-| └──────────────────────────┘   |
-|                                 |
-| ➡️ Turn right on NH-27         |
-|    in 200m                     |
-|                                 |
-| ⏱️ 18 min remaining            |
-| 📏 1.8 km remaining            |
-|                                 |
-| 👥 Group: 4/4 together ✓       |
-|                                 |
-| 🟢 Route clear ahead           |
-|                                 |
-| [🚨 SOS]  [📋 Report Issue]    |
-+--------------------------------+
+### Route Results & Navigation State (Inside Global Sidebar)
+```text
++-------------------------+
+| JOURNEY PLANNER         |
+|                         |
+| [✓] SAFE ROUTE          |
+| [  25 MIN  ]            |
+|                         |
+| Start: Current Loc      |
+| Gate:  Gate G5          |
+|                         |
+| [ START NAVIGATION ]    |
+| [ Cancel ]              |
++-------------------------+
 ```
 
 ### Group Coordination Screen
