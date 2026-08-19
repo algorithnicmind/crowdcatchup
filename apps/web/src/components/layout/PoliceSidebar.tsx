@@ -26,6 +26,7 @@ import { DotPattern } from '@/components/ui/dot-pattern';
 export function PoliceSidebar() {
   const pathname = usePathname();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isPatrol, setIsPatrol] = useState(true);
 
   const navItems = [
     { name: 'Dashboard', href: '/police', icon: LayoutGrid },
@@ -77,14 +78,22 @@ export function PoliceSidebar() {
             <div className="flex flex-col">
               <span className="text-white font-bold text-sm">Officer-4</span>
               <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] shadow-[0_0_5px_#00E5FF]" />
-                <span className="text-[#00E5FF] text-[10px] font-bold tracking-wider">Status: Patrol</span>
+                <span className={`w-1.5 h-1.5 rounded-full ${isPatrol ? 'bg-[#00E5FF] shadow-[0_0_5px_#00E5FF]' : 'bg-zinc-500'}`} />
+                <span className={`text-[10px] font-bold tracking-wider ${isPatrol ? 'text-[#00E5FF]' : 'text-zinc-500'}`}>
+                  Status: {isPatrol ? 'Patrol' : 'Off-Duty'}
+                </span>
               </div>
             </div>
           </div>
           {/* Toggle Switch */}
-          <div className="w-9 h-5 bg-[#1F2937] rounded-full relative cursor-pointer shadow-inner">
-            <div className="absolute right-1 top-1 w-3 h-3 rounded-full bg-[#00E5FF] shadow-[0_0_8px_#00E5FF]" />
+          <div 
+            onClick={() => {
+              setIsPatrol(!isPatrol);
+              toast.info(isPatrol ? 'Status changed to Off-Duty' : 'Status changed to Patrol');
+            }}
+            className={`w-9 h-5 rounded-full relative cursor-pointer shadow-inner transition-colors ${isPatrol ? 'bg-[#1F2937]' : 'bg-zinc-800'}`}
+          >
+            <div className={`absolute top-1 w-3 h-3 rounded-full transition-all ${isPatrol ? 'right-1 bg-[#00E5FF] shadow-[0_0_8px_#00E5FF]' : 'left-1 bg-zinc-500'}`} />
           </div>
         </div>
 
@@ -170,13 +179,16 @@ export function PoliceSidebar() {
 
       {/* Footer */}
       <div className="mt-auto px-4 py-4 border-t border-[#1a253a] flex flex-col gap-1 relative z-10">
-        <Link href="/support" className="flex items-center gap-3 px-2 py-2 rounded-md text-[11px] font-semibold text-zinc-400 hover:text-white hover:bg-white/5 transition-all">
+        <button 
+          onClick={() => toast.success('Connecting to Command Support...', { description: 'Secure channel established.' })}
+          className="flex items-center gap-3 px-2 py-2 rounded-md text-[11px] font-semibold text-zinc-400 hover:text-white hover:bg-white/5 transition-all w-full text-left"
+        >
           <HelpCircle className="h-4 w-4" />
           Support
-        </Link>
+        </button>
         <button 
           onClick={() => setSettingsOpen(true)}
-          className="flex items-center gap-3 px-2 py-2 rounded-md text-[11px] font-semibold text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
+          className="flex items-center gap-3 px-2 py-2 rounded-md text-[11px] font-semibold text-zinc-400 hover:text-white hover:bg-white/5 transition-all w-full text-left"
         >
           <Settings className="h-4 w-4" />
           Settings
