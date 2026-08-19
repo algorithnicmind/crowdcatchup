@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MagicCard } from '@/components/ui/magic-card';
 import { Navigation, Users, ShieldAlert, HeartPulse, Search, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useMapStore } from '@/stores/map-store';
 
 export function SafeRoutePanel() {
   const [isPlanning, setIsPlanning] = useState(false);
@@ -57,9 +58,23 @@ export function SafeRoutePanel() {
 
                 <Button 
                   className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg shadow-emerald-500/20"
-                  onClick={() => {
+                  onClick={async () => {
                     setIsPlanning(true);
-                    setTimeout(() => setRouteFound(true), 1500); // Simulate API call
+                    try {
+                      // Call the Navigation Backend (Phase 7.6)
+                      const res = await fetch("http://localhost:8000/api/v1/navigation/route?start_zone=Zone-A&end_zone=Maha-Kumbh-Mela");
+                      if (res.ok) {
+                        const data = await res.json();
+                        console.log("Safe Route Fetched:", data);
+                        // Store route in mapStore so GoogleEventMap can render the polyline
+                        useMapStore.getState().setRouteCoordinates(data.coordinates || []);
+                        setRouteFound(true);
+                      }
+                    } catch (e) {
+                      console.error("Failed to fetch route", e);
+                    } finally {
+                      setIsPlanning(false);
+                    }
                   }}
                   disabled={isPlanning}
                 >
@@ -134,7 +149,10 @@ export function SafeRoutePanel() {
                   <Button 
                     variant="outline"
                     className="bg-transparent border-white/20 text-white hover:bg-white/10"
-                    onClick={() => setRouteFound(false)}
+                    onClick={() => {
+                      setRouteFound(false);
+                      useMapStore.getState().setRouteCoordinates(null);
+                    }}
                   >
                     Cancel
                   </Button>

@@ -26,6 +26,7 @@ from features.recommendations.api.routes import router as recommendations_router
 from features.navigation.api.routes import router as navigation_router
 from features.simulation.api.routes import router as simulation_router
 from features.reports.api.routes import router as reports_router
+from features.incidents.api.routes import router as incidents_router
 
 settings = get_settings()
 logging.basicConfig(level=logging.INFO if not settings.DEBUG else logging.DEBUG)
@@ -77,6 +78,7 @@ app.include_router(recommendations_router, prefix="/api/v1/recommendations", tag
 app.include_router(navigation_router, prefix="/api/v1/navigation", tags=["Navigation"])
 app.include_router(simulation_router, prefix="/api/v1/simulation", tags=["Simulation"])
 app.include_router(reports_router, prefix="/api/v1/reports", tags=["Reports"])
+app.include_router(incidents_router, prefix="/api/v1/incidents", tags=["Incidents"])
 
 
 @app.get("/")

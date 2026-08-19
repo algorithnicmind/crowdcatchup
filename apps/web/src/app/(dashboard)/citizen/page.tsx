@@ -7,6 +7,32 @@ import { ShieldAlert, BellRing, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function CitizenDashboard() {
+  const handleSosTrigger = async () => {
+    try {
+      // In a real app, we'd get actual device GPS coordinates here.
+      const payload = {
+        event_id: "test-event-123",
+        type: "SOS",
+        description: "Emergency assistance requested by Citizen",
+        lat: 25.4358, 
+        lng: 81.8463,
+        timestamp: new Date().toISOString()
+      };
+
+      const res = await fetch("http://localhost:8000/api/v1/incidents/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      
+      if (res.ok) {
+        alert("SOS Triggered! Police have been notified of your location.");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <div className="h-[calc(100vh-64px)] w-full relative overflow-hidden bg-black flex flex-col">
       {/* 1. Base Map Layer */}
@@ -27,10 +53,15 @@ export default function CitizenDashboard() {
             <Button 
               variant="destructive" 
               size="icon" 
+<<<<<<< Updated upstream
               className="rounded-full shadow-lg shadow-red-500/30 w-10 h-10"
               onClick={() => {
                 import('sonner').then(({ toast }) => toast.error('Emergency SOS Triggered! Nearby police alerted.'));
               }}
+=======
+              className="rounded-full shadow-lg shadow-red-500/30 w-10 h-10 animate-pulse"
+              onClick={handleSosTrigger}
+>>>>>>> Stashed changes
             >
               <ShieldAlert className="w-5 h-5" />
             </Button>
