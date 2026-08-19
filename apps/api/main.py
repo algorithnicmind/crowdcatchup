@@ -19,6 +19,7 @@ from shared.api.error_handlers import register_error_handlers
 # Import Routers
 from features.auth.api.routes import router as auth_router
 from features.events.api.routes import router as events_router
+from features.events.api.gps_routes import router as gps_router
 from features.fusion.api.routes import router as fusion_router
 from features.auth.api.officer_routes import router as officer_router
 from features.recommendations.api.routes import router as recommendations_router
@@ -69,6 +70,7 @@ register_error_handlers(app)
 # Include API Routers
 app.include_router(auth_router)
 app.include_router(events_router)
+app.include_router(gps_router, prefix="/api/v1")
 app.include_router(fusion_router)
 app.include_router(officer_router)
 app.include_router(recommendations_router, prefix="/api/v1/recommendations", tags=["Recommendations"])

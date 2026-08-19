@@ -92,7 +92,7 @@
 - [x] **2.5 Route builder**
   RouteEditor — draw/edit routes; types: one-way, two-way, emergency, police-only, temporary; activate/deactivate; capacity (doc 11 §11).
   → After: 2.6 · ✅ Done when: all route types persist and render.
-- [ ] **2.6 GPS route recording** (P1, LLD §3)
+- [x] **2.6 GPS route recording** (P1, LLD §3)
   Walk-a-route capture → trajectory smoothing → editable route; accuracy handling (LLD §3.2).
   → After: 2.7 · ✅ Done when: recorded trajectory becomes a route.
 - [x] **2.7 Temporary infrastructure**
@@ -137,10 +137,10 @@
 - [x] **3.9 Frontend crowd panels**
   CrowdMetrics, ZoneStatusCard, SourceHealthPanel, RiskPanel skeleton; `useCrowdState`, `useRiskUpdates` hooks (doc 12 frontend).
   → After: 3.10 · ✅ Done when: live zone status + source health on dashboard.
-- [ ] **3.10 End-to-end + tests + docs ripple**
+- [x] **3.10 End-to-end + tests + docs ripple**
   Simulator → ingest → fusion → WS → UI verified end-to-end; fusion accuracy tests (doc 09).
   → After: PHASE 3 GATE · ✅ Done when: full pipeline verified and tested.
-- [ ] **🚧 PHASE 3 GATE** *(pass before Phase 4)*
+- [x] **🚧 PHASE 3 GATE** *(pass before Phase 4)*
   Fake telemetry flows live to the map — the demo backbone works.
   → After: Phase 4 starts.
 

@@ -65,6 +65,8 @@ interface MapState {
   activeRecommendations: ActionPlan[];
   activeTasks: SecurityTask[];
   sourceHealth: SourceHealth[];
+  isRecordingGps: boolean;
+  gpsSessionId: string | null;
   
   setMapTypeId: (id: string) => void;
   setTrafficEnabled: (enabled: boolean) => void;
@@ -77,6 +79,8 @@ interface MapState {
   addTask: (task: SecurityTask) => void;
   removeTask: (id: string) => void;
   updateSourceHealth: (health: SourceHealth) => void;
+  setIsRecordingGps: (isRecording: boolean) => void;
+  setGpsSessionId: (id: string | null) => void;
 }
 
 export const useMapStore = create<MapState>((set) => ({
@@ -112,6 +116,8 @@ export const useMapStore = create<MapState>((set) => ({
     }
   ],
   sourceHealth: [],
+  isRecordingGps: false,
+  gpsSessionId: null,
   
   setMapTypeId: (id) => set({ mapTypeId: id }),
   setTrafficEnabled: (enabled) => set({ trafficEnabled: enabled }),
@@ -154,5 +160,8 @@ export const useMapStore = create<MapState>((set) => ({
       return { sourceHealth: next };
     }
     return { sourceHealth: [...prev.sourceHealth, health] };
-  })
+  }),
+  
+  setIsRecordingGps: (isRecording) => set({ isRecordingGps: isRecording }),
+  setGpsSessionId: (id) => set({ gpsSessionId: id })
 }));
