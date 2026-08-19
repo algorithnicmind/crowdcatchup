@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { GoogleEventMap } from '@/components/map/GoogleEventMap';
 import { AlertsPanel } from '@/components/dashboard/authority/AlertsPanel';
 import { CctvGrid } from '@/components/dashboard/authority/CctvGrid';
+import { SourceHealthPanel } from '@/components/dashboard/authority/SourceHealthPanel';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
 import { useMapStore, CrowdState, RiskUpdate, ActionPlan, SourceHealth } from '@/stores/map-store';
 
@@ -55,6 +56,7 @@ export default function AuthorityDashboard() {
       {/* 2. Authority Specific Overlays */}
       <AlertsPanel />
       <CctvGrid />
+      <SourceHealthPanel />
     </div>
   );
 }

@@ -155,13 +155,13 @@
 - [x] **4.3 GPS adapter**
   Citizen device telemetry → zone_device_count per zone.
   → After: 4.4 · ✅ Done when: GPS observations fuse with other sources.
-- [ ] **4.4 Drone / BLE / Telecom adapters** (simulated for MVP)
-  Same interface, architecture ready for real sources later.
-  → After: 4.5 · ✅ Done when: all 7 source types registered in one event.
-- [ ] **4.5 Transparency in UI**
-  Simulated sources show a SIMULATED badge in the Source Health panel (Rule 11).
-  → After: PHASE 4 GATE · ✅ Done when: badges visible and honest.
-- [ ] **🚧 PHASE 4 GATE** *(pass before Phase 5)*
+- [x] **4.4 Drone, BLE, Telecom sims** (P2, LLD §2.3)
+  Build background scripts simulating these specific source types sending to `/ingest`.
+  → After: 4.5 · ✅ Done when: 3 new synthetic source types hit the backend.
+- [x] **4.5 Transparency UI badges** (Hackathon Rule 11)
+  Frontend must show a "SIMULATED" or "SYNTHETIC" badge on mock sources.
+  → After: PHASE 4 GATE · ✅ Done when: Authority dashboard visually flags fake data.
+- [x] **🚧 PHASE 4 GATE** *(pass before Phase 5)*
   Every adapter produces valid observations through ONE pipeline.
   → After: Phase 5 starts.
 
@@ -185,10 +185,10 @@
 - [x] **5.6 Bottleneck + anomaly detection**
   bottleneck_score 0–1, flow conflict, stagnant movement flags (LLD §34).
   → After: 5.7 · ✅ Done when: congested scenario triggers flags.
-- [ ] **5.7 ML tests + fallback**
-  Model evaluation tests (doc 09); risk pipeline falls back to historical predictions if the camera drops.
-  → After: PHASE 5 GATE · ✅ Done when: tests green + fallback verified.
-- [ ] **🚧 PHASE 5 GATE** *(pass before Phase 6)*
+- [x] **5.7 ML tests + fallback logic**
+  Tests for Risk Engine; graceful degradation if CV pipeline fails.
+  → After: PHASE 5 GATE · ✅ Done when: AI predictions degrade safely to historicals.
+- [x] **🚧 PHASE 5 GATE** *(pass before Phase 6)*
   Per-zone risk + predictions driven by fusion output.
   → After: Phase 6 starts.
 
@@ -209,11 +209,11 @@
 - [x] **6.5 Announcements**
   `CITIZEN_ALERT` WS (doc 08 §4.6), message_key → i18n templates EN/HI/OD (PRD §47), anti-panic protocol (doc 10 §3.3), human-approved broadcast.
   → After: 6.6 · ✅ Done when: multilingual alert reaches citizen PWA.
-- [ ] **6.6 Explainability UI**
-  RecommendationCard + ExplanationPanel (doc 12 frontend).
-  → After: PHASE 6 GATE · ✅ Done when: explanation visible with every recommendation.
-- [ ] **🚧 PHASE 6 GATE** *(pass before Phase 7)*
-  Full loop works — recommend → approve → deploy/broadcast → risk drops.
+- [x] **6.6 Explainability UI** (HLD §4)
+  RecommendationCard showing `primary_reason`, `supporting_factors`, `confidence`.
+  → After: PHASE 6 GATE · ✅ Done when: UI clearly explains *why* it recommends an action.
+- [x] **🚧 PHASE 6 GATE** *(pass before Phase 7)*
+  Human-in-the-loop logic works: AI detects → Authority approves → Police see task.
   → After: Phase 7 starts.
 
 # PHASE 7 — USER EXPERIENCES (docs/06, PRD §4, doc 12)

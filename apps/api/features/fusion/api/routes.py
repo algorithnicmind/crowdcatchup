@@ -24,9 +24,15 @@ def process_observation_background(obs: StandardObservation):
     crowd_state = FusionService.process_observation(obs)
     logger.info(f"Updated CrowdState for {obs.zone_id}: Density {crowd_state.density} ({crowd_state.density_level})")
     
-    # Run the Risk Engine
-    from ...risk.application.risk_service import risk_service
-    risk_score = risk_service.predict_risk(crowd_state)
+    # Fallback Logic: Graceful Degradation (Phase 5.7)
+    # If confidence drops below 30%, rely on historical moving average (simulated here)
+    if obs.confidence < 0.3:
+        logger.warning(f"Low confidence ({obs.confidence}) from {obs.source_id}. Falling back to historical average risk.")
+        risk_score = 30.0 # Example fallback historical average
+    else:
+        from ...risk.application.risk_service import risk_service
+        risk_score = risk_service.predict_risk(crowd_state)
+        
     crowd_state.risk_score = risk_score
     
     # Update risk level

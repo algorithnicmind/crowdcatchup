@@ -42,6 +42,20 @@ export function AlertsPanel() {
                   <div className="bg-red-500/10 rounded-md p-3 border border-red-500/20">
                     <p className="text-white text-sm font-medium">{rec.explanation.primary_reason}</p>
                     <p className="text-red-300 text-xs mt-1">Zone: {rec.zone_id} | Risk: {rec.risk_score}</p>
+                    
+                    {/* Phase 6.6 Explainability UI Details */}
+                    <div className="mt-2 pt-2 border-t border-red-500/20 space-y-1">
+                      <p className="text-gray-400 text-[10px] font-semibold uppercase">Supporting Factors</p>
+                      <ul className="list-disc pl-4 text-xs text-red-200/80">
+                        {rec.explanation.supporting_factors?.map((f, i) => (
+                          <li key={i}>{f}</li>
+                        ))}
+                      </ul>
+                      <div className="flex justify-between items-center mt-2 text-[10px] font-semibold text-gray-400">
+                        <span>Source Agreement: {(rec.explanation.source_agreement * 100).toFixed(0)}%</span>
+                        <span>AI Confidence: {(rec.explanation.prediction_confidence * 100).toFixed(0)}%</span>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
