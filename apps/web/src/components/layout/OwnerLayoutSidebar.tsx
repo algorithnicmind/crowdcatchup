@@ -11,7 +11,10 @@ import {
   Hexagon,
   DoorOpen,
   Route,
-  Video
+  Video,
+  Calendar,
+  Activity,
+  Settings2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -30,7 +33,10 @@ export function OwnerLayoutSidebar() {
   ];
 
   const navItems = [
-    { name: 'Event Management', href: '/owner', icon: MapIcon },
+    { name: "Events", href: "/owner/events", icon: Calendar },
+    { name: "Venue Map", href: "/owner", icon: MapIcon },
+    { name: "Simulations", href: "/owner", icon: Activity },
+    { name: "Settings", href: "/settings", icon: Settings2 }
   ];
 
   const getIsActive = (href: string) => {

@@ -75,7 +75,10 @@ export function AlertsPanel() {
                       variant="destructive" 
                       size="sm" 
                       className="w-full font-semibold shadow-lg shadow-red-500/20"
-                      onClick={() => useMapStore.getState().removeRecommendation(rec.recommendation_id)}
+                      onClick={() => {
+                        import('sonner').then(({ toast }) => toast.success('Plan Approved: Units Deployed & Interventions Activated'));
+                        useMapStore.getState().removeRecommendation(rec.recommendation_id);
+                      }}
                     >
                       <ShieldAlert className="w-4 h-4 mr-2" />
                       Approve Plan

@@ -28,7 +28,9 @@ export default function CitizenDashboard() {
               variant="destructive" 
               size="icon" 
               className="rounded-full shadow-lg shadow-red-500/30 w-10 h-10"
-              onClick={() => alert("SOS Triggered!")}
+              onClick={() => {
+                import('sonner').then(({ toast }) => toast.error('Emergency SOS Triggered! Nearby police alerted.'));
+              }}
             >
               <ShieldAlert className="w-5 h-5" />
             </Button>

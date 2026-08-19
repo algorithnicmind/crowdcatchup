@@ -28,6 +28,7 @@ export function CitizenLayoutSidebar() {
   const navItems = [
     { name: 'Live Map', href: '/citizen', icon: MapIcon },
     { name: 'Alerts', href: '/citizen/alerts', icon: BellRing },
+    { name: 'Journey Planner', href: '/citizen/planner', icon: ShieldAlert },
     { name: 'Profile', href: '/citizen/profile', icon: User },
   ];
 
