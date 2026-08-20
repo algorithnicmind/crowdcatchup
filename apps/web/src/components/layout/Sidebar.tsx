@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
-import { Map, ShieldAlert, BarChart3, Settings, LogOut, CheckSquare, Radio, FileWarning } from 'lucide-react';
+import { Map, ShieldAlert, BarChart3, Settings, LogOut, CheckSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useClerk } from '@clerk/nextjs';
 import { DotPattern } from '@/components/ui/dot-pattern';

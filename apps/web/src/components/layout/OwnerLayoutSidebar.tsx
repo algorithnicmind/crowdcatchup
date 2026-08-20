@@ -17,7 +17,6 @@ import {
   Settings2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import { DotPattern } from '@/components/ui/dot-pattern';
 
 export function OwnerLayoutSidebar() {

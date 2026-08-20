@@ -7,13 +7,10 @@ import {
   Map as MapIcon, 
   Video, 
   Users, 
-  Radio, 
-  Settings2,
   Activity,
   Layers,
   LayoutGrid
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useMapStore } from '@/stores/map-store';
 import { MagicCard } from '@/components/ui/magic-card';

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { APIProvider, Map, AdvancedMarker, Pin, useMap } from '@vis.gl/react-google-maps';
+import { APIProvider, Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps';
 import { useMapStore } from '@/stores/map-store';
 import { MapOverlayControls } from './MapOverlayControls';
 import { MapDrawingManager } from './MapDrawingManager';
@@ -9,25 +9,6 @@ import { MapDrawingManager } from './MapDrawingManager';
 // Coordinates for the event (e.g., Kalinga Stadium)
 const EVENT_CENTER = { lat: 20.2886, lng: 85.8178 };
 
-// Modern dark style array (Google Maps JSON)
-const darkMapStyle = [
-  { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
-  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-  { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-  { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
-  { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
-  { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
-  { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
-  { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
-  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] },
-  { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
-  { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
-  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#515c6d" }] },
-  { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#17263c" }] }
-];
 
 function TrafficLayer() {
   const map = useMap();
@@ -148,6 +129,7 @@ function LiveMarkers() {
 function HeatmapOverlay() {
   const map = useMap();
   const { heatmapEnabled, liveCrowdState } = useMapStore();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const heatmapLayerRef = useRef<any>(null);
 
   useEffect(() => {
@@ -155,6 +137,7 @@ function HeatmapOverlay() {
 
     if (!heatmapLayerRef.current && window.google?.maps?.visualization) {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const HeatmapLayerClass = window.google.maps.visualization.HeatmapLayer as any;
         heatmapLayerRef.current = new HeatmapLayerClass({
           radius: 40,
@@ -279,8 +262,9 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
           mapTypeId={mapTypeId}
           disableDefaultUI={true}
           gestureHandling="greedy"
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onDragEnd={(e: any) => {
-            if (e.detail.latLng) {
+            if (e.detail?.latLng) {
               useMapStore.getState().setSearchResultPin({
                 lat: e.detail.latLng.lat,
                 lng: e.detail.latLng.lng

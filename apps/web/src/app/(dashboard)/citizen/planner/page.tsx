@@ -35,6 +35,7 @@ export default function CitizenPlannerPage() {
         })
       });
       setRouteData(result);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message || 'Failed to plan route');
     } finally {

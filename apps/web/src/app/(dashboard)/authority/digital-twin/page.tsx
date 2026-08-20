@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { GoogleEventMap } from '@/components/map/GoogleEventMap';
 import { WhatIfModal } from '@/components/dashboard/authority/digital-twin/WhatIfModal';
 import { ScenarioController } from '@/components/dashboard/authority/digital-twin/ScenarioController';

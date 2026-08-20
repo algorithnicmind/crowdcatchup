@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useMap } from '@vis.gl/react-google-maps';
 import { Button } from '@/components/ui/button';
-import { Map, Edit3, Save, Trash2, MapPin, Route as RouteIcon } from 'lucide-react';
+import { Edit3, Save, Trash2, Route as RouteIcon } from 'lucide-react';
 import { useMapStore } from '@/stores/map-store';
 
 export function MapDrawingManager() {
@@ -65,7 +65,7 @@ export function MapDrawingManager() {
   useEffect(() => {
     if (!map || typeof window === 'undefined' || !window.google) return;
     const line = new window.google.maps.Polyline({
-      path: gpsPoints,
+      path: [],
       strokeColor: '#3b82f6',
       strokeOpacity: 0.8,
       strokeWeight: 4,

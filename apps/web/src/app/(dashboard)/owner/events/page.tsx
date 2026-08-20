@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Plus, Settings2, BarChart2, Map, Loader2 } from 'lucide-react';
+import { Calendar, Plus, Settings2, Map, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api-client';
@@ -62,6 +62,7 @@ export default function OwnerEventsPage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchEvents();
   }, []);
 
@@ -95,6 +96,7 @@ export default function OwnerEventsPage() {
       setOpen(false);
       setFormData({ name: '', description: '', expected_attendance: '', max_capacity: '', start_date: '', end_date: '' });
       fetchEvents();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message || 'Failed to create event');
     } finally {

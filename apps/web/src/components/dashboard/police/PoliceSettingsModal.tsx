@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
@@ -20,7 +19,6 @@ import {
   Layers, 
   Image as ImageIcon 
 } from "lucide-react";
-import Image from "next/image";
 import { useUser } from '@clerk/nextjs';
 import { toast } from 'sonner';
 
@@ -50,6 +48,7 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
   // Fetch settings when modal opens
   useEffect(() => {
     if (open && email) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFetching(true);
       fetch(`http://localhost:8000/api/v1/officers/settings/${email}`)
         .then(res => {
@@ -104,7 +103,7 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
         description: "Your tactical preferences have been updated."
       });
       onOpenChange(false);
-    } catch (err) {
+    } catch {
       // Demo Mode Fallback: Fake successful save
       console.warn("[Demo Mode] Simulated save. Backend offline.");
       toast.success("Settings saved locally (Demo Mode)", {

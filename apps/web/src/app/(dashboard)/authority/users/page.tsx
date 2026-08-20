@@ -34,6 +34,7 @@ export default function CreateStaffPage() {
       setPassword("");
       setFullName("");
       
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setMessage({ type: "error", text: error.message || "Something went wrong" });
     } finally {

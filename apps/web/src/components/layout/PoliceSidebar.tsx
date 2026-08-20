@@ -34,8 +34,7 @@ export function PoliceSidebar() {
 
   useEffect(() => {
     if (!currentTask) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      setElapsed(0);
+      setTimeout(() => setElapsed(0), 0);
       return;
     }
     

@@ -6,7 +6,6 @@ import { MagicCard } from '@/components/ui/magic-card';
 import { 
   PencilRuler, 
   Map as MapIcon, 
-  Layers, 
   Hexagon,
   DoorOpen,
   Route,

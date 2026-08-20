@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Bell, Menu, Search } from 'lucide-react';
+import { Bell, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UserButton } from "@clerk/nextjs";
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -10,7 +10,6 @@ import { PoliceSidebar } from './PoliceSidebar';
 import { AuthorityLayoutSidebar } from './AuthorityLayoutSidebar';
 import { OwnerLayoutSidebar } from './OwnerLayoutSidebar';
 import { CitizenLayoutSidebar } from './CitizenLayoutSidebar';
-import { useAuthStore } from '@/stores/auth-store';
 import { useMapStore } from '@/stores/map-store';
 import { usePathname } from 'next/navigation';
 

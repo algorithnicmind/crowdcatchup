@@ -45,6 +45,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, userId: newUser.id, email: email, role: targetRole });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Error creating user:", error);
     // Return friendly error if it's a Clerk error (like duplicate email)

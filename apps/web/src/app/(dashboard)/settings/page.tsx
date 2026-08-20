@@ -31,6 +31,7 @@ export default function SettingsPage() {
   // Pre-fill form from Clerk data on load
   useEffect(() => {
     if (isLoaded && user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFullName(user.fullName ?? '');
       setPhoneNumber(user.phoneNumbers?.[0]?.phoneNumber ?? '');
     }

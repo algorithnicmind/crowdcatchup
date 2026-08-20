@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MagicCard } from '@/components/ui/magic-card';
-import { useMapStore, SourceHealth } from '@/stores/map-store';
+import { useMapStore } from '@/stores/map-store';
 import { Video, Activity, Wifi, WifiOff, AlertCircle, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
