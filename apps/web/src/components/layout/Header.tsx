@@ -42,15 +42,7 @@ export function Header() {
           </SheetContent>
         </Sheet>
 
-        {/* Global Search / Event Selector */}
-        <div className="hidden md:flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/50 px-3 py-1.5 transition-colors focus-within:border-emerald-500/50">
-          <Search className="h-4 w-4 text-zinc-500" />
-          <input 
-            type="text" 
-            placeholder="Search TechNova 2026..." 
-            className="bg-transparent text-sm text-zinc-200 placeholder:text-zinc-500 focus:outline-none w-48 lg:w-64"
-          />
-        </div>
+
       </div>
 
       <div className="flex items-center gap-4">
