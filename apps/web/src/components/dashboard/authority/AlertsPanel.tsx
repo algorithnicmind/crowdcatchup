@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMapStore, ActionPlan } from '@/stores/map-store';
+import { useMapStore } from '@/stores/map-store';
 import { MagicCard } from '@/components/ui/magic-card';
 import { AlertTriangle, CheckCircle, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';

@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: crowdshield-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+    depends_on:
+      - backend
+    restart: unless-stopped
+  backend:
+    build: 
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: crowdshield-backend
+    ports:
+      - "8000:8000"
+    environment:
+      # Automatically points to the Redis container below
+      - REDIS_URL=redis://redis:6379/0
+      # Provide your Neon DB connection string here or in a .env file
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://user:password@ep-cool-snowflake-1234.us-east-2.aws.neon.tech/neondb}
+      # Make sure to set any other backend environment variables your app needs
+      - SECRET_KEY=${SECRET_KEY:-your-super-secret-key-change-me}
+      - DEBUG=False
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: crowdshield-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+volumes:
+  redis_data:

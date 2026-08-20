@@ -5,7 +5,6 @@ import { GoogleEventMap } from '@/components/map/GoogleEventMap';
 import { TaskCard } from '@/components/dashboard/police/TaskCard';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
 import { useMapStore, SecurityTask } from '@/stores/map-store';
-import { Shield } from 'lucide-react';
 
 export default function PoliceDashboard() {
   const eventId = "EVT-001"; // Hardcoded for hackathon demo

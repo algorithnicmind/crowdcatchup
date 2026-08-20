@@ -1,0 +1,37 @@
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy root package.json and lockfile
+COPY package.json package-lock.json* ./
+
+# Copy all workspace package.jsons to leverage Docker cache
+COPY apps/web/package.json ./apps/web/
+COPY packages/config/package.json ./packages/config/
+COPY packages/types/package.json ./packages/types/
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the monorepo source code
+COPY . .
+
+# Build the Next.js application
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build:web
+
+# Production runner stage
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Just copy the built standalone or run via npm
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/web ./apps/web
+
+EXPOSE 3000
+
+# Start Next.js from the web workspace
+CMD ["npm", "-w", "apps/web", "run", "start"]

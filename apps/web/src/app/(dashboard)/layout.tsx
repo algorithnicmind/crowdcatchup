@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
 import { useMapStore } from '@/stores/map-store';
 
@@ -13,7 +13,6 @@ import { CitizenLayoutSidebar } from '@/components/layout/CitizenLayoutSidebar';
 import { Header } from '@/components/layout/Header';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const { setRole } = useAuthStore();

@@ -9,10 +9,8 @@ import {
   Settings, 
   ShieldAlert,
   Activity,
-  Layers,
   Video,
-  Users,
-  LayoutDashboard
+  Users
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useMapStore } from '@/stores/map-store';

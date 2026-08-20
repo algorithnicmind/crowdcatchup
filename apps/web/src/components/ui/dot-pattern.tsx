@@ -90,23 +90,29 @@ export function DotPattern({
     return () => window.removeEventListener("resize", updateDimensions)
   }, [])
 
-  const dots = Array.from(
-    {
-      length:
-        Math.ceil(dimensions.width / width) *
-        Math.ceil(dimensions.height / height),
-    },
-    (_, i) => {
-      const col = i % Math.ceil(dimensions.width / width)
-      const row = Math.floor(i / Math.ceil(dimensions.width / width))
-      return {
-        x: col * width + cx + x,
-        y: row * height + cy + y,
-        delay: Math.random() * 5,
-        duration: Math.random() * 3 + 2,
+  const dots = React.useMemo(() => {
+    if (!dimensions.width || !dimensions.height) return [];
+    
+    return Array.from(
+      {
+        length:
+          Math.ceil(dimensions.width / width) *
+          Math.ceil(dimensions.height / height),
+      },
+      (_, i) => {
+        const col = i % Math.ceil(dimensions.width / width)
+        const row = Math.floor(i / Math.ceil(dimensions.width / width))
+        return {
+          x: col * width + cx + x,
+          y: row * height + cy + y,
+          // eslint-disable-next-line react-hooks/purity
+          delay: Math.random() * 5,
+          // eslint-disable-next-line react-hooks/purity
+          duration: Math.random() * 3 + 2,
+        }
       }
-    }
-  )
+    )
+  }, [dimensions, width, height, cx, cy, x, y])
 
   return (
     <svg

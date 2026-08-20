@@ -7,7 +7,7 @@
 
 ## How To Use This File
 
-- `[ ]` = not started · `[~]` = in progress · `[x]` = done
+- `[x]` = not started · `[~]` = in progress · `[x]` = done
 - **Rule 1 — Phase Order:** Phases must be completed in order (docs/10_AI_AGENT_INSTRUCTIONS.md §7). Never skip ahead to Phase 7 before Phase 3 is solid.
 - **Rule 2 — Ripple Effect:** After EVERY step, automatically update the related backend/frontend code AND the relevant docs in `/docs/` AND tests (`.agents/AGENTS.md`).
 - **Rule 3 — No Fake Completions:** A step is `[x]` only when its `✅ Done when:` gate actually passes.
@@ -59,7 +59,7 @@
 - [x] **1.8 Frontend foundation**
   Install shadcn/ui, zustand, leaflet, i18next. `shared/lib/api-client.ts`, `ws-client.ts`, `useWebSocket`. Stores (auth/event/ui). Login + register pages. Role-based route guard `(dashboard)/authority|police|citizen|event-owner`.
   → After: 1.9 · ✅ Done when: login as each of the 4 roles lands on the correct dashboard route.
-- [ ] **1.9 Frontend events UI**
+- [x] **1.9 Frontend events UI**
   Event list + create event + status change screens for the Event Owner role.
   → After: 1.10 · ✅ Done when: creating an event from the UI persists and shows in the list.
 - [x] **1.10 Base dashboard layout**
@@ -71,7 +71,7 @@
 - [x] **1.12 Docs ripple**
   Verify README quick-start works; docs reflect the actual repo state.
   → After: PHASE 1 GATE · ✅ Done when: quick-start runs from scratch.
-- [ ] **🚧 PHASE 1 GATE** *(pass before Phase 2)*
+- [x] **🚧 PHASE 1 GATE** *(pass before Phase 2)*
   Create event persists · JWT + RBAC work · WebSocket connects · PWA installable.
   → After: Phase 2 starts.
 
@@ -230,22 +230,22 @@
 - [x] **7.4 Citizen app**
   Safe route guidance, alerts, SOS reporting (FR-13/14, doc 08 §5). NO panic-inducing metrics (PRD §4).
   → After: 7.5 · ✅ Done when: citizen sees green routes + alerts only.
-- [ ] **7.5 Incidents feature (backend)**
+- [x] **7.5 Incidents feature (backend)**
   Create/resolve incident, IncidentCreated event, citizen SOS → command map.
   → After: 7.6 · ✅ Done when: SOS appears on Authority map.
 - [x] **7.6 Citizen Journey Navigation — backend** (innovation, docs/04 §64, docs/08 §64)
   `features/navigation/` — Group/Journey/SafeRoute entities; use cases plan_group_journey, navigate, check_reroute; route_engine (A* (A-Star) + crowd weights); navigation_engine (turn-by-turn); osm_adapter; `POST /api/v1/navigation/plan`, `POST /exit-plan`, WS `/api/v1/navigation/live` (NAVIGATION_UPDATE, REROUTE_ALERT, GROUP_MEMBER_ALERT).
   → After: 7.7 · ✅ Done when: plan request returns SafeRoutes with gate recommendations (doc 08 §64 schemas).
-- [ ] **7.7 Citizen Journey Navigation — frontend**
+- [x] **7.7 Citizen Journey Navigation — frontend**
   JourneyPlanner, GroupSizeSelector, RouteMap, NavigationPanel, CrowdOverlay, GateRecommendation, GroupTipCard, ExitPlanner; hooks useJourney/useNavigation/useLiveReroute/useGroupCoordination; group profiles SOLO→LARGE_GROUP + special needs priority (PRD §9B).
   → After: 7.8 · ✅ Done when: 3 journey phases (to / inside / going home from event) work in demo.
-- [ ] **7.8 PWA polish**
+- [x] **7.8 PWA polish**
   Push notifications, offline map cache (Service Worker + IndexedDB), mobile install.
   → After: PHASE 7 GATE · ✅ Done when: all mobile flows work offline-aware.
 - [x] **7.9 User Profile & Police Settings**
   User profile management (`/settings`) and Police Officer tactical settings modal.
   → ✅ Done when: Settings persist to DB and reflect in UI.
-- [ ] **🚧 PHASE 7 GATE** *(pass before Phase 8)*
+- [x] **🚧 PHASE 7 GATE** *(pass before Phase 8)*
   All 4 roles complete a live walkthrough.
   → After: Phase 8 starts.
 
@@ -263,36 +263,36 @@
 - [x] **8.4 Post-event reports**
   Event summary, risk timeline, intervention history (reports module, HLD §3).
   → After: PHASE 8 GATE · ✅ Done when: report generated from a completed event.
-- [ ] **🚧 PHASE 8 GATE** *(pass before Phase 9)*
+- [x] **🚧 PHASE 8 GATE** *(pass before Phase 9)*
   Demo story (PRD §11) runs end-to-end flawlessly.
   → After: Phase 9 starts.
 
 # PHASE 9 — PRODUCTION & DELIVERABLES (docs/07, docs/09, PRD §2 & §51)
 
-- [ ] **9.1 Security hardening**
+- [x] **9.1 Security hardening**
   RBAC audit, rate limiting, security headers, CORS lockdown, audit logging, input validation, secrets via env only (PRD §51).
   → After: 9.2 · ✅ Done when: security checklist from PRD §51 complete.
 - [x] **9.2 Backend tests**
   Pytest unit/integration/e2e for all features; fusion accuracy tests + chaos playbooks (doc 09).
   → After: 9.3 · ✅ Done when: full test suite green.
-- [ ] **9.3 Frontend tests**
+- [x] **9.3 Frontend tests**
   Jest/Playwright for dashboards + navigation.
   → After: 9.4 · ✅ Done when: frontend test suite green.
-- [ ] **9.4 Performance + monitoring**
+- [x] **9.4 Performance + monitoring**
   WebSocket load, AI latency, logging, graceful degradation verification.
   → After: 9.5 · ✅ Done when: WS handles demo load; degraded mode verified.
-- [ ] **9.5 Deployment**
+- [x] **9.5 Deployment**
   CI/CD — Vercel (web), Docker/AWS (API), Neon DB (Cloud PostgreSQL) (DB); env config; HTTPS (doc 07).
   → After: 9.6 · ✅ Done when: both apps deploy from CI and talk over HTTPS.
-- [ ] **9.6 Docs final sync + README**
+- [x] **9.6 Docs final sync + README**
   Verify quick-start; docs 01–12 match the code.
   → After: 9.7 · ✅ Done when: README quick-start works from scratch.
-- [ ] **9.7 Architecture diagram + source code pack** (mandatory deliverable)
+- [x] **9.7 Architecture diagram + source code pack** (mandatory deliverable)
   Data flow, modules, third-party APIs used.
   → After: 9.8 · ✅ Done when: diagram matches implemented system.
-- [ ] **9.8 Pitch deck (≤10 slides) + Demo video** (mandatory)
+- [x] **9.8 Pitch deck (≤10 slides) + Demo video** (mandatory)
   → After: 9.9 · ✅ Done when: deck ≤10 slides, video recorded.
-- [ ] **9.9 Documentation pack** (mandatory)
+- [x] **9.9 Documentation pack** (mandatory)
   Tech choices, assumptions, compliance checks (data ethics & privacy).
   → After: DEMO REHEARSAL · ✅ Done when: all 5 deliverables present.
 
@@ -300,21 +300,21 @@
 
 # FINAL: DEMO REHEARSAL (PRD §58 — the hackathon story)
 
-- [ ] **D1** Create event with 5 zones, 6 gates, 8 routes, 2 emergency routes, CCTV cameras, Smart Gates
-- [ ] **D2** Start simulation — normal state: Zone A, B, C all GREEN
-- [ ] **D3** Inject incident — Gate G3 high inflow, Zone B density increasing, Route R4 congested, CCTV detecting slowing, GPS showing more devices
-- [ ] **D4** Fusion engine — crowd state changes
-- [ ] **D5** Risk engine — Zone B risk increases to CRITICAL
-- [ ] **D6** Prediction — "High risk developing in Zone B within approximately 10 minutes"
-- [ ] **D7** Decision engine — Restrict G3, Open G5, Redirect crowd, Deploy police, Broadcast warning
-- [ ] **D8** Authority approves
-- [ ] **D9** Crowd state improves, risk falls
-- [ ] **D10** Result — Incident prevented / risk mitigated
+- [x] **D1** Create event with 5 zones, 6 gates, 8 routes, 2 emergency routes, CCTV cameras, Smart Gates
+- [x] **D2** Start simulation — normal state: Zone A, B, C all GREEN
+- [x] **D3** Inject incident — Gate G3 high inflow, Zone B density increasing, Route R4 congested, CCTV detecting slowing, GPS showing more devices
+- [x] **D4** Fusion engine — crowd state changes
+- [x] **D5** Risk engine — Zone B risk increases to CRITICAL
+- [x] **D6** Prediction — "High risk developing in Zone B within approximately 10 minutes"
+- [x] **D7** Decision engine — Restrict G3, Open G5, Redirect crowd, Deploy police, Broadcast warning
+- [x] **D8** Authority approves
+- [x] **D9** Crowd state improves, risk falls
+- [x] **D10** Result — Incident prevented / risk mitigated
 
 # FINAL: DELIVERABLE CHECKLIST (PRD §2 — missing any = disqualification)
 
-- [ ] Working prototype: Citizen PWA + Command Dashboard
-- [ ] Architecture diagram + source code (data flow, modules, third-party APIs)
-- [ ] Pitch deck (max 10 slides)
-- [ ] Demo video
-- [ ] Documentation (tech choices, assumptions, compliance checks)
+- [x] Working prototype: Citizen PWA + Command Dashboard
+- [x] Architecture diagram + source code (data flow, modules, third-party APIs)
+- [x] Pitch deck (max 10 slides)
+- [x] Demo video
+- [x] Documentation (tech choices, assumptions, compliance checks)
