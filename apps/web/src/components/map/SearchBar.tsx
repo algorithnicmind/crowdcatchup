@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useMap } from '@vis.gl/react-google-maps';
-import { Search, MapPin } from 'lucide-react';
+import { Search, MapPin, Navigation } from 'lucide-react';
 
 interface NominatimResult {
   place_id: number;
@@ -68,17 +68,24 @@ export function SearchBar() {
   };
 
   return (
-    <div className="absolute top-4 md:top-6 left-4 md:left-6 z-50 w-[calc(100vw-140px)] md:w-80 pointer-events-auto" ref={wrapperRef}>
-      <div className="flex items-center bg-zinc-900/90 backdrop-blur-md border border-zinc-800 rounded-full px-4 py-3 shadow-lg shadow-black/50 transition-all focus-within:ring-2 focus-within:ring-blue-500">
-        <Search className={`h-5 w-5 mr-3 ${isLoading ? 'text-blue-500 animate-pulse' : 'text-zinc-400'}`} />
+    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-[400px] pointer-events-auto" ref={wrapperRef}>
+      <div className="flex items-center gap-3 bg-white px-4 py-3 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-shadow border border-zinc-200 focus-within:ring-2 focus-within:ring-[#0f8b8d]/50">
+        <Search className={`h-5 w-5 ${isLoading ? 'text-blue-500 animate-pulse' : 'text-zinc-500'}`} />
         <input 
           type="text" 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => { if (results.length > 0) setIsOpen(true) }}
-          placeholder="Search venue, gates, zones..."
-          className="bg-transparent border-none outline-none text-sm text-white w-full placeholder:text-zinc-500"
+          placeholder="Search Google Maps"
+          className="flex-1 bg-transparent border-none outline-none text-[15px] font-medium text-zinc-800 w-full placeholder:text-zinc-600"
         />
+        <div className="flex items-center gap-2 pl-2">
+          <button className="text-white bg-[#0f8b8d] hover:bg-[#0d787a] rounded-md flex items-center justify-center p-1.5 transition-colors transform rotate-45 w-7 h-7 shadow-sm shrink-0">
+            <div className="-rotate-45">
+              <Navigation className="h-4 w-4 fill-current" />
+            </div>
+          </button>
+        </div>
       </div>
 
       {isOpen && results.length > 0 && (

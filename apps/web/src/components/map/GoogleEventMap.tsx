@@ -217,29 +217,7 @@ function HeatmapOverlay() {
   return null;
 }
 
-import { Search, Navigation, Crosshair, Plus, Minus } from 'lucide-react';
-
-function FloatingSearchBar() {
-  return (
-    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 w-[90%] max-w-[400px]">
-      <div className="flex items-center gap-3 rounded-full bg-white px-4 py-3 shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-shadow border border-zinc-200">
-        <Search className="h-5 w-5 text-zinc-500" />
-        <input 
-          type="text" 
-          placeholder="Search Google Maps" 
-          className="flex-1 bg-transparent text-[15px] font-medium text-zinc-800 placeholder:text-zinc-600 focus:outline-none"
-        />
-        <div className="flex items-center gap-2 pl-2">
-          <button className="text-white bg-[#0f8b8d] rounded-md flex items-center justify-center p-1.5 transition-colors transform rotate-45 w-7 h-7 shadow-sm">
-            <div className="-rotate-45">
-              <Navigation className="h-4 w-4 fill-current" />
-            </div>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+import { Crosshair, Plus, Minus } from 'lucide-react';
 
 function CustomMapControls() {
   const map = useMap();
@@ -308,9 +286,6 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
           <LiveMarkers />
         </Map>
         
-        {/* Floating Google Maps Style Search Bar */}
-        <FloatingSearchBar />
-
         {/* Custom Zoom & Location Controls */}
         <CustomMapControls />
 
