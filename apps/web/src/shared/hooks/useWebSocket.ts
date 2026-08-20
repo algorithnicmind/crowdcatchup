@@ -14,6 +14,7 @@ export function useWebSocket(eventId: string) {
   const { role } = useAuthStore();
   const { getToken, userId } = useAuth();
   const ws = useRef<WebSocket | null>(null);
+  const retryCount = useRef(0);
   
   // A dictionary to store callbacks for each event type
   const callbacks = useRef<Record<string, ((payload: unknown) => void)[]>>({});
@@ -41,6 +42,7 @@ export function useWebSocket(eventId: string) {
 
       ws.current.onopen = () => {
         console.log(`[WS] Connected to event ${eventId} as ${role}`);
+        retryCount.current = 0;
       };
 
     ws.current.onmessage = (event) => {
@@ -58,11 +60,21 @@ export function useWebSocket(eventId: string) {
 
     ws.current.onclose = () => {
         console.log(`[WS] Disconnected from event ${eventId}`);
-        setTimeout(() => {
-          if (ws.current?.readyState === WebSocket.CLOSED) {
-            if (connectRef.current) connectRef.current();
-          }
-        }, 5000);
+        
+        // Only retry up to 5 times to prevent console spam if backend is completely down
+        if (retryCount.current < 5) {
+          retryCount.current += 1;
+          const delay = Math.min(5000 * retryCount.current, 30000);
+          console.log(`[WS] Attempting to reconnect in ${delay}ms (Attempt ${retryCount.current}/5)`);
+          
+          setTimeout(() => {
+            if (ws.current?.readyState === WebSocket.CLOSED || !ws.current) {
+              if (connectRef.current) connectRef.current();
+            }
+          }, delay);
+        } else {
+          console.warn('[WS] Max reconnection attempts reached. Please ensure the Python backend is running on port 8000.');
+        }
       };
     } catch (error) {
       console.error("[WS] Failed to connect", error);
