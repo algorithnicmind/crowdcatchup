@@ -38,7 +38,7 @@ export default function PoliceDashboard() {
 
 
         {/* 4. Bottom Tactical Bar */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] pointer-events-auto">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 pointer-events-auto">
           <div className="bg-zinc-900/90 backdrop-blur-xl border border-white/10 px-6 py-3 rounded-2xl flex gap-8 shadow-[0_10px_40px_rgba(0,0,0,0.8)] cursor-pointer hover:bg-zinc-800/90 transition-colors">
             <div className="flex flex-col items-center gap-1 min-w-[100px]">
               <div className="flex items-center gap-2">
