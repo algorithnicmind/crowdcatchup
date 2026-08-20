@@ -19,6 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { DotPattern } from '@/components/ui/dot-pattern';
+import { useMapStore } from '@/stores/map-store';
 
 export function CitizenLayoutSidebar() {
   const pathname = usePathname();
@@ -124,9 +125,21 @@ export function CitizenLayoutSidebar() {
 
                 <Button 
                   className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-8"
-                  onClick={() => {
+                  onClick={async () => {
                     setIsPlanning(true);
-                    setTimeout(() => setRouteFound(true), 1500);
+                    try {
+                      // Fallback mock coordinates for demo
+                      useMapStore.getState().setRouteCoordinates([
+                        { lat: 20.296059, lng: 85.824539 },
+                        { lat: 20.297, lng: 85.826 },
+                        { lat: 20.298, lng: 85.828 }
+                      ]);
+                      setTimeout(() => setRouteFound(true), 1500);
+                    } catch (e) {
+                      console.error("Failed", e);
+                    } finally {
+                      setIsPlanning(false);
+                    }
                   }}
                   disabled={isPlanning}
                 >
@@ -171,8 +184,23 @@ export function CitizenLayoutSidebar() {
                 </div>
 
                 <div className="flex gap-2 pt-2 border-t border-white/5">
-                  <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-7">START</Button>
-                  <Button variant="outline" className="h-7 text-xs px-2 border-white/10 hover:bg-white/5" onClick={() => { setIsPlanning(false); setRouteFound(false); }}>Cancel</Button>
+                  <Button 
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-7"
+                    onClick={() => alert('Navigation Started!')}
+                  >
+                    START
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="h-7 text-xs px-2 border-white/10 hover:bg-white/5" 
+                    onClick={() => { 
+                      setIsPlanning(false); 
+                      setRouteFound(false); 
+                      useMapStore.getState().setRouteCoordinates(null);
+                    }}
+                  >
+                    Cancel
+                  </Button>
                 </div>
               </div>
             )}

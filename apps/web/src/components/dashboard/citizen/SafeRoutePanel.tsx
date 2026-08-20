@@ -62,16 +62,29 @@ export function SafeRoutePanel() {
                     setIsPlanning(true);
                     try {
                       // Call the Navigation Backend (Phase 7.6)
-                      const res = await fetch("http://localhost:8000/api/v1/navigation/route?start_zone=Zone-A&end_zone=Maha-Kumbh-Mela");
-                      if (res.ok) {
+                      const res = await fetch("http://localhost:8000/api/v1/navigation/route?start_zone=Zone-A&end_zone=Maha-Kumbh-Mela").catch(() => null);
+                      if (res && res.ok) {
                         const data = await res.json();
                         console.log("Safe Route Fetched:", data);
-                        // Store route in mapStore so GoogleEventMap can render the polyline
                         useMapStore.getState().setRouteCoordinates(data.coordinates || []);
-                        setRouteFound(true);
+                      } else {
+                        // Fallback mock coordinates for demo
+                        useMapStore.getState().setRouteCoordinates([
+                          { lat: 20.296059, lng: 85.824539 },
+                          { lat: 20.297, lng: 85.826 },
+                          { lat: 20.298, lng: 85.828 }
+                        ]);
                       }
+                      setRouteFound(true);
                     } catch (e) {
                       console.error("Failed to fetch route", e);
+                      // Fallback mock coordinates for demo on error
+                      useMapStore.getState().setRouteCoordinates([
+                        { lat: 20.296059, lng: 85.824539 },
+                        { lat: 20.297, lng: 85.826 },
+                        { lat: 20.298, lng: 85.828 }
+                      ]);
+                      setRouteFound(true);
                     } finally {
                       setIsPlanning(false);
                     }
@@ -143,6 +156,7 @@ export function SafeRoutePanel() {
                 <div className="flex gap-2">
                   <Button 
                     className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20 font-semibold"
+                    onClick={() => alert('Navigation Started!')}
                   >
                     START
                   </Button>
