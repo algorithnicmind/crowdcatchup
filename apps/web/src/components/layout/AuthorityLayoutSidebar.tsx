@@ -29,6 +29,7 @@ export function AuthorityLayoutSidebar() {
   const navItems = [
     { name: 'Command Center', href: '/authority', icon: BarChart3 },
     { name: 'Live Map', href: '/map-demo', icon: MapIcon },
+    { name: 'Access Control', href: '/authority/users', icon: Users },
   ];
 
   // Active state logic
@@ -179,3 +180,4 @@ export function AuthorityLayoutSidebar() {
     </div>
   );
 }
+

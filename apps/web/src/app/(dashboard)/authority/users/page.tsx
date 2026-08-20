@@ -1,122 +1,141 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { Shield, Key, Plus, Copy, Check } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { useUserStore, UserAccount } from '@/stores/user-store';
+import { UserRole } from '@/stores/auth-store';
 
-export default function CreateStaffPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [role, setRole] = useState("POLICE");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+export default function UserManagementPage() {
+  const { users, addUser } = useUserStore();
+  const [role, setRole] = useState<UserRole>('POLICE');
+  const [name, setName] = useState('');
+  
+  const [generatedAccount, setGeneratedAccount] = useState<UserAccount | null>(null);
+  const [copied, setCopied] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const generatedUsers = users.filter(u => u.role === 'POLICE' || u.role === 'EVENT_OWNER');
+
+  const handleGenerate = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setMessage(null);
+    if (!name) return;
 
-    try {
-      const res = await fetch("/api/users/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, fullName, role }),
-      });
+    // Generate random 6 character ID and random password
+    const genId = `${role === 'POLICE' ? 'POL' : 'OWN'}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    const genPass = Math.random().toString(36).substring(2, 10);
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText);
-      }
+    const newAcc = addUser({
+      name,
+      role,
+      generatedId: genId,
+      password: genPass
+    });
 
-      setMessage({ type: "success", text: `Successfully created ${role} account for ${email}` });
-      setEmail("");
-      setPassword("");
-      setFullName("");
-      
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      setMessage({ type: "error", text: error.message || "Something went wrong" });
-    } finally {
-      setLoading(false);
-    }
+    setGeneratedAccount(newAcc);
+    setName('');
+    toast.success(`${role} account generated successfully.`);
+  };
+
+  const copyCredentials = () => {
+    if (!generatedAccount) return;
+    const text = `Role: ${generatedAccount.role}\nID: ${generatedAccount.generatedId}\nPassword: ${generatedAccount.password}\nLogin at: http://localhost:3000/login`;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast.success('Credentials copied to clipboard');
   };
 
   return (
-    <div className="p-8 max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2">Staff Management</h1>
-      <p className="text-muted-foreground mb-8">
-        As the Authority (Super Admin), you can manually create accounts for Police Officers and Event Managers. Citizens must register themselves.
-      </p>
+    <div className="p-6 max-w-5xl mx-auto space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold text-white tracking-tight">Access Control</h1>
+        <p className="text-zinc-400 mt-2">Generate and manage official credentials for Police and Event Owners.</p>
+      </div>
 
-      <div className="bg-card border rounded-xl p-6 shadow-sm">
-        <h2 className="text-xl font-semibold mb-6">Create New Staff Account</h2>
-        
-        {message && (
-          <div className={`p-4 mb-6 rounded-md ${message.type === "success" ? "bg-green-500/10 text-green-600 border border-green-500/20" : "bg-red-500/10 text-red-600 border border-red-500/20"}`}>
-            {message.text}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Form */}
+        <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-6">
+          <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+            <Plus className="w-5 h-5 text-emerald-500" />
+            Generate New Credentials
+          </h2>
+          <form onSubmit={handleGenerate} className="space-y-4">
+            <div className="space-y-2">
+              <Label className="text-zinc-400">Assign Role</Label>
+              <select 
+                value={role}
+                onChange={(e) => setRole(e.target.value as UserRole)}
+                className="w-full h-10 px-3 rounded-md border border-zinc-800 bg-zinc-900 text-white text-sm outline-none focus:border-emerald-500"
+              >
+                <option value="POLICE">Field Police Officer</option>
+                <option value="EVENT_OWNER">Event Owner</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-zinc-400">Officer / Owner Name</Label>
+              <Input 
+                required
+                placeholder="e.g. Officer Smith"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="bg-zinc-900 border-zinc-800 text-white"
+              />
+            </div>
+            <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white mt-2">
+              Generate ID & Password
+            </Button>
+          </form>
+
+          {generatedAccount && (
+            <div className="mt-8 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg space-y-3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-emerald-400 font-medium text-sm uppercase tracking-wider">Credentials Generated</h3>
+                  <p className="text-white font-bold mt-1">{generatedAccount.name} ({generatedAccount.role})</p>
+                </div>
+                <Button variant="ghost" size="icon" onClick={copyCredentials} className="text-zinc-400 hover:text-white">
+                  {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                </Button>
+              </div>
+              <div className="bg-black/50 rounded-md p-3 font-mono text-sm space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-zinc-500">ID:</span>
+                  <span className="text-emerald-400">{generatedAccount.generatedId}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-500">Password:</span>
+                  <span className="text-zinc-300">{generatedAccount.password}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* List */}
+        <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-6">
+          <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+            <Key className="w-5 h-5 text-blue-500" />
+            Active Authority Accounts
+          </h2>
+          <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+            {generatedUsers.length === 0 ? (
+              <p className="text-zinc-500 text-sm text-center py-8">No accounts generated yet.</p>
+            ) : (
+              generatedUsers.map(u => (
+                <div key={u.id} className="p-3 bg-zinc-900 border border-zinc-800 rounded-lg flex justify-between items-center">
+                  <div>
+                    <p className="text-white font-medium text-sm">{u.name}</p>
+                    <p className="text-zinc-500 text-xs mt-0.5">{u.role} • {u.generatedId}</p>
+                  </div>
+                  <Shield className={`w-4 h-4 ${u.role === 'POLICE' ? 'text-blue-500' : 'text-purple-500'}`} />
+                </div>
+              ))
+            )}
           </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Full Name</label>
-            <input
-              type="text"
-              required
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full p-2 bg-background border rounded-md"
-              placeholder="Officer John Doe"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Email Address</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 bg-background border rounded-md"
-              placeholder="john.doe@crowdshield.local"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Temporary Password</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 bg-background border rounded-md"
-              placeholder="••••••••"
-              minLength={8}
-            />
-            <p className="text-xs text-muted-foreground mt-1">Must be at least 8 characters long.</p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Role</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="w-full p-2 bg-background border rounded-md"
-            >
-              <option value="POLICE">Police / Security Officer</option>
-              <option value="EVENT_OWNER">Event Manager / Owner</option>
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-primary-foreground p-2 rounded-md font-medium hover:bg-primary/90 disabled:opacity-50 mt-4 transition-colors"
-          >
-            {loading ? "Creating Account..." : "Create Account"}
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );

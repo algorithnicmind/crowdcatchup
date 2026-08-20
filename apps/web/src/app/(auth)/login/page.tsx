@@ -1,12 +1,15 @@
-'use client';
+"use client";
 
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore, UserRole } from '@/stores/auth-store';
+import { useUserStore } from '@/stores/user-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Shield, Smartphone, Loader2 } from 'lucide-react';
+import { Shield, Loader2, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { toast } from 'sonner';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,47 +21,58 @@ export default function LoginPage() {
     : 'AUTHORITY';
 
   const setAuth = useAuthStore(state => state.setAuth);
+  const { getUserByGeneratedId, getUserByEmailOrPhone } = useUserStore();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
-  const [step, setStep] = useState<'PHONE' | 'OTP'>('PHONE');
   const [role, setRole] = useState<UserRole>(initialRole);
+  const [identifier, setIdentifier] = useState(''); // ID, Email, or Phone
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSendOtp = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API Call to FastAPI
+
     setTimeout(() => {
       setIsLoading(false);
-      setStep('OTP');
+      let validUser = null;
+
+      if (role === 'AUTHORITY') {
+        if (identifier === 'admin' && password === 'admin123') {
+          validUser = { id: 'admin_1', name: 'Command Center Admin' };
+        } else {
+          toast.error('Invalid Authority credentials. Use admin / admin123');
+          return;
+        }
+      } else if (role === 'POLICE' || role === 'EVENT_OWNER') {
+        const found = getUserByGeneratedId(identifier, role);
+        if (found && found.password === password) {
+          validUser = { id: found.id, name: found.name };
+        } else {
+          toast.error(`Invalid ${role} ID or password.`);
+          return;
+        }
+      } else if (role === 'CITIZEN') {
+        const found = getUserByEmailOrPhone(identifier, role);
+        if (found && found.password === password) {
+          validUser = { id: found.id, name: found.name, email: found.email, phone: found.phone };
+        } else {
+          toast.error('Invalid Email/Phone or password.');
+          return;
+        }
+      }
+
+      if (validUser) {
+        const mockToken = "mock_jwt_token_" + Date.now();
+        setAuth(validUser, role, mockToken);
+        const targetUrl = redirectUrl || `/${role.toLowerCase()}`;
+        router.push(targetUrl);
+      }
     }, 1000);
-  };
-
-  const handleVerifyOtp = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    // Simulate API Call to FastAPI
-    setTimeout(() => {
-      setIsLoading(false);
-      // Generate a mock JWT for demo purposes
-      const mockToken = "mock_jwt_token_" + Date.now();
-      
-      setAuth(
-        { id: "usr_123", name: "Demo Agent", phone: "+91 " + phone }, 
-        role, 
-        mockToken
-      );
-      
-      const targetUrl = redirectUrl || `/${role.toLowerCase()}`;
-      router.push(targetUrl);
-    }, 1500);
   };
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background Cyber Grid */}
       <div className="absolute inset-0 z-0 opacity-20" style={{
         backgroundImage: 'linear-gradient(to right, #18181b 1px, transparent 1px), linear-gradient(to bottom, #18181b 1px, transparent 1px)',
         backgroundSize: '40px 40px'
@@ -73,76 +87,76 @@ export default function LoginPage() {
           <p className="text-zinc-500 text-sm mt-2">Secure Access Portal</p>
         </div>
 
-        {step === 'PHONE' ? (
-          <form onSubmit={handleSendOtp} className="space-y-6">
-            <div className="space-y-2">
-              <Label className="text-zinc-400 uppercase text-xs tracking-widest font-bold">Role Access</Label>
-              <select 
-                value={role}
-                onChange={(e) => setRole(e.target.value as UserRole)}
-                className="w-full h-10 px-3 rounded-md border border-zinc-800 bg-zinc-900 text-white text-sm outline-none focus:border-emerald-500 transition-colors"
-              >
-                <option value="AUTHORITY">Command Center Authority</option>
-                <option value="POLICE">Field Police Officer</option>
-                <option value="CITIZEN">Citizen</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-zinc-400 uppercase text-xs tracking-widest font-bold">Indian Phone Number</Label>
-              <div className="flex gap-2">
-                <div className="flex items-center justify-center bg-zinc-900 border border-zinc-800 px-3 rounded-md text-zinc-400 font-medium">
-                  +91
-                </div>
-                <Input 
-                  required
-                  type="tel" 
-                  placeholder="9876543210" 
-                  pattern="[0-9]{10}"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-700"
-                />
-              </div>
-            </div>
-
-            <Button type="submit" disabled={isLoading} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12">
-              {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "SEND OTP"}
-            </Button>
-          </form>
-        ) : (
-          <form onSubmit={handleVerifyOtp} className="space-y-6">
-            <div className="space-y-2">
-              <Label className="text-zinc-400 uppercase text-xs tracking-widest font-bold">Enter OTP</Label>
-              <div className="relative">
-                <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                <Input 
-                  required
-                  autoFocus
-                  type="text" 
-                  placeholder="123456" 
-                  maxLength={6}
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-700 pl-10 text-center tracking-[0.5em] text-lg font-bold"
-                />
-              </div>
-              <p className="text-xs text-zinc-500 text-center mt-2">Code sent to +91 {phone}</p>
-            </div>
-
-            <Button type="submit" disabled={isLoading} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12">
-              {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "VERIFY & ENTER"}
-            </Button>
-            
-            <button 
-              type="button" 
-              onClick={() => setStep('PHONE')}
-              className="w-full text-center text-sm text-zinc-500 hover:text-white transition-colors"
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div className="space-y-2">
+            <Label className="text-zinc-400 uppercase text-xs tracking-widest font-bold">Role Access</Label>
+            <select 
+              value={role}
+              onChange={(e) => setRole(e.target.value as UserRole)}
+              className="w-full h-10 px-3 rounded-md border border-zinc-800 bg-zinc-900 text-white text-sm outline-none focus:border-emerald-500 transition-colors"
             >
-              Change phone number
-            </button>
-          </form>
-        )}
+              <option value="AUTHORITY">Command Center Authority</option>
+              <option value="POLICE">Field Police Officer</option>
+              <option value="EVENT_OWNER">Event Owner</option>
+              <option value="CITIZEN">Citizen</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-zinc-400 uppercase text-xs tracking-widest font-bold">
+              {role === 'CITIZEN' ? 'Email or Phone Number' : 'Assigned ID'}
+            </Label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <Input 
+                required
+                type="text" 
+                placeholder={role === 'AUTHORITY' ? "admin" : (role === 'CITIZEN' ? 'name@example.com' : 'ID-XXXXXX')}
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-700 pl-10"
+              />
+            </div>
+            {role === 'AUTHORITY' && <p className="text-xs text-zinc-500">Hint: admin / admin123</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-zinc-400 uppercase text-xs tracking-widest font-bold">Password</Label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <Input 
+                required
+                type={showPassword ? "text" : "password"} 
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-700 pl-10 pr-10"
+              />
+              <button 
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          <Button type="submit" disabled={isLoading} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12">
+            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "AUTHENTICATE"}
+          </Button>
+
+          {role === 'CITIZEN' && (
+            <div className="text-center pt-4 border-t border-zinc-800 mt-6">
+              <p className="text-zinc-500 text-sm">
+                Don't have an account?{' '}
+                <Link href="/register" className="text-emerald-500 hover:text-emerald-400 transition-colors">
+                  Register here
+                </Link>
+              </p>
+            </div>
+          )}
+        </form>
       </div>
     </div>
   );
