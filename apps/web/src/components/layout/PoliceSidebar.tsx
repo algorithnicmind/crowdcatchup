@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
+import { useMapStore } from '@/stores/map-store';
 import { 
   LayoutGrid, 
   Map as MapIcon, 
@@ -27,6 +28,34 @@ export function PoliceSidebar() {
   const pathname = usePathname();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isPatrol, setIsPatrol] = useState(true);
+
+  const { activeTasks } = useMapStore();
+  const currentTask = activeTasks.length > 0 ? activeTasks[0] : null;
+
+  const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    if (!currentTask) {
+      setElapsed(0);
+      return;
+    }
+    
+    // In a real app we'd use currentTask.timestamp, but for demo we just tick
+    const interval = setInterval(() => {
+      setElapsed(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [currentTask]);
+
+  const formatTime = (seconds: number) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const timerString = currentTask ? formatTime(elapsed) : '00:00:00';
 
   const navItems = [
     { name: 'Dashboard', href: '/police', icon: LayoutGrid },
@@ -162,18 +191,28 @@ export function PoliceSidebar() {
             <span className="text-zinc-500 font-black text-[10px]">!</span>
             <span className="text-zinc-500 font-bold text-[9px] tracking-widest uppercase">CURRENT OBJECTIVE</span>
           </div>
-          <div className="bg-black/60 backdrop-blur-md rounded-md border-l-4 border-l-[#E11D48] p-3 shadow-lg relative border-y border-r border-white/10">
-            <div className="flex justify-between items-center mb-2">
-              <div className="bg-[#E11D48]/20 px-1.5 py-0.5 rounded-sm">
-                <span className="text-[#E11D48] text-[8px] font-black tracking-wider uppercase">HIGH PRIORITY</span>
+          
+          {currentTask ? (
+            <div className={`bg-black/60 backdrop-blur-md rounded-md border-l-4 p-3 shadow-lg relative border-y border-r border-white/10 ${currentTask.priority === 'CRITICAL' ? 'border-l-[#E11D48]' : currentTask.priority === 'HIGH' ? 'border-l-[#EAB308]' : 'border-l-[#00E5FF]'}`}>
+              <div className="flex justify-between items-center mb-2">
+                <div className={`${currentTask.priority === 'CRITICAL' ? 'bg-[#E11D48]/20' : currentTask.priority === 'HIGH' ? 'bg-[#EAB308]/20' : 'bg-[#00E5FF]/20'} px-1.5 py-0.5 rounded-sm`}>
+                  <span className={`${currentTask.priority === 'CRITICAL' ? 'text-[#E11D48]' : currentTask.priority === 'HIGH' ? 'text-[#EAB308]' : 'text-[#00E5FF]'} text-[8px] font-black tracking-wider uppercase`}>{currentTask.priority} PRIORITY</span>
+                </div>
+                <span className="text-zinc-300 text-[9px] font-mono tracking-wider font-bold">{timerString}</span>
               </div>
-              <span className="text-zinc-300 text-[9px] font-mono tracking-wider font-bold">00:14:32</span>
+              <h4 className="text-white text-[11px] font-bold mb-1">{currentTask.title}</h4>
+              <p className="text-zinc-400 text-[10px] leading-relaxed line-clamp-2">
+                {currentTask.zone_id} - {currentTask.description}
+              </p>
             </div>
-            <h4 className="text-white text-[11px] font-bold mb-1">Control crowd near Gate 3</h4>
-            <p className="text-zinc-400 text-[10px] leading-relaxed">
-              Sector 7G - Potential escalation reported by aerial drone unit.
-            </p>
-          </div>
+          ) : (
+            <div className="bg-black/60 backdrop-blur-md rounded-md border-l-4 border-l-zinc-700 p-3 shadow-lg relative border-y border-r border-white/10">
+              <h4 className="text-zinc-300 text-[11px] font-bold mb-1">Standby</h4>
+              <p className="text-zinc-500 text-[10px] leading-relaxed">
+                No active critical objectives at this time. Maintain sector patrol.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
