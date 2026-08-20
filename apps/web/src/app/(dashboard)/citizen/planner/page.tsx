@@ -50,9 +50,9 @@ export default function CitizenPlannerPage() {
                   <label className="text-xs text-zinc-500 font-bold uppercase tracking-wider">Group Size</label>
                   <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-3 flex items-center justify-between">
                     <Users className="w-5 h-5 text-zinc-400" />
-                    <select className="bg-transparent text-white font-bold text-sm outline-none">
+                    <select defaultValue="4" className="bg-transparent text-white font-bold text-sm outline-none">
                       <option value="1">1 Person</option>
-                      <option value="4" selected>4 People</option>
+                      <option value="4">4 People</option>
                       <option value="10">10+ People</option>
                     </select>
                   </div>
