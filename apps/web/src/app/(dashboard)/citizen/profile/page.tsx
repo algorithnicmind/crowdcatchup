@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { User, Phone, Users, Save, ShieldAlert } from 'lucide-react';
+import { User, Phone, Users, Save, ShieldAlert, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth-store';
@@ -34,14 +34,11 @@ export default function CitizenProfilePage() {
                 readOnly
               />
             </div>
-                        <div className="flex-1">
-                <h2 className="text-xl font-bold text-white tracking-wide">
-                  {user?.name || 'Loading...'}
-                </h2>
-                <div className="flex items-center gap-2 text-zinc-400 mt-1">
-                  <Mail className="w-4 h-4" />
-                  <span className="text-sm">{user?.email || 'No email attached'}</span>
-                </div>
+            
+            <div className="flex-1 mt-4">
+              <div className="flex items-center gap-2 text-zinc-400 mt-1">
+                <Mail className="w-4 h-4" />
+                <span className="text-sm">{user?.email || 'No email attached'}</span>
               </div>
             </div>
           </div>
@@ -86,5 +83,3 @@ export default function CitizenProfilePage() {
     </div>
   );
 }
-
-
