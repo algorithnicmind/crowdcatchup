@@ -71,15 +71,13 @@ export function Header() {
 
         {/* Profile Dropdown */}
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-9 w-9 rounded-full border border-zinc-800 p-0 overflow-hidden">
-              <Avatar className="h-9 w-9">
-                <AvatarImage src="" alt="User" />
-                <AvatarFallback className="bg-zinc-800 text-zinc-400">
-                  {useAuthStore.getState().user?.name?.charAt(0) || "U"}
-                </AvatarFallback>
-              </Avatar>
-            </Button>
+          <DropdownMenuTrigger className="relative h-9 w-9 rounded-full border border-zinc-800 p-0 overflow-hidden flex items-center justify-center bg-transparent hover:bg-zinc-800/50 transition-colors outline-none cursor-pointer">
+            <Avatar className="h-9 w-9">
+              <AvatarImage src="" alt="User" />
+              <AvatarFallback className="bg-zinc-800 text-zinc-400">
+                {useAuthStore.getState().user?.name?.charAt(0) || "U"}
+              </AvatarFallback>
+            </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 bg-zinc-950 border-zinc-800 text-zinc-300" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
