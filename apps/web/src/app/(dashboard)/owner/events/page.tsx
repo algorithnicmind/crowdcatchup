@@ -5,7 +5,7 @@ import { Calendar, Plus, Settings2, Map, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api-client';
-import { useUser } from '@clerk/nextjs';
+import { useAuthStore } from '@/stores/auth-store';
 import {
   Dialog,
   DialogContent,
@@ -32,7 +32,7 @@ interface EventDTO {
 
 export default function OwnerEventsPage() {
   const router = useRouter();
-  const { user } = useUser();
+  const { user } = useAuthStore();
   
   const [events, setEvents] = useState<EventDTO[]>([]);
   const [isLoading, setIsLoading] = useState(true);

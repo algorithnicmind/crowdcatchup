@@ -6,13 +6,18 @@ import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
 import { Map, ShieldAlert, BarChart3, Settings, LogOut, CheckSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useClerk } from '@clerk/nextjs';
 import { DotPattern } from '@/components/ui/dot-pattern';
+import { useRouter } from 'next/navigation';
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { role } = useAuthStore();
-  const { signOut } = useClerk();
+  const router = useRouter();
+  const { role, logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  };
 
 
   // Define links based on role
@@ -88,7 +93,7 @@ export function Sidebar() {
       {/* User Area */}
       <div className="border-t border-zinc-800/50 p-4 relative z-10">
         <button 
-          onClick={() => signOut()}
+          onClick={handleLogout}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
         >
           <LogOut className="h-4 w-4" />
