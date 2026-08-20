@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import {
   Settings as SettingsIcon,
@@ -11,6 +11,7 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
+  Camera,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -23,15 +24,31 @@ export default function SettingsPage() {
 
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [avatarStr, setAvatarStr] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [notificationsOn, setNotificationsOn] = useState(true);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarStr(reader.result as string);
+        setSaveStatus('idle');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Pre-fill form from Clerk data on load
   useEffect(() => {
     if (user) {
       setFullName(user.name ?? '');
       setPhoneNumber(user.phone ?? '');
+      setAvatarStr(user.avatar ?? null);
     }
   }, [user]);
 
@@ -49,7 +66,7 @@ export default function SettingsPage() {
       // Simulate network request for UI
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      useAuthStore.getState().updateProfile(fullName.trim(), phoneNumber.trim());
+      useAuthStore.getState().updateProfile(fullName.trim(), phoneNumber.trim(), avatarStr || undefined);
 
       setSaveStatus('success');
       setTimeout(() => setSaveStatus('idle'), 3000);
@@ -62,7 +79,8 @@ export default function SettingsPage() {
 
   const isDirty =
     fullName !== (user?.name ?? '') ||
-    phoneNumber !== (user?.phone ?? '');
+    phoneNumber !== (user?.phone ?? '') ||
+    avatarStr !== (user?.avatar ?? null);
 
   return (
     <div className="h-[calc(100vh-64px)] w-full overflow-y-auto bg-black p-6 md:p-12">
@@ -100,6 +118,39 @@ export default function SettingsPage() {
               <h2 className="text-lg font-semibold text-white">Profile</h2>
             </div>
             <div className="space-y-5">
+              {/* Profile Picture */}
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                  Profile Picture
+                </label>
+                <div className="flex items-center gap-4">
+                  <div className="relative h-16 w-16 rounded-full overflow-hidden bg-zinc-800 border border-zinc-700 flex items-center justify-center shrink-0">
+                    {avatarStr ? (
+                      <img src={avatarStr} alt="Profile" className="h-full w-full object-cover" />
+                    ) : (
+                      <span className="text-xl text-zinc-400 font-medium">
+                        {fullName.charAt(0) || user?.name?.charAt(0) || 'U'}
+                      </span>
+                    )}
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-sm text-zinc-300"
+                  >
+                    <Camera className="w-4 h-4 mr-2" />
+                    Change Picture
+                  </Button>
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleFileChange} 
+                    accept="image/*" 
+                    className="hidden" 
+                  />
+                </div>
+              </div>
+
               {/* Full Name */}
               <div>
                 <label

@@ -24,6 +24,7 @@ import { usePathname } from 'next/navigation';
 
 export function Header() {
   const pathname = usePathname();
+  const { user, logout } = useAuthStore();
   const isPolice = pathname?.startsWith('/police');
   const isAuthority = pathname?.startsWith('/authority');
   const isOwner = pathname?.startsWith('/owner');
@@ -73,8 +74,11 @@ export function Header() {
         <DropdownMenu>
           <DropdownMenuTrigger className="relative h-9 w-9 rounded-full border border-zinc-800 p-0 overflow-hidden flex items-center justify-center bg-transparent hover:bg-zinc-800/50 transition-colors outline-none cursor-pointer">
             <Avatar className="h-9 w-9">
+              {user?.avatar && (
+                <AvatarImage src={user.avatar} alt="Profile" className="object-cover" />
+              )}
               <AvatarFallback className="bg-zinc-800 text-zinc-400">
-                {useAuthStore.getState().user?.name?.charAt(0) || "U"}
+                {user?.name?.charAt(0) || "U"}
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
@@ -82,10 +86,10 @@ export function Header() {
             <div className="px-2 py-1.5 font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none text-white">
-                  {useAuthStore.getState().user?.name || "Demo User"}
+                  {user?.name || "Demo User"}
                 </p>
                 <p className="text-xs leading-none text-zinc-500">
-                  {useAuthStore.getState().user?.phone || useAuthStore.getState().user?.email || "No contact info"}
+                  {user?.phone || user?.email || "No contact info"}
                 </p>
               </div>
             </div>
@@ -101,7 +105,7 @@ export function Header() {
             <DropdownMenuItem 
               className="text-red-500 hover:text-red-400 hover:bg-zinc-900 cursor-pointer focus:bg-zinc-900 focus:text-red-400"
               onClick={() => {
-                useAuthStore.getState().logout();
+                logout();
                 window.location.href = '/login';
               }}
             >
