@@ -19,6 +19,7 @@ import { AuthorityLayoutSidebar } from './AuthorityLayoutSidebar';
 import { OwnerLayoutSidebar } from './OwnerLayoutSidebar';
 import { CitizenLayoutSidebar } from './CitizenLayoutSidebar';
 import { useMapStore } from '@/stores/map-store';
+import { useAuthStore } from '@/stores/auth-store';
 import { usePathname } from 'next/navigation';
 
 export function Header() {
