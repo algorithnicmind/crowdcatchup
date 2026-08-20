@@ -1,20 +1,45 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Navigation, Users, Search, HeartPulse, CheckCircle, MapPin, ArrowRight, ShieldAlert } from 'lucide-react';
+import { Navigation, Users, Search, HeartPulse, CheckCircle, MapPin, ArrowRight, ShieldAlert, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { GoogleEventMap } from '@/components/map/GoogleEventMap';
+import { apiClient } from '@/lib/api-client';
+import { toast } from 'sonner';
+
+interface SafeRoute {
+  route_id: string;
+  path: Array<{lat: number, lng: number}>;
+  estimated_time_mins: number;
+  status: string;
+  warnings: string[];
+}
 
 export default function CitizenPlannerPage() {
   const [isPlanning, setIsPlanning] = useState(false);
-  const [routeFound, setRouteFound] = useState(false);
+  const [routeData, setRouteData] = useState<SafeRoute | null>(null);
+  const [groupSize, setGroupSize] = useState(4);
+  const [destination, setDestination] = useState("Maha Kumbh Mela - Main Ghat");
 
-  const handlePlanRoute = () => {
+  const handlePlanRoute = async () => {
     setIsPlanning(true);
-    setTimeout(() => {
+    setRouteData(null);
+    try {
+      const result = await apiClient<SafeRoute>('/navigation/plan', {
+        method: 'POST',
+        body: JSON.stringify({
+          event_id: 'EVT-001',
+          start_zone_id: 'Z-001',
+          end_zone_id: 'Z-005',
+          group_size: groupSize
+        })
+      });
+      setRouteData(result);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to plan route');
+    } finally {
       setIsPlanning(false);
-      setRouteFound(true);
-    }, 2000);
+    }
   };
 
   return (
@@ -30,7 +55,7 @@ export default function CitizenPlannerPage() {
         </div>
 
         <div className="p-6 flex-1 overflow-y-auto">
-          {!routeFound ? (
+          {!routeData ? (
             <div className="space-y-6">
               <div className="space-y-4">
                 <label className="text-xs text-zinc-500 font-bold uppercase tracking-wider">Destination</label>
@@ -39,8 +64,9 @@ export default function CitizenPlannerPage() {
                   <input 
                     type="text" 
                     placeholder="Where to?" 
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
                     className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-3 pl-10 pr-4 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50 transition-colors"
-                    defaultValue="Maha Kumbh Mela - Main Ghat"
                   />
                 </div>
               </div>
@@ -50,7 +76,11 @@ export default function CitizenPlannerPage() {
                   <label className="text-xs text-zinc-500 font-bold uppercase tracking-wider">Group Size</label>
                   <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-3 flex items-center justify-between">
                     <Users className="w-5 h-5 text-zinc-400" />
-                    <select defaultValue="4" className="bg-transparent text-white font-bold text-sm outline-none">
+                    <select 
+                      value={groupSize} 
+                      onChange={(e) => setGroupSize(Number(e.target.value))}
+                      className="bg-transparent text-white font-bold text-sm outline-none"
+                    >
                       <option value="1">1 Person</option>
                       <option value="4">4 People</option>
                       <option value="10">10+ People</option>
@@ -83,7 +113,7 @@ export default function CitizenPlannerPage() {
               >
                 {isPlanning ? (
                   <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     CALCULATING SAFE ROUTE...
                   </span>
                 ) : (
@@ -100,7 +130,7 @@ export default function CitizenPlannerPage() {
                     <span className="text-emerald-400 font-bold text-sm uppercase tracking-wider">Safe Route Found</span>
                   </div>
                   <div className="bg-emerald-500/20 px-2 py-1 rounded text-emerald-400 text-xs font-bold border border-emerald-500/30">
-                    25 MIN
+                    {Math.round(routeData.estimated_time_mins)} MIN
                   </div>
                 </div>
 
@@ -120,8 +150,10 @@ export default function CitizenPlannerPage() {
                       <ArrowRight className="w-3 h-3 text-emerald-400" />
                     </div>
                     <div>
-                      <h4 className="text-emerald-400 font-bold text-sm">Proceed to Gate G5</h4>
-                      <p className="text-xs text-zinc-500">Avoiding Gate G3 (High Density)</p>
+                      <h4 className="text-emerald-400 font-bold text-sm">Follow safe path</h4>
+                      <p className="text-xs text-zinc-500">
+                        {routeData.warnings.length > 0 ? routeData.warnings[0] : "Clear path ahead"}
+                      </p>
                     </div>
                   </div>
 
@@ -130,7 +162,7 @@ export default function CitizenPlannerPage() {
                       <MapPin className="w-3 h-3 text-blue-500" />
                     </div>
                     <div>
-                      <h4 className="text-white font-bold text-sm">Maha Kumbh Main Ghat</h4>
+                      <h4 className="text-white font-bold text-sm">{destination}</h4>
                       <p className="text-xs text-zinc-500">Destination</p>
                     </div>
                   </div>
@@ -139,7 +171,7 @@ export default function CitizenPlannerPage() {
 
               <div className="flex gap-3">
                 <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold h-12 shadow-lg shadow-emerald-900/20">START NAVIGATION</Button>
-                <Button variant="outline" className="flex-1 h-12 border-zinc-700 text-zinc-300 hover:bg-zinc-800" onClick={() => setRouteFound(false)}>Cancel</Button>
+                <Button variant="outline" className="flex-1 h-12 border-zinc-700 text-zinc-300 hover:bg-zinc-800" onClick={() => setRouteData(null)}>Cancel</Button>
               </div>
             </div>
           )}
