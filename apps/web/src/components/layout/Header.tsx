@@ -73,14 +73,13 @@ export function Header() {
         <DropdownMenu>
           <DropdownMenuTrigger className="relative h-9 w-9 rounded-full border border-zinc-800 p-0 overflow-hidden flex items-center justify-center bg-transparent hover:bg-zinc-800/50 transition-colors outline-none cursor-pointer">
             <Avatar className="h-9 w-9">
-              <AvatarImage src="" alt="User" />
               <AvatarFallback className="bg-zinc-800 text-zinc-400">
                 {useAuthStore.getState().user?.name?.charAt(0) || "U"}
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 bg-zinc-950 border-zinc-800 text-zinc-300" align="end" forceMount>
-            <DropdownMenuLabel className="font-normal">
+            <div className="px-2 py-1.5 font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none text-white">
                   {useAuthStore.getState().user?.name || "Demo User"}
@@ -89,7 +88,7 @@ export function Header() {
                   {useAuthStore.getState().user?.phone || useAuthStore.getState().user?.email || "No contact info"}
                 </p>
               </div>
-            </DropdownMenuLabel>
+            </div>
             <DropdownMenuSeparator className="bg-zinc-800" />
             <DropdownMenuItem 
               className="text-red-500 hover:text-red-400 hover:bg-zinc-900 cursor-pointer focus:bg-zinc-900 focus:text-red-400"
