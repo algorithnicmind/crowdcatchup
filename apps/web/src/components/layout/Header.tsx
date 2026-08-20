@@ -11,6 +11,7 @@ import { AuthorityLayoutSidebar } from './AuthorityLayoutSidebar';
 import { OwnerLayoutSidebar } from './OwnerLayoutSidebar';
 import { CitizenLayoutSidebar } from './CitizenLayoutSidebar';
 import { useAuthStore } from '@/stores/auth-store';
+import { useMapStore } from '@/stores/map-store';
 import { usePathname } from 'next/navigation';
 
 export function Header() {
@@ -41,8 +42,16 @@ export function Header() {
             {(!isPolice && !isAuthority && !isOwner && !isCitizen) && <Sidebar />}
           </SheetContent>
         </Sheet>
-
-
+        {/* Desktop Sidebar Toggle */}
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="hidden md:flex text-zinc-400 hover:text-white"
+          onClick={() => useMapStore.getState().toggleSidebar()}
+        >
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Toggle Sidebar</span>
+        </Button>
       </div>
 
       <div className="flex items-center gap-4">

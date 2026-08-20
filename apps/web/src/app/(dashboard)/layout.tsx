@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
+import { useMapStore } from '@/stores/map-store';
 
 import { Sidebar } from '@/components/layout/Sidebar';
 import { PoliceSidebar } from '@/components/layout/PoliceSidebar';
@@ -46,11 +47,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const isAuthority = pathname?.startsWith('/authority');
   const isOwner = pathname?.startsWith('/owner');
   const isCitizen = pathname?.startsWith('/citizen');
+  const { isSidebarOpen } = useMapStore();
 
   return (
     <div className="flex h-screen w-full bg-[#09090b] text-white overflow-hidden">
       {/* Desktop Sidebar */}
-      <div className="hidden md:block">
+      <div className={`hidden md:block transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-[260px] translate-x-0' : 'w-0 -translate-x-full opacity-0'}`}>
         {isPolice && <PoliceSidebar />}
         {isAuthority && <AuthorityLayoutSidebar />}
         {isOwner && <OwnerLayoutSidebar />}

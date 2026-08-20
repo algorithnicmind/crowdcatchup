@@ -80,7 +80,9 @@ interface MapState {
   removeTask: (id: string) => void;
   updateSourceHealth: (health: SourceHealth) => void;
   setIsRecordingGps: (isRecording: boolean) => void;
-  setGpsSessionId: (id: string | null) => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (isOpen: boolean) => void;
+  toggleSidebar: () => void;
 }
 
 export const useMapStore = create<MapState>((set) => ({
@@ -163,5 +165,8 @@ export const useMapStore = create<MapState>((set) => ({
   }),
   
   setIsRecordingGps: (isRecording) => set({ isRecordingGps: isRecording }),
-  setGpsSessionId: (id) => set({ gpsSessionId: id })
+  setGpsSessionId: (id) => set({ gpsSessionId: id }),
+  isSidebarOpen: true,
+  setIsSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
+  toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen }))
 }));
