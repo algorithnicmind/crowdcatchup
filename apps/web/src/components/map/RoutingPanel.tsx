@@ -157,7 +157,7 @@ export function RoutingPanel() {
     return (
       <button 
         onClick={() => setIsOpen(true)}
-        className="absolute top-20 md:top-6 right-4 md:right-auto md:left-[360px] z-50 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 md:py-3 px-4 md:px-6 rounded-full shadow-lg transition-colors flex items-center gap-2 pointer-events-auto"
+        className="absolute top-20 md:top-16 right-4 md:right-auto md:left-6 z-50 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 md:py-3 px-4 md:px-6 rounded-full shadow-lg transition-colors flex items-center gap-2 pointer-events-auto"
       >
         <ArrowLeft className="h-4 w-4 rotate-180" /> 
         <span className="hidden md:inline">Get Directions</span>
@@ -167,7 +167,7 @@ export function RoutingPanel() {
   }
 
   return (
-    <div className="absolute top-6 left-6 z-50 w-80 bg-zinc-950/95 backdrop-blur-xl border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-left-4 fade-in duration-300 pointer-events-auto">
+    <div className="absolute top-16 left-6 z-50 w-80 bg-zinc-950/95 backdrop-blur-xl border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-left-4 fade-in duration-300 pointer-events-auto">
       <div className="p-4 bg-zinc-900 border-b border-zinc-800 flex flex-col gap-3">
         <div className="flex items-center gap-3">
           <button onClick={() => { setIsOpen(false); setRouteCoordinates(null); }} className="text-zinc-400 hover:text-white">
