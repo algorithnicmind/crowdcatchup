@@ -4,10 +4,10 @@ import React from 'react';
 import { User, Phone, Users, Save, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { useUser } from "@clerk/nextjs";
+import { useAuthStore } from '@/stores/auth-store';
 
 export default function CitizenProfilePage() {
-  const { user } = useUser();
+  const { user } = useAuthStore();
 
   const handleSave = () => {
     toast.success("Profile Preferences Saved");
@@ -30,19 +30,19 @@ export default function CitizenProfilePage() {
               <input 
                 type="text" 
                 className="w-full bg-zinc-900/50 border border-zinc-800 rounded-md py-2 px-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
-                defaultValue={user?.fullName || "Citizen User"}
+                defaultValue={user?.name || "Citizen User"}
                 readOnly
               />
             </div>
-            
-            <div className="space-y-2">
-              <label className="text-xs text-zinc-400">Email Address</label>
-              <input 
-                type="text" 
-                className="w-full bg-zinc-900/50 border border-zinc-800 rounded-md py-2 px-3 text-sm text-zinc-500"
-                defaultValue={user?.primaryEmailAddress?.emailAddress || "user@example.com"}
-                readOnly
-              />
+                        <div className="flex-1">
+                <h2 className="text-xl font-bold text-white tracking-wide">
+                  {user?.name || 'Loading...'}
+                </h2>
+                <div className="flex items-center gap-2 text-zinc-400 mt-1">
+                  <Mail className="w-4 h-4" />
+                  <span className="text-sm">{user?.email || 'No email attached'}</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -86,3 +86,5 @@ export default function CitizenProfilePage() {
     </div>
   );
 }
+
+

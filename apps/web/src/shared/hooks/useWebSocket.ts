@@ -1,6 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
-import { useAuth } from '@clerk/nextjs';
 
 export type WebSocketEvent = 
   | 'CROWD_STATE_UPDATE'
@@ -11,8 +10,8 @@ export type WebSocketEvent =
   | 'CITIZEN_ALERT';
 
 export function useWebSocket(eventId: string) {
-  const { role } = useAuthStore();
-  const { getToken, userId } = useAuth();
+  const { role, token, user } = useAuthStore();
+  const userId = user?.id;
   const ws = useRef<WebSocket | null>(null);
   const retryCount = useRef(0);
   
@@ -23,17 +22,13 @@ export function useWebSocket(eventId: string) {
   const connectRef = useRef<(() => void) | null>(null);
 
   const connect = useCallback(async () => {
-    if (!eventId || !role || !userId) return;
+    if (!eventId || !role || !userId || !token) return;
 
     try {
-      // Prevent Clerk offline error by checking connection state first
       if (typeof navigator !== 'undefined' && !navigator.onLine) {
         console.warn('[WS] Browser is offline, skipping connection.');
         return;
       }
-
-      const token = await getToken();
-      if (!token) return;
 
       // Use ws:// localhost for development
       const wsUrl = `ws://localhost:8000/ws?token=${token}&event_id=${eventId}&role=${role}&user_id=${userId}`;
@@ -79,7 +74,7 @@ export function useWebSocket(eventId: string) {
     } catch (error) {
       console.error("[WS] Failed to connect", error);
     }
-  }, [eventId, role, userId, getToken]);
+  }, [eventId, role, userId, token]);
 
   useEffect(() => {
     connectRef.current = connect;

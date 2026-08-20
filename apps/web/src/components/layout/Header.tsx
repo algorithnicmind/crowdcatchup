@@ -3,7 +3,15 @@
 import React from 'react';
 import { Bell, Menu, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { UserButton } from "@clerk/nextjs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Sidebar } from './Sidebar';
 import { PoliceSidebar } from './PoliceSidebar';
@@ -62,15 +70,40 @@ export function Header() {
         </Button>
 
         {/* Profile Dropdown */}
-        <div className="h-9 w-9 rounded-full overflow-hidden border border-zinc-800 flex items-center justify-center bg-zinc-900">
-          <UserButton 
-            appearance={{
-              elements: {
-                userButtonAvatarBox: "h-9 w-9"
-              }
-            }}
-          />
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="relative h-9 w-9 rounded-full border border-zinc-800 p-0 overflow-hidden">
+              <Avatar className="h-9 w-9">
+                <AvatarImage src="" alt="User" />
+                <AvatarFallback className="bg-zinc-800 text-zinc-400">
+                  {useAuthStore.getState().user?.name?.charAt(0) || "U"}
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 bg-zinc-950 border-zinc-800 text-zinc-300" align="end" forceMount>
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none text-white">
+                  {useAuthStore.getState().user?.name || "Demo User"}
+                </p>
+                <p className="text-xs leading-none text-zinc-500">
+                  {useAuthStore.getState().user?.phone || useAuthStore.getState().user?.email || "No contact info"}
+                </p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-zinc-800" />
+            <DropdownMenuItem 
+              className="text-red-500 hover:text-red-400 hover:bg-zinc-900 cursor-pointer focus:bg-zinc-900 focus:text-red-400"
+              onClick={() => {
+                useAuthStore.getState().logout();
+                window.location.href = '/login';
+              }}
+            >
+              Log out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

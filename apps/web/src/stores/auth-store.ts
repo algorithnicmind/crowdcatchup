@@ -1,13 +1,45 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import Cookies from 'js-cookie';
 
 export type UserRole = 'AUTHORITY' | 'POLICE' | 'CITIZEN' | 'EVENT_OWNER';
 
-interface AuthState {
-  role: UserRole;
-  setRole: (role: UserRole) => void;
+interface User {
+  id: string;
+  name: string;
+  phone?: string;
+  email?: string;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  role: 'AUTHORITY', // Default to Authority for the demo
-  setRole: (role) => set({ role }),
-}));
+interface AuthState {
+  role: UserRole | null;
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  setAuth: (user: User, role: UserRole, token: string) => void;
+  setRole: (role: UserRole) => void;
+  logout: () => void;
+}
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      role: null,
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      setAuth: (user, role, token) => {
+        Cookies.set('auth_token', token, { expires: 7 }); // Set cookie for middleware
+        set({ user, role, token, isAuthenticated: true });
+      },
+      setRole: (role) => set({ role }),
+      logout: () => {
+        Cookies.remove('auth_token');
+        set({ user: null, role: null, token: null, isAuthenticated: false });
+      },
+    }),
+    {
+      name: 'crowdshield-auth-storage',
+    }
+  )
+);

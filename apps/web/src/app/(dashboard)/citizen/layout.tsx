@@ -1,20 +1,12 @@
-import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import { getUserRoleFromEmail } from "@/lib/rbac";
-import React from "react";
+import React from 'react';
+import { useAuthStore } from '@/stores/auth-store';
 
-export default async function CitizenLayoutGuard({ children }: { children: React.ReactNode }) {
-  try {
-    const user = await currentUser();
-    const primaryEmail = user?.emailAddresses.find(e => e.id === user.primaryEmailAddressId)?.emailAddress;
-    const role = getUserRoleFromEmail(primaryEmail);
-
-    if (role !== "CITIZEN") {
-      redirect("/unauthorized");
-    }
-  } catch (error) {
-    console.warn("Clerk API error in Citizen layout. Bypassing check to prevent crash:", error);
-  }
-
-  return <>{children}</>;
+export default function LayoutGuard({ children }: { children: React.ReactNode }) {
+  // Authentication is now strictly handled by middleware.ts (auth_token cookie).
+  // Zustand state manages client side session state.
+  return (
+    <>
+      {children}
+    </>
+  );
 }

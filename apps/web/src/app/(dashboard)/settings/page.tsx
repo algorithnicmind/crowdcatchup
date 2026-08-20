@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
-import { useUser } from '@clerk/nextjs';
 import {
   Settings as SettingsIcon,
   User,
@@ -20,8 +19,8 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 type SaveStatus = 'idle' | 'saving' | 'success' | 'error';
 
 export default function SettingsPage() {
-  const { role } = useAuthStore();
-  const { user, isLoaded } = useUser();
+  const { role, user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
 
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -30,14 +29,14 @@ export default function SettingsPage() {
 
   // Pre-fill form from Clerk data on load
   useEffect(() => {
-    if (isLoaded && user) {
-      setFullName(user.fullName ?? '');
-      setPhoneNumber(user.phoneNumbers?.[0]?.phoneNumber ?? '');
+    if (user) {
+      setFullName(user.name ?? '');
+      setPhoneNumber(user.phone ?? '');
     }
-  }, [isLoaded, user]);
+  }, [user]);
 
   const handleSave = async () => {
-    const email = user?.primaryEmailAddress?.emailAddress;
+    const email = user?.email;
     if (!email) {
       setErrorMsg('Could not determine your account email. Please try again.');
       setSaveStatus('error');
@@ -81,8 +80,8 @@ export default function SettingsPage() {
   };
 
   const isDirty =
-    fullName !== (user?.fullName ?? '') ||
-    phoneNumber !== (user?.phoneNumbers?.[0]?.phoneNumber ?? '');
+    fullName !== (user?.name ?? '') ||
+    phoneNumber !== (user?.phone ?? '');
 
   return (
     <div className="h-[calc(100vh-64px)] w-full overflow-y-auto bg-black p-6 md:p-12">
@@ -146,7 +145,7 @@ export default function SettingsPage() {
                   Email
                 </label>
                 <div className="mt-1 text-sm text-zinc-400 bg-zinc-900/30 border border-zinc-800/60 rounded-lg px-3 py-2 select-none cursor-not-allowed">
-                  {user?.primaryEmailAddress?.emailAddress ?? 'Loading…'}
+                  {user?.email ?? 'Loading…'}
                 </div>
                 <p className="mt-1 text-xs text-zinc-600">Managed by your sign-in provider.</p>
               </div>
@@ -248,3 +247,7 @@ export default function SettingsPage() {
     </div>
   );
 }
+
+
+
+

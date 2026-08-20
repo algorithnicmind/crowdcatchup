@@ -36,23 +36,21 @@ export const viewport: Viewport = {
 };
 
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from 'sonner';
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <ClerkProvider>
-          <TooltipProvider>
-            {children}
-            <Toaster theme="dark" position="top-right" />
-          </TooltipProvider>
-        </ClerkProvider>
+        <TooltipProvider>
+          {children}
+          <Toaster theme="dark" position="top-right" />
+        </TooltipProvider>
       </body>
     </html>
   );
 }
+

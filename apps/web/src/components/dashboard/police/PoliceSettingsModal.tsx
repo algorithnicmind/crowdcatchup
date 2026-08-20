@@ -21,7 +21,7 @@ import {
   Image as ImageIcon 
 } from "lucide-react";
 import Image from "next/image";
-import { useUser } from '@clerk/nextjs';
+import { useAuthStore } from '@/stores/auth-store';
 import { toast } from 'sonner';
 
 interface PoliceSettingsModalProps {
@@ -30,9 +30,9 @@ interface PoliceSettingsModalProps {
 }
 
 export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalProps) {
-  const { user } = useUser();
-  const email = user?.primaryEmailAddress?.emailAddress;
-  const fullName = user?.fullName || "Officer";
+  const { user } = useAuthStore((state) => state.user);
+  const email = user?.email;
+  const fullName = user?.name || "Officer";
 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
@@ -349,3 +349,7 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
     </Dialog>
   );
 }
+
+
+
+
