@@ -20,7 +20,6 @@ type SaveStatus = 'idle' | 'saving' | 'success' | 'error';
 
 export default function SettingsPage() {
   const { role, user } = useAuthStore();
-  const user = useAuthStore((state) => state.user);
 
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
