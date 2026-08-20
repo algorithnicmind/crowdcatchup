@@ -22,7 +22,6 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { PoliceSettingsModal } from '../dashboard/police/PoliceSettingsModal';
 
-import { DotPattern } from '@/components/ui/dot-pattern';
 
 export function PoliceSidebar() {
   const pathname = usePathname();
@@ -74,17 +73,13 @@ export function PoliceSidebar() {
   };
 
   return (
-    <div className="flex h-full w-[260px] flex-col bg-black text-white border-r border-[#1a253a] shadow-xl font-sans overflow-hidden relative">
-      <DotPattern
-        width={20}
-        height={20}
-        cx={1}
-        cy={1}
-        cr={1.5}
-        className={cn(
-          "text-white/40 [mask-image:radial-gradient(400px_circle_at_center,white,transparent)]",
-        )}
-      />
+    <div className="flex h-full w-[260px] flex-col bg-[#09090b] text-white border-r border-[#1a253a] shadow-xl font-sans overflow-hidden relative">
+      {/* Cool Ambient Background */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute -top-[20%] -left-[20%] w-[140%] h-[50%] bg-[radial-gradient(ellipse_at_top_left,rgba(0,229,255,0.15),transparent_70%)] animate-pulse" />
+        <div className="absolute top-[40%] -right-[30%] w-[100%] h-[50%] bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.1),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:linear-gradient(to_bottom,black,transparent)]" />
+      </div>
       
       {/* Header */}
       <div className="flex h-16 items-center justify-between px-5 border-b border-[#1a253a] relative z-10">
