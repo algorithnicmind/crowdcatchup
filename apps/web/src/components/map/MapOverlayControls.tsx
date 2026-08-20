@@ -46,7 +46,7 @@ export function MapOverlayControls({ role = 'authority' }: MapOverlayControlsPro
 
       {/* Action Buttons - Top Right Overlay */}
       <MapControl position={ControlPosition.RIGHT_TOP}>
-        <div className="flex flex-col gap-3 mt-6 mr-6 pointer-events-auto">
+        <div className="flex flex-col gap-3 mt-20 md:mt-6 mr-4 md:mr-6 pointer-events-auto">
           <LayerMenu />
           
           <CompassButton />
