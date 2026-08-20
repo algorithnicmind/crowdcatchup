@@ -19,7 +19,6 @@ import {
   LayoutDashboard
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 import { PoliceSettingsModal } from '../dashboard/police/PoliceSettingsModal';
 
 
@@ -35,6 +34,7 @@ export function PoliceSidebar() {
 
   useEffect(() => {
     if (!currentTask) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       setElapsed(0);
       return;
     }
@@ -188,16 +188,16 @@ export function PoliceSidebar() {
           </div>
           
           {currentTask ? (
-            <div className={`bg-black/60 backdrop-blur-md rounded-md border-l-4 p-3 shadow-lg relative border-y border-r border-white/10 ${currentTask.priority === 'CRITICAL' ? 'border-l-[#E11D48]' : currentTask.priority === 'HIGH' ? 'border-l-[#EAB308]' : 'border-l-[#00E5FF]'}`}>
+            <div className={`bg-black/60 backdrop-blur-md rounded-md border-l-4 p-3 shadow-lg relative border-y border-r border-white/10 ${currentTask.risk_level === 'CRITICAL' ? 'border-l-[#E11D48]' : currentTask.risk_level === 'HIGH' ? 'border-l-[#EAB308]' : 'border-l-[#00E5FF]'}`}>
               <div className="flex justify-between items-center mb-2">
-                <div className={`${currentTask.priority === 'CRITICAL' ? 'bg-[#E11D48]/20' : currentTask.priority === 'HIGH' ? 'bg-[#EAB308]/20' : 'bg-[#00E5FF]/20'} px-1.5 py-0.5 rounded-sm`}>
-                  <span className={`${currentTask.priority === 'CRITICAL' ? 'text-[#E11D48]' : currentTask.priority === 'HIGH' ? 'text-[#EAB308]' : 'text-[#00E5FF]'} text-[8px] font-black tracking-wider uppercase`}>{currentTask.priority} PRIORITY</span>
+                <div className={`${currentTask.risk_level === 'CRITICAL' ? 'bg-[#E11D48]/20' : currentTask.risk_level === 'HIGH' ? 'bg-[#EAB308]/20' : 'bg-[#00E5FF]/20'} px-1.5 py-0.5 rounded-sm`}>
+                  <span className={`${currentTask.risk_level === 'CRITICAL' ? 'text-[#E11D48]' : currentTask.risk_level === 'HIGH' ? 'text-[#EAB308]' : 'text-[#00E5FF]'} text-[8px] font-black tracking-wider uppercase`}>{currentTask.risk_level} PRIORITY</span>
                 </div>
                 <span className="text-zinc-300 text-[9px] font-mono tracking-wider font-bold">{timerString}</span>
               </div>
-              <h4 className="text-white text-[11px] font-bold mb-1">{currentTask.title}</h4>
+              <h4 className="text-white text-[11px] font-bold mb-1">Task: {currentTask.task_id}</h4>
               <p className="text-zinc-400 text-[10px] leading-relaxed line-clamp-2">
-                {currentTask.zone_id} - {currentTask.description}
+                {currentTask.zone_id} - {currentTask.instructions}
               </p>
             </div>
           ) : (

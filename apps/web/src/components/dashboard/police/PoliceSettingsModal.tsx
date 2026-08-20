@@ -269,7 +269,7 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
                   <div className="text-xs text-zinc-400 mb-3">Alert Volume</div>
                   <Slider 
                     value={[alertVolume]} 
-                    onValueChange={(val) => setAlertVolume(val[0])}
+                    onValueChange={(val) => setAlertVolume((val as number[])[0])}
                     max={100} step={1} 
                     className="[&_[role=slider]]:bg-[#93c5fd] [&_[role=slider]]:border-none" 
                   />

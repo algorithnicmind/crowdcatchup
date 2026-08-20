@@ -279,7 +279,7 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
           mapTypeId={mapTypeId}
           disableDefaultUI={true}
           gestureHandling="greedy"
-          onClick={(e) => {
+          onDragEnd={(e: any) => {
             if (e.detail.latLng) {
               useMapStore.getState().setSearchResultPin({
                 lat: e.detail.latLng.lat,

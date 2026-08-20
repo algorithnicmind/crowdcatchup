@@ -34,8 +34,6 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
-    "@reticlehq/next": "^2.8.0",
-    "@reticlehq/react": "^2.8.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
