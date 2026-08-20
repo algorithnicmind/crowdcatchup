@@ -25,6 +25,7 @@ export default function SettingsPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [notificationsOn, setNotificationsOn] = useState(true);
 
   // Pre-fill form from Clerk data on load
   useEffect(() => {
@@ -199,8 +200,11 @@ export default function SettingsPage() {
                   <p className="text-sm font-medium text-white">Notifications</p>
                   <p className="text-xs text-zinc-500 mt-0.5">Receive alerts for your zone.</p>
                 </div>
-                <div className="h-5 w-9 rounded-full bg-emerald-500 relative cursor-pointer">
-                  <div className="absolute right-1 top-1 h-3 w-3 rounded-full bg-white shadow-sm" />
+                <div 
+                  className={`h-5 w-9 rounded-full relative cursor-pointer transition-colors duration-200 ${notificationsOn ? 'bg-emerald-500' : 'bg-zinc-700'}`}
+                  onClick={() => setNotificationsOn(!notificationsOn)}
+                >
+                  <div className={`absolute top-1 h-3 w-3 rounded-full bg-white shadow-sm transition-all duration-200 ${notificationsOn ? 'right-1' : 'left-1'}`} />
                 </div>
               </div>
             </div>
