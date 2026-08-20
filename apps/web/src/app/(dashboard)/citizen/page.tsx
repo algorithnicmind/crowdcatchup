@@ -43,13 +43,13 @@ export default function CitizenDashboard() {
         <SafeRoutePanel />
         
         {/* 3. Header/Status */}
-        <div className="absolute top-4 left-4 right-4 z-[1000] pointer-events-none flex justify-between items-start">
+        <div className="absolute top-20 md:top-4 left-4 z-40 pointer-events-none flex flex-col items-start gap-4">
           <div className="bg-emerald-600/90 backdrop-blur-md border border-emerald-400/30 px-3 py-1.5 rounded-full text-white text-xs font-bold tracking-widest flex items-center gap-2 shadow-lg shadow-emerald-900/50">
             <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
             YOUR AREA IS SAFE
           </div>
 
-          <div className="flex flex-col gap-2 pointer-events-auto">
+          <div className="flex flex-row gap-3 pointer-events-auto">
             <Button 
               variant="destructive" 
               size="icon" 
