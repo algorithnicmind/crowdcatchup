@@ -83,6 +83,8 @@ interface MapState {
   isSidebarOpen: boolean;
   setIsSidebarOpen: (isOpen: boolean) => void;
   toggleSidebar: () => void;
+  searchResultPin: { lat: number, lng: number } | null;
+  setSearchResultPin: (pin: { lat: number, lng: number } | null) => void;
 }
 
 export const useMapStore = create<MapState>((set) => ({
@@ -168,5 +170,7 @@ export const useMapStore = create<MapState>((set) => ({
   setGpsSessionId: (id) => set({ gpsSessionId: id }),
   isSidebarOpen: true,
   setIsSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
-  toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen }))
+  toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+  searchResultPin: null,
+  setSearchResultPin: (pin) => set({ searchResultPin: pin })
 }));

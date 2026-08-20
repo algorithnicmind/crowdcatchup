@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useMap } from '@vis.gl/react-google-maps';
 import { Search, MapPin, Navigation } from 'lucide-react';
+import { useMapStore } from '@/stores/map-store';
 
 interface NominatimResult {
   place_id: number;
@@ -62,8 +63,11 @@ export function SearchBar() {
     setIsOpen(false);
     
     if (map) {
-      map.panTo({ lat: parseFloat(result.lat), lng: parseFloat(result.lon) });
+      const lat = parseFloat(result.lat);
+      const lng = parseFloat(result.lon);
+      map.panTo({ lat, lng });
       map.setZoom(17);
+      useMapStore.getState().setSearchResultPin({ lat, lng });
     }
   };
 

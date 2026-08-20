@@ -256,7 +256,7 @@ interface GoogleEventMapProps {
 
 export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-  const { mapTypeId } = useMapStore();
+  const { mapTypeId, searchResultPin } = useMapStore();
 
   if (!apiKey) {
     return (
@@ -284,6 +284,9 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
           <RoutePolyline />
           <HeatmapOverlay />
           <LiveMarkers />
+          {searchResultPin && (
+            <AdvancedMarker position={searchResultPin} />
+          )}
         </Map>
         
         {/* Custom Zoom & Location Controls */}
