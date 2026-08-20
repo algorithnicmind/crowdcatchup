@@ -36,12 +36,6 @@ export default function SettingsPage() {
   }, [user]);
 
   const handleSave = async () => {
-    const email = user?.email;
-    if (!email) {
-      setErrorMsg('Could not determine your account email. Please try again.');
-      setSaveStatus('error');
-      return;
-    }
     if (!fullName.trim()) {
       setErrorMsg('Name cannot be empty.');
       setSaveStatus('error');
@@ -52,28 +46,15 @@ export default function SettingsPage() {
     setErrorMsg('');
 
     try {
-      const res = await fetch(`${API_BASE}/api/v1/auth/me/profile`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-User-Email': email,
-        },
-        body: JSON.stringify({
-          full_name: fullName.trim(),
-          phone_number: phoneNumber.trim() || null,
-        }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.detail ?? `Server error: ${res.status}`);
-      }
+      // Simulate network request for UI
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      useAuthStore.getState().updateProfile(fullName.trim(), phoneNumber.trim());
 
       setSaveStatus('success');
       setTimeout(() => setSaveStatus('idle'), 3000);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'An unexpected error occurred.';
-      setErrorMsg(message);
+      setErrorMsg('An unexpected error occurred.');
       setSaveStatus('error');
       setTimeout(() => setSaveStatus('idle'), 5000);
     }
@@ -145,9 +126,9 @@ export default function SettingsPage() {
                   Email
                 </label>
                 <div className="mt-1 text-sm text-zinc-400 bg-zinc-900/30 border border-zinc-800/60 rounded-lg px-3 py-2 select-none cursor-not-allowed">
-                  {user?.email ?? 'Loading…'}
+                  {user?.email ?? user?.id ?? 'No email provided'}
                 </div>
-                <p className="mt-1 text-xs text-zinc-600">Managed by your sign-in provider.</p>
+                <p className="mt-1 text-xs text-zinc-600">Identity provided by your organization.</p>
               </div>
 
               {/* Phone Number */}

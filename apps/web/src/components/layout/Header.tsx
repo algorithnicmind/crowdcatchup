@@ -91,6 +91,14 @@ export function Header() {
             </div>
             <DropdownMenuSeparator className="bg-zinc-800" />
             <DropdownMenuItem 
+              className="hover:bg-zinc-900 cursor-pointer focus:bg-zinc-900"
+              onClick={() => {
+                window.location.href = '/settings';
+              }}
+            >
+              Manage Account
+            </DropdownMenuItem>
+            <DropdownMenuItem 
               className="text-red-500 hover:text-red-400 hover:bg-zinc-900 cursor-pointer focus:bg-zinc-900 focus:text-red-400"
               onClick={() => {
                 useAuthStore.getState().logout();

@@ -18,6 +18,7 @@ interface AuthState {
   isAuthenticated: boolean;
   setAuth: (user: User, role: UserRole, token: string) => void;
   setRole: (role: UserRole) => void;
+  updateProfile: (name: string, phone: string) => void;
   logout: () => void;
 }
 
@@ -33,6 +34,9 @@ export const useAuthStore = create<AuthState>()(
         set({ user, role, token, isAuthenticated: true });
       },
       setRole: (role) => set({ role }),
+      updateProfile: (name, phone) => set((state) => ({
+        user: state.user ? { ...state.user, name, phone } : null
+      })),
       logout: () => {
         Cookies.remove('auth_token');
         set({ user: null, role: null, token: null, isAuthenticated: false });
