@@ -279,6 +279,14 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
           mapTypeId={mapTypeId}
           disableDefaultUI={true}
           gestureHandling="greedy"
+          onClick={(e) => {
+            if (e.detail.latLng) {
+              useMapStore.getState().setSearchResultPin({
+                lat: e.detail.latLng.lat,
+                lng: e.detail.latLng.lng
+              });
+            }
+          }}
         >
           <TrafficLayer />
           <RoutePolyline />
