@@ -22,6 +22,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/login/:role(authority|police|citizen|owner)',
+        destination: '/login?role=:role',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default withPWA(nextConfig);

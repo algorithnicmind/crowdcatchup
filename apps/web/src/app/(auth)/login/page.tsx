@@ -12,14 +12,18 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect_url');
-  const queryRole = searchParams.get('role') as UserRole | null;
+  const queryRole = searchParams.get('role');
+  const initialRole = queryRole 
+    ? (queryRole.toUpperCase() as UserRole)
+    : 'AUTHORITY';
+
   const setAuth = useAuthStore(state => state.setAuth);
 
   const [isLoading, setIsLoading] = useState(false);
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState<'PHONE' | 'OTP'>('PHONE');
-  const [role, setRole] = useState<UserRole>(queryRole || 'AUTHORITY');
+  const [role, setRole] = useState<UserRole>(initialRole);
 
   const handleSendOtp = (e: React.FormEvent) => {
     e.preventDefault();
