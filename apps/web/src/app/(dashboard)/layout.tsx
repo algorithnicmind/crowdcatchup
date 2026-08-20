@@ -17,6 +17,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const { setRole } = useAuthStore();
+  const { isSidebarOpen } = useMapStore();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -47,7 +48,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const isAuthority = pathname?.startsWith('/authority');
   const isOwner = pathname?.startsWith('/owner');
   const isCitizen = pathname?.startsWith('/citizen');
-  const { isSidebarOpen } = useMapStore();
 
   return (
     <div className="flex h-screen w-full bg-[#09090b] text-white overflow-hidden">
