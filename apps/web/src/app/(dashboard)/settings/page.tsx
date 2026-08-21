@@ -171,7 +171,7 @@ export default function SettingsPage() {
                 />
               </div>
 
-              {/* Email — read-only, comes from Clerk */}
+              {/* Email — read-only, comes from auth store */}
               <div>
                 <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                   Email
