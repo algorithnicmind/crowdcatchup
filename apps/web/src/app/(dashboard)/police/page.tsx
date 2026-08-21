@@ -15,9 +15,17 @@ export default function PoliceDashboard() {
   const addTask = useMapStore((state) => state.addTask);
 
   useEffect(() => {
-    const unsubscribeTasks = subscribe('SECURITY_TASK', (payload: unknown) => {
-      const data = payload as { task?: SecurityTask };
-      if (data.task) addTask(data.task);
+    const unsubscribeTasks = subscribe('SECURITY_TASK', (wsEvent: any) => {
+      if (wsEvent.payload) {
+        addTask({
+          task_id: wsEvent.payload.intervention_id || `task-${Date.now()}`,
+          zone_id: wsEvent.payload.target_zone || wsEvent.payload.zone_id || 'Unknown Zone',
+          distance: 100, // Mock distance
+          risk_level: 'HIGH',
+          instructions: wsEvent.payload.message || 'No instructions provided',
+          required_officers: 2
+        });
+      }
     });
 
     return () => {

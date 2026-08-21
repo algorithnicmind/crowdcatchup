@@ -7,7 +7,9 @@ export type WebSocketEvent =
   | 'RECOMMENDATION_ALERT'
   | 'SECURITY_TASK'
   | 'SOURCE_HEALTH'
-  | 'CITIZEN_ALERT';
+  | 'CITIZEN_ALERT'
+  | 'NAVIGATION_UPDATE'
+  | 'REROUTE_ALERT';
 
 export function useWebSocket(eventId: string) {
   const { role, token, user } = useAuthStore();

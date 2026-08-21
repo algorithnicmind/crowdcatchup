@@ -75,9 +75,18 @@ export function AlertsPanel() {
                       variant="destructive" 
                       size="sm" 
                       className="w-full font-semibold shadow-lg shadow-red-500/20"
-                      onClick={() => {
-                        import('sonner').then(({ toast }) => toast.success('Plan Approved: Units Deployed & Interventions Activated'));
-                        useMapStore.getState().removeRecommendation(rec.recommendation_id);
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(`http://localhost:8000/api/v1/interventions/${rec.recommendation_id}/approve`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                          });
+                          if (!res.ok) throw new Error('Failed to approve plan');
+                          import('sonner').then(({ toast }) => toast.success('Plan Approved: Units Deployed & Interventions Activated'));
+                          useMapStore.getState().removeRecommendation(rec.recommendation_id);
+                        } catch (err) {
+                          import('sonner').then(({ toast }) => toast.error('Error approving plan. Check connection.'));
+                        }
                       }}
                     >
                       <ShieldAlert className="w-4 h-4 mr-2" />

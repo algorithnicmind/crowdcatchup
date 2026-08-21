@@ -1,20 +1,51 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MagicCard } from '@/components/ui/magic-card';
-import { Navigation, Users, ShieldAlert, HeartPulse, Search, MapPin } from 'lucide-react';
+import { Navigation, Users, ShieldAlert, HeartPulse, Search, MapPin, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useMapStore } from '@/stores/map-store';
+import { useWebSocket } from '@/shared/hooks/useWebSocket';
 
 export function SafeRoutePanel() {
   const [isPlanning, setIsPlanning] = useState(false);
   const [routeFound, setRouteFound] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [navInstruction, setNavInstruction] = useState('Head North towards Gate G5');
+  const [distanceRemaining, setDistanceRemaining] = useState(450);
+  
+  const { subscribe } = useWebSocket('EVT-001');
+
+  useEffect(() => {
+    let unsubNav: any;
+    let unsubReroute: any;
+    if (isNavigating) {
+      unsubNav = subscribe('NAVIGATION_UPDATE', (wsEvent: any) => {
+        if (wsEvent.payload) {
+          setNavInstruction(wsEvent.payload.next_instruction || 'Continue on route');
+          setDistanceRemaining(wsEvent.payload.remaining_distance || 0);
+        }
+      });
+      unsubReroute = subscribe('REROUTE_ALERT', (wsEvent: any) => {
+        if (wsEvent.payload) {
+          import('sonner').then(({ toast }) => {
+            toast.error('REROUTE: ' + wsEvent.payload.reason, { duration: 10000 });
+          });
+          setNavInstruction('Recalculating route...');
+        }
+      });
+    }
+    return () => {
+      if (unsubNav) unsubNav();
+      if (unsubReroute) unsubReroute();
+    };
+  }, [isNavigating, subscribe]);
 
   return (
     <div className="absolute bottom-24 md:bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-96 z-40 pointer-events-none">
       <AnimatePresence>
-        {!routeFound ? (
+        {!routeFound && !isNavigating && (
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -65,7 +96,6 @@ export function SafeRoutePanel() {
                       const res = await fetch("http://localhost:8000/api/v1/navigation/route?start_zone=Zone-A&end_zone=Maha-Kumbh-Mela").catch(() => null);
                       if (res && res.ok) {
                         const data = await res.json();
-                        console.log("Safe Route Fetched:", data);
                         useMapStore.getState().setRouteCoordinates(data.coordinates || []);
                       } else {
                         // Fallback mock coordinates for demo
@@ -77,8 +107,6 @@ export function SafeRoutePanel() {
                       }
                       setRouteFound(true);
                     } catch (e) {
-                      console.error("Failed to fetch route", e);
-                      // Fallback mock coordinates for demo on error
                       useMapStore.getState().setRouteCoordinates([
                         { lat: 20.296059, lng: 85.824539 },
                         { lat: 20.297, lng: 85.826 },
@@ -103,7 +131,9 @@ export function SafeRoutePanel() {
               </div>
             </MagicCard>
           </motion.div>
-        ) : (
+        )}
+
+        {routeFound && !isNavigating && (
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -156,7 +186,11 @@ export function SafeRoutePanel() {
                 <div className="flex gap-2">
                   <Button 
                     className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20 font-semibold"
-                    onClick={() => alert('Navigation Started!')}
+                    onClick={async () => {
+                      // Trigger start navigation on backend
+                      await fetch("http://localhost:8000/api/v1/navigation/start", { method: 'POST' }).catch(()=>null);
+                      setIsNavigating(true);
+                    }}
                   >
                     START
                   </Button>
@@ -170,6 +204,51 @@ export function SafeRoutePanel() {
                   >
                     Cancel
                   </Button>
+                </div>
+              </div>
+            </MagicCard>
+          </motion.div>
+        )}
+
+        {isNavigating && (
+          <motion.div
+            initial={{ scale: 0.9, y: 20, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            className="pointer-events-auto"
+          >
+            <MagicCard 
+              className="bg-black/90 backdrop-blur-xl border border-blue-500/50 shadow-2xl overflow-hidden"
+              gradientColor="rgba(59, 130, 246, 0.15)"
+            >
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 to-cyan-400" />
+              
+              <div className="p-4 flex flex-col items-center">
+                <div className="w-full flex justify-between items-center mb-4 border-b border-white/10 pb-4">
+                  <div className="flex flex-col">
+                    <span className="text-blue-400 text-xs font-bold uppercase tracking-wider">Navigating</span>
+                    <span className="text-white text-2xl font-black">{distanceRemaining}m</span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30"
+                    onClick={() => {
+                      setIsNavigating(false);
+                      setRouteFound(false);
+                      useMapStore.getState().setRouteCoordinates(null);
+                    }}
+                  >
+                    END
+                  </Button>
+                </div>
+
+                <div className="flex items-center gap-4 w-full">
+                  <div className="bg-blue-500/20 p-3 rounded-full border border-blue-500/30">
+                    <ArrowRight className="w-8 h-8 text-blue-400" />
+                  </div>
+                  <p className="text-white text-lg font-medium leading-tight">
+                    {navInstruction}
+                  </p>
                 </div>
               </div>
             </MagicCard>

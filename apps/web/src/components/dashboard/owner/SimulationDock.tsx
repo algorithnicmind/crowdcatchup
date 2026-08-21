@@ -5,11 +5,13 @@ import { Play, Pause, FastForward, RotateCcw, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { MagicCard } from '@/components/ui/magic-card';
+import { ScenarioController } from '@/components/dashboard/authority/digital-twin/ScenarioController';
 
 export function SimulationDock() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [time, setTime] = useState(0);
+  const [showScenarioModal, setShowScenarioModal] = useState(false);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -67,11 +69,22 @@ export function SimulationDock() {
           </div>
 
           {/* Add Event Injection (Simulate crisis) */}
-          <div className="border-l border-white/10 pl-4">
-            <Button variant="outline" size="sm" className="bg-orange-500/10 border-orange-500/30 text-orange-400 hover:bg-orange-500/20 hover:text-orange-300">
+          <div className="border-l border-white/10 pl-4 relative">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="bg-orange-500/10 border-orange-500/30 text-orange-400 hover:bg-orange-500/20 hover:text-orange-300"
+              onClick={() => setShowScenarioModal(!showScenarioModal)}
+            >
               <AlertCircle className="w-3.5 h-3.5 mr-1.5" />
               Inject Scenario
             </Button>
+            
+            {showScenarioModal && (
+              <div className="absolute bottom-full right-0 mb-4 w-72 z-50">
+                <ScenarioController eventId="EVT-001" />
+              </div>
+            )}
           </div>
 
         </div>

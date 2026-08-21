@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, Enum, Integer
+from sqlalchemy import Column, String, DateTime, Enum, Integer, Float, JSON
 from core.database import Base
 from datetime import datetime
 from ...domain.entities.intervention import InterventionStatus, InterventionType
@@ -12,6 +12,9 @@ class InterventionModel(Base):
     target_zone = Column(String)
     intervention_type = Column(Enum(InterventionType))
     message = Column(String)
+    risk_score = Column(Float, nullable=True)
+    explanation = Column(JSON, nullable=True)
+    actions = Column(JSON, nullable=True)
     status = Column(Enum(InterventionStatus), default=InterventionStatus.PENDING)
     created_at = Column(DateTime, default=datetime.utcnow)
     action_taken_at = Column(DateTime, nullable=True)

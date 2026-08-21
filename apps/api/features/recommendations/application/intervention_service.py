@@ -39,6 +39,9 @@ class InterventionService:
                     target_zone=rec["target"],
                     intervention_type=InterventionType(rec["type"]),
                     message=rec["message"],
+                    risk_score=rec.get("risk_score"),
+                    explanation=rec.get("explanation"),
+                    actions=rec.get("actions"),
                     status=InterventionStatus.PENDING
                 )
                 self.db.add(new_intervention)
@@ -48,11 +51,14 @@ class InterventionService:
                 await ws_manager.broadcast_to_event(new_intervention.event_id, {
                     "type": "RECOMMENDATION_ALERT",
                     "payload": {
-                        "intervention_id": new_intervention.id,
+                        "recommendation_id": new_intervention.id,
                         "event_id": new_intervention.event_id,
-                        "target_zone": new_intervention.target_zone,
+                        "zone_id": new_intervention.target_zone,
                         "intervention_type": new_intervention.intervention_type.value,
-                        "message": new_intervention.message
+                        "message": new_intervention.message,
+                        "risk_score": new_intervention.risk_score,
+                        "explanation": new_intervention.explanation,
+                        "actions": new_intervention.actions
                     }
                 })
                 

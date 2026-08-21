@@ -5,8 +5,41 @@ import { GoogleEventMap } from '@/components/map/GoogleEventMap';
 import { SafeRoutePanel } from '@/components/dashboard/citizen/SafeRoutePanel';
 import { ShieldAlert, BellRing } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useWebSocket } from '@/shared/hooks/useWebSocket';
 
 export default function CitizenDashboard() {
+  const eventId = "EVT-001";
+  const { subscribe } = useWebSocket(eventId);
+
+  React.useEffect(() => {
+    // Request notification permissions for PWA requirement
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+        Notification.requestPermission();
+      }
+    }
+
+    const unsubscribeAlerts = subscribe('CITIZEN_ALERT', (wsEvent: any) => {
+      if (wsEvent.payload?.message) {
+        import('sonner').then(({ toast }) => {
+          toast.warning('EMERGENCY ALERT: ' + wsEvent.payload.message, {
+            duration: 10000,
+            style: { background: 'red', color: 'white', border: '1px solid darkred' }
+          });
+        });
+        
+        // Show native notification if allowed
+        if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+          new Notification('EMERGENCY ALERT', { body: wsEvent.payload.message });
+        }
+      }
+    });
+
+    return () => {
+      unsubscribeAlerts();
+    };
+  }, [subscribe]);
+
   const handleSosTrigger = async () => {
     try {
       // In a real app, we'd get actual device GPS coordinates here.

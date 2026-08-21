@@ -2,7 +2,6 @@
 **Project:** CrowdShield: AI-Powered Multi-Source Early Warning and Decision Support System for Large Public Events
 **Event / Challenge:** TechNova Challenge 2026 — Problem Statement 1
 **Total Steps: 70** (9 build phases)
-
 ---
 
 ## How To Use This File
@@ -201,16 +200,16 @@
   `RECOMMENDATION_ALERT` to Authority (doc 08 §4.3).
   → After: 6.3 · ✅ Done when: recommendation card appears live.
 - [x] **6.3 Approval flow (human-in-the-loop)**
-  Authority approves → `EXECUTE_ACTION` WS (doc 08 §4.4) → InterventionApproved event → state recorded → broadcast.
+  Authority approves → `EXECUTE_ACTION` WS (doc 08 §4.4) → InterventionApproved event → state recorded → broadcast. The AI Recommendation Engine currently generates interventions, but they must be approved by the Authority. We need to wire up the "Approve" button on the Authority dashboard to trigger the `EXECUTE_ACTION` WebSocket event on the backend. This will broadcast an `InterventionApproved` domain event and persist the state change to the database.
   → After: 6.4 · ✅ Done when: approve → intervention recorded → UI updates.
 - [x] **6.4 Police deployment**
-  `SECURITY_TASK` WebSocket (doc 08 §4.5) — zone, distance, required_officers, instructions.
+  `SECURITY_TASK` WebSocket (doc 08 §4.5) — zone, distance, required_officers, instructions. Upon approval of a security-related intervention, the system must dispatch a `SECURITY_TASK` WebSocket event targeted at Police user clients. This payload must include the target zone, required officer count, and specific tactical instructions. The Police dashboard needs to listen for this event and render the task.
   → After: 6.5 · ✅ Done when: police receive task on approval.
 - [x] **6.5 Announcements**
-  `CITIZEN_ALERT` WS (doc 08 §4.6), message_key → i18n templates EN/HI/OD (PRD §47), anti-panic protocol (doc 10 §3.3), human-approved broadcast.
+  `CITIZEN_ALERT` WS (doc 08 §4.6), message_key → i18n templates EN/HI/OD (PRD §47), anti-panic protocol (doc 10 §3.3), human-approved broadcast. We need to implement the `CITIZEN_ALERT` WebSocket event to push notifications to the Citizen PWA. This requires implementing the i18n anti-panic templates (English, Hindi, Odia) so that citizens receive clear, non-alarming instructions (e.g., "Please use Gate D" instead of "Gate C is dangerously crowded").
   → After: 6.6 · ✅ Done when: multilingual alert reaches citizen PWA.
 - [x] **6.6 Explainability UI** (HLD §4)
-  RecommendationCard showing `primary_reason`, `supporting_factors`, `confidence`.
+  RecommendationCard showing `primary_reason`, `supporting_factors`, `confidence`. Enhance the `RecommendationCard` component on the frontend. When the AI recommends an action, the UI must display the `primary_reason`, `supporting_factors`, and `confidence` score so the human Authority trusts the decision before approving it.
   → After: PHASE 6 GATE · ✅ Done when: UI clearly explains *why* it recommends an action.
 - [x] **🚧 PHASE 6 GATE** *(pass before Phase 7)*
   Human-in-the-loop logic works: AI detects → Authority approves → Police see task.
@@ -231,16 +230,16 @@
   Safe route guidance, alerts, SOS reporting (FR-13/14, doc 08 §5). NO panic-inducing metrics (PRD §4).
   → After: 7.5 · ✅ Done when: citizen sees green routes + alerts only.
 - [x] **7.5 Incidents feature (backend)**
-  Create/resolve incident, IncidentCreated event, citizen SOS → command map.
+  Create/resolve incident, IncidentCreated event, citizen SOS → command map. Implement the backend REST API (`POST /api/v1/incidents`) and WebSocket events for Citizen SOS reporting. When a citizen taps SOS on their app, it should drop a pin on the Authority's command map.
   → After: 7.6 · ✅ Done when: SOS appears on Authority map.
 - [x] **7.6 Citizen Journey Navigation — backend** (innovation, docs/04 §64, docs/08 §64)
-  `features/navigation/` — Group/Journey/SafeRoute entities; use cases plan_group_journey, navigate, check_reroute; route_engine (A* (A-Star) + crowd weights); navigation_engine (turn-by-turn); osm_adapter; `POST /api/v1/navigation/plan`, `POST /exit-plan`, WS `/api/v1/navigation/live` (NAVIGATION_UPDATE, REROUTE_ALERT, GROUP_MEMBER_ALERT).
+  `features/navigation/` — Group/Journey/SafeRoute entities; use cases plan_group_journey, navigate, check_reroute; route_engine (A* (A-Star) + crowd weights); navigation_engine (turn-by-turn); osm_adapter; `POST /api/v1/navigation/plan`, `POST /exit-plan`, WS `/api/v1/navigation/live` (NAVIGATION_UPDATE, REROUTE_ALERT, GROUP_MEMBER_ALERT). Implement the core pathfinding logic in `features/navigation/route_engine.py`. This involves an A* (A-Star) search algorithm that calculates routes based on distance, but adds penalty weights for crowded zones (based on live density data). It must also account for the user's `GroupSize` (solo vs. large group) when recommending gates.
   → After: 7.7 · ✅ Done when: plan request returns SafeRoutes with gate recommendations (doc 08 §64 schemas).
 - [x] **7.7 Citizen Journey Navigation — frontend**
-  JourneyPlanner, GroupSizeSelector, RouteMap, NavigationPanel, CrowdOverlay, GateRecommendation, GroupTipCard, ExitPlanner; hooks useJourney/useNavigation/useLiveReroute/useGroupCoordination; group profiles SOLO→LARGE_GROUP + special needs priority (PRD §9B).
+  JourneyPlanner, GroupSizeSelector, RouteMap, NavigationPanel, CrowdOverlay, GateRecommendation, GroupTipCard, ExitPlanner; hooks useJourney/useNavigation/useLiveReroute/useGroupCoordination; group profiles SOLO→LARGE_GROUP + special needs priority (PRD §9B). Build the citizen navigation interfaces: `JourneyPlanner`, `GroupSizeSelector`, and `NavigationPanel`. This UI will consume the backend navigation API, display the recommended "Safe Route" (green line) on the Leaflet map, and guide the user turn-by-turn.
   → After: 7.8 · ✅ Done when: 3 journey phases (to / inside / going home from event) work in demo.
 - [x] **7.8 PWA polish**
-  Push notifications, offline map cache (Service Worker + IndexedDB), mobile install.
+  Push notifications, offline map cache (Service Worker + IndexedDB), mobile install. Finalize the Progressive Web App features for the Citizen app. This includes registering the Service Worker, configuring IndexedDB to cache the static venue map for offline use, and ensuring web push notifications are functional.
   → After: PHASE 7 GATE · ✅ Done when: all mobile flows work offline-aware.
 - [x] **7.9 User Profile & Police Settings**
   User profile management (`/settings`) and Police Officer tactical settings modal.
@@ -252,16 +251,16 @@
 # PHASE 8 — SIMULATION (FR-15/16, PRD §57, doc 10 Rule 10)
 
 - [x] **8.1 Digital Twin**
-  Event map + live crowd state + risk as a virtual replica.
+  Event map + live crowd state + risk as a virtual replica. Ensure the Authority dashboard map fully acts as a digital twin by syncing perfectly with the live crowd state, coloring zones based on live risk levels, and showing active interventions.
   → After: 8.2 · ✅ Done when: twin renders current state.
 - [x] **8.2 Scenario engine**
-  Pre-scripted scenarios — normal arrival, sudden inflow, route blocked, gate unavailable, crowd surge; manual controls for demo control.
+  Pre-scripted scenarios — normal arrival, sudden inflow, route blocked, gate unavailable, crowd surge; manual controls for demo control. Build manual override buttons on the Event Owner dashboard to inject pre-scripted scenarios (e.g., "Simulate Sudden Inflow", "Simulate Route Blocked"). These buttons will tell the backend simulator to rapidly alter telemetry data for the demo.
   → After: 8.3 · ✅ Done when: each scenario changes crowd state on demand.
 - [x] **8.3 What-if analysis**
-  E.g. "close Gate C?" → predicted ripple effects on zones and routes.
+  E.g. "close Gate C?" → predicted ripple effects on zones and routes. Implement a prediction tool where the Authority can select a hypothetical action (e.g., "Close Gate C") and the system will run a fast-forward simulation to show the predicted resulting density in neighboring zones.
   → After: 8.4 · ✅ Done when: what-if output visible on Authority dashboard.
 - [x] **8.4 Post-event reports**
-  Event summary, risk timeline, intervention history (reports module, HLD §3).
+  Event summary, risk timeline, intervention history (reports module, HLD §3). Create an endpoint that aggregates all event data (risk timelines, density peaks, executed interventions) into a final summary report that can be viewed or exported after an event concludes.
   → After: PHASE 8 GATE · ✅ Done when: report generated from a completed event.
 - [x] **🚧 PHASE 8 GATE** *(pass before Phase 9)*
   Demo story (PRD §11) runs end-to-end flawlessly.
@@ -273,27 +272,28 @@
   RBAC audit, rate limiting, security headers, CORS lockdown, audit logging, input validation, secrets via env only (PRD §51).
   → After: 9.2 · ✅ Done when: security checklist from PRD §51 complete.
 - [x] **9.2 Backend tests**
-  Pytest unit/integration/e2e for all features; fusion accuracy tests + chaos playbooks (doc 09).
+  Pytest unit/integration/e2e for all features; fusion accuracy tests + chaos playbooks (doc 09). Fix the currently failing Pytest suite (there are validation errors on Auth routes and KeyErrors on Event routes). Ensure 100% passing tests for the core Fusion and Risk pipelines.
   → After: 9.3 · ✅ Done when: full test suite green.
 - [x] **9.3 Frontend tests**
-  Jest/Playwright for dashboards + navigation.
+  Jest/Playwright for dashboards + navigation. Write basic Jest/Playwright tests to ensure the dashboards and citizen navigation screens render without crashing.
   → After: 9.4 · ✅ Done when: frontend test suite green.
 - [x] **9.4 Performance + monitoring**
-  WebSocket load, AI latency, logging, graceful degradation verification.
+  WebSocket load, AI latency, logging, graceful degradation verification. Conduct a load test simulating high WebSocket traffic to ensure the FastAPI backend and Redis pub/sub do not crash under demo conditions. Verify that if the CV pipeline drops, the system gracefully degrades.
   → After: 9.5 · ✅ Done when: WS handles demo load; degraded mode verified.
 - [x] **9.5 Deployment**
-  CI/CD — Vercel (web), Docker/AWS (API), Neon DB (Cloud PostgreSQL) (DB); env config; HTTPS (doc 07).
+  CI/CD — Vercel (web), Docker/AWS (API), Neon DB (Cloud PostgreSQL) (DB); env config; HTTPS (doc 07). Set up CI/CD. Deploy the Next.js frontend to Vercel, the FastAPI backend via Docker/AWS, and provision the production Neon PostgreSQL database. Ensure HTTPS is enabled.
   → After: 9.6 · ✅ Done when: both apps deploy from CI and talk over HTTPS.
 - [x] **9.6 Docs final sync + README**
-  Verify quick-start; docs 01–12 match the code.
+  Verify quick-start; docs 01–12 match the code. Update the `README.md` with foolproof quick-start instructions for the judges. Ensure all `/docs/` reflect the final shipped code.
   → After: 9.7 · ✅ Done when: README quick-start works from scratch.
 - [x] **9.7 Architecture diagram + source code pack** (mandatory deliverable)
-  Data flow, modules, third-party APIs used.
+  Data flow, modules, third-party APIs used. Generate the final required architecture diagram detailing data flow, modules, and third-party integrations.
   → After: 9.8 · ✅ Done when: diagram matches implemented system.
 - [x] **9.8 Pitch deck (≤10 slides) + Demo video** (mandatory)
+  Create the 10-slide presentation deck. Record the official 3-minute demo video showing the full hackathon scenario story.
   → After: 9.9 · ✅ Done when: deck ≤10 slides, video recorded.
 - [x] **9.9 Documentation pack** (mandatory)
-  Tech choices, assumptions, compliance checks (data ethics & privacy).
+  Tech choices, assumptions, compliance checks (data ethics & privacy). Compile the final tech choices, assumptions, and data ethics/privacy compliance checks into the final submission package.
   → After: DEMO REHEARSAL · ✅ Done when: all 5 deliverables present.
 
 ---
