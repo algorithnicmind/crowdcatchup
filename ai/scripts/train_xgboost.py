@@ -38,9 +38,9 @@ def train_model():
     print(f"Training XGBoost Regressor on {len(X_train)} samples with {len(FEATURES)} features...")
 
     model = xgb.XGBRegressor(
-        n_estimators=200,
-        learning_rate=0.05,
-        max_depth=6,
+        n_estimators=500,
+        learning_rate=0.03,
+        max_depth=8,
         subsample=0.8,
         colsample_bytree=0.8,
         random_state=42,
@@ -72,9 +72,9 @@ def train_model():
     with open(meta_path, 'w') as f:
         json.dump({
             'features': FEATURES,
-            'n_estimators': 200,
-            'learning_rate': 0.05,
-            'max_depth': 6,
+            'n_estimators': 500,
+            'learning_rate': 0.03,
+            'max_depth': 8,
             'test_r2': float(r2),
             'test_rmse': float(rmse),
             'test_mae': float(mae),

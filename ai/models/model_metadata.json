@@ -1,0 +1,21 @@
+{
+  "features": [
+    "density",
+    "entry_rate",
+    "exit_rate",
+    "average_speed",
+    "estimated_people",
+    "net_flow",
+    "flow_conflict",
+    "confidence",
+    "hour_of_day",
+    "zone_capacity_pct"
+  ],
+  "n_estimators": 500,
+  "learning_rate": 0.03,
+  "max_depth": 8,
+  "test_r2": 0.9928501118392491,
+  "test_rmse": 2.7282525248767597,
+  "test_mae": 2.075328482954986,
+  "training_samples": 80000
+}

@@ -1,0 +1,16 @@
+{
+  "features": [
+    "density",
+    "entry_rate",
+    "exit_rate",
+    "average_speed",
+    "estimated_people",
+    "net_flow",
+    "flow_conflict",
+    "confidence",
+    "hour_of_day",
+    "zone_capacity_pct"
+  ],
+  "test_r2": 0.9928501118392491,
+  "test_rmse": 2.7282525248767597
+}
