@@ -11,6 +11,21 @@ export type WebSocketEvent =
   | 'NAVIGATION_UPDATE'
   | 'REROUTE_ALERT';
 
+/**
+ * [ARCHITECTURAL DECISION: FRONTEND REAL-TIME SYNC]
+ * 
+ * Why this exists:
+ * The UI (Map markers, Dashboards, Mobile apps) must reflect the physical reality of the 
+ * event in less than 500ms. Polling the REST API every second would kill mobile battery 
+ * and DDoS our own server.
+ * 
+ * How it works:
+ * This custom React Hook establishes a persistent WebSocket connection to the FastAPI backend.
+ * It strictly enforces data isolation by passing `event_id` and `role` in the connection URL.
+ * It implements a robust exponential backoff reconnection strategy (lines 62-74) to handle 
+ * spotty mobile network conditions (like a crowded festival) without spamming the server.
+ * Components use `subscribe()` to listen for specific domain events (e.g. 'RISK_UPDATE').
+ */
 export function useWebSocket(eventId: string) {
   const { role, token, user } = useAuthStore();
   const userId = user?.id;

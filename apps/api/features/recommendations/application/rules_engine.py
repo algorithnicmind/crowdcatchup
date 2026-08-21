@@ -6,6 +6,22 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 
 class RecommendationEngine:
+    """
+    [ARCHITECTURAL DECISION: DECISION SUPPORT & EXPLAINABLE AI (XAI)]
+    
+    Why this exists:
+    While the XGBoost models output raw numbers (e.g., Risk = 85%), a human Authority Operator 
+    under pressure cannot easily interpret what "85%" means or what they should do about it.
+    
+    How it works:
+    This Rules Engine acts as an expert system that bridges raw ML outputs to human action. 
+    It evaluates the complex `CrowdStateDTO` and generates concrete `SECURITY_TASK` payloads.
+    Crucially, it implements Explainable AI (XAI) patterns by attaching `primary_reason`, 
+    `supporting_factors`, and `prediction_confidence` to every recommendation (TRD §2.4).
+    This ensures that when a Police deployment is suggested, the Operator understands *why* 
+    and can trust the system.
+    """
+    
     @staticmethod
     def generate_recommendations(state: CrowdStateDTO) -> List[dict]:
         """

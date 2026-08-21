@@ -8,6 +8,22 @@ import { Button } from '@/components/ui/button';
 import { useMapStore } from '@/stores/map-store';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
 
+/**
+ * [ARCHITECTURAL DECISION: DYNAMIC A* PATHFINDING CONSUMPTION]
+ * 
+ * Why this exists:
+ * Static maps (like Google Maps) don't account for temporary crowd crushes. We needed a way 
+ * to guide citizens around dangerous zones in real-time.
+ * 
+ * How it works:
+ * 1. The Citizen clicks "Find Safe Route" (Line 92).
+ * 2. This calls the Python FastAPI `navigation_engine` (Phase 7.6) which uses A* Pathfinding 
+ *    with a custom heuristic: Cost = Distance + (Density * Risk Score).
+ * 3. The Backend returns a safe polyline which we plot on the `GoogleEventMap` via Zustand state.
+ * 4. We then use the `useWebSocket` hook to listen for `REROUTE_ALERT`s. If the AI detects 
+ *    a sudden crush on the active path, it pushes an event here instantly, and this UI 
+ *    prompts a recalculation.
+ */
 export function SafeRoutePanel() {
   const [isPlanning, setIsPlanning] = useState(false);
   const [routeFound, setRouteFound] = useState(false);

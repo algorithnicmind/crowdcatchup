@@ -15,8 +15,23 @@ from typing import Any
 
 class WebSocketManager:
     """
-    Manages WebSocket connections with event isolation and role-based broadcasting.
-    Each connection is tagged with event_id and user_role for targeted messaging.
+    [ARCHITECTURAL DECISION: REAL-TIME EVENT STREAMING]
+    
+    Why this exists:
+    To power a "Digital Twin" and live dashboards (Command Center, Police App, Citizen App), 
+    the system requires sub-second latency for pushing Crowd State, Risk, and Alerts to clients.
+    HTTP polling is too slow and resource-intensive for this scale.
+
+    How it works (The Pub/Sub Pattern):
+    This manager tracks active WebSockets by mapping them to `event_id` and `user_role`.
+    When the internal EventBus (events.py) triggers a domain event (e.g., `RiskLevelChanged`), 
+    this manager broadcasts a targeted JSON payload strictly to the authorized clients 
+    (e.g., broadcasting SECURITY_TASK only to POLICE roles within Event A).
+
+    Production Scalability (TRD §1.2):
+    Currently, this stores connections in-memory (`self._connections`). For horizontal scaling 
+    across multiple API pods (Kubernetes), this class acts as a facade over Redis Pub/Sub, 
+    ensuring that a message published on Pod A reaches a client connected to Pod B.
     """
 
     def __init__(self):

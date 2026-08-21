@@ -15,9 +15,21 @@ EventHandler = Callable[[Any], Coroutine[Any, Any, None]]
 
 class EventBus:
     """
-    In-process async event bus.
-    Features publish domain events; other features subscribe and react.
-    This keeps features decoupled and testable (doc 12 Principle 3 & 4).
+    [ARCHITECTURAL DECISION: IN-PROCESS DOMAIN EVENT BUS]
+    
+    Why this exists:
+    In a Domain-Driven Design (DDD) micro-monolith, features must remain strictly decoupled. 
+    Instead of Feature A importing and directly calling Feature B (creating tight coupling and spaghetti code), 
+    Feature A publishes a "Domain Event" (e.g., 'CROWD_STATE_UPDATED') to this EventBus. 
+    Feature B simply subscribes to it.
+
+    For the Hackathon Prototype:
+    We use an `asyncio`-based in-process bus for extreme low latency without the overhead of external 
+    infrastructure.
+    
+    Production Scalability (TRD §1.2):
+    In a true horizontally-scaled production environment, this exact interface would be swapped out 
+    for Apache Kafka or AWS EventBridge, allowing seamless transition to distributed microservices.
     """
 
     def __init__(self):

@@ -20,6 +20,20 @@ SOURCE_RELIABILITY = {
 }
 
 class FusionService:
+    """
+    [ARCHITECTURAL DECISION: SENSOR FUSION ENGINE]
+    
+    Why this exists:
+    A real-world venue receives messy, conflicting data. CCTV Camera A might say there are 100 people 
+    in Zone 1 (90% confidence), while Smart Gate B says 120 people (95% confidence). 
+    If we just overwrite the database with the latest ping, the UI will flicker violently.
+    
+    How it works:
+    This engine implements a Confidence-Weighted Sensor Fusion Algorithm (TRD §2.2).
+    It buffers incoming streams, detects sensor disagreements (e.g., if CCTV breaks and reports 0),
+    and mathematically merges multi-modal inputs (CCTV + RFID Gates + GPS) into a single, 
+    stabilized `CrowdStateDTO` representing the undeniable "ground truth".
+    """
     @staticmethod
     def get_reliability(source_type: str) -> float:
         return SOURCE_RELIABILITY.get(source_type, 0.5)
