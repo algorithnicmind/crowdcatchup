@@ -35,6 +35,5 @@ class MockCCTVAdapter:
             value=float(simulated_density),
             confidence=0.88,
             latency_ms=latency,
-            health="ONLINE",
-            metadata={"notes": "SIMULATED_CCTV_FEED"}
+            health="ONLINE"
         )

@@ -33,6 +33,5 @@ class MockSmartGateAdapter:
             value=float(simulated_flow),
             confidence=0.99, # Gates are highly accurate
             latency_ms=5,
-            health="ONLINE",
-            metadata={"notes": "SIMULATED_TURNSTILE"}
+            health="ONLINE"
         )

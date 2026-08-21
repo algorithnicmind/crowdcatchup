@@ -18,7 +18,7 @@ export function SourceHealthPanel() {
             <div key={s.source_id} className="flex items-center justify-between pointer-events-auto bg-white/5 p-2 rounded-lg border border-white/10">
               <div className="flex flex-col">
                 <span className="text-gray-200 text-xs font-medium">{s.source_id}</span>
-                {s.source_type === 'SYNTHETIC' && (
+                {(s.source_type === 'SYNTHETIC' || s.source_id.includes('SIM') || s.source_id.includes('MOCK')) && (
                   <span className="text-[10px] text-purple-400 border border-purple-500/50 mt-1 w-fit bg-purple-500/10 px-1.5 py-0.5 rounded-full font-bold">
                     SIMULATED
                   </span>
