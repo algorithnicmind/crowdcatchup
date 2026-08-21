@@ -32,8 +32,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     else if (pathname.startsWith('/owner')) setRole('EVENT_OWNER');
   }, [pathname, setRole]);
 
-  // Clerk middleware handles auth guarding
-
   // Prevent flash of hydration
   if (!mounted) {
     return (
