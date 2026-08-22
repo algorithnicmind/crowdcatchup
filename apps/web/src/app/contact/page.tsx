@@ -61,7 +61,7 @@ export default function ContactPage() {
                 <input 
                   type="text" 
                   className="w-full bg-white/[0.05] border border-white/[0.1] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors"
-                  placeholder="John Doe"
+                  placeholder="Your name"
                 />
               </div>
               
@@ -70,7 +70,7 @@ export default function ContactPage() {
                 <input 
                   type="email" 
                   className="w-full bg-white/[0.05] border border-white/[0.1] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors"
-                  placeholder="john@example.com"
+                  placeholder="Your email"
                 />
               </div>
               
@@ -79,7 +79,7 @@ export default function ContactPage() {
                 <textarea 
                   rows={4}
                   className="w-full bg-white/[0.05] border border-white/[0.1] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors resize-none"
-                  placeholder="How can we help you?"
+                  placeholder="Your message"
                 />
               </div>
             </div>
