@@ -13,6 +13,11 @@ function HeroSplineBackground() {
       overflow: 'hidden',
     }}>
       <Script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.7/build/spline-viewer.js" strategy="lazyOnload" />
+      <style dangerouslySetInnerHTML={{ __html: `
+        spline-viewer::part(logo) {
+          display: none !important;
+        }
+      `}} />
       {/* @ts-ignore - custom web component */}
       <spline-viewer 
         url="https://prod.spline.design/dJqTIQ-tE3ULUPMi/scene.splinecode" 
