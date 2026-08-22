@@ -10,7 +10,7 @@ class WebSocketClient {
 
   constructor() {
     // Determine WS URL based on current host or env var
-    const wsBaseUrl = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000/api/v1/ws";
+    const wsBaseUrl = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000/ws";
     this.url = wsBaseUrl;
   }
 
