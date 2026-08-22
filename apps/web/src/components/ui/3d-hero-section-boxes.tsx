@@ -67,16 +67,17 @@ function HeroContent() {
          <p className="text-base sm:text-lg opacity-80 mb-6 max-w-md">
            Advanced Multi-Source Early Warning System. Monitor crowd density, detect anomalies, and secure your venues in real-time.
         </p>
-        <div className="flex pointer-events-auto flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-3 mb-8">
-             <a href="#portals" className="border border-white text-white font-semibold py-2.5 sm:py-3.5 px-6 sm:px-8 rounded-2xl transition duration-300 w-full sm:w-auto hover:bg-white hover:text-black inline-block text-center">
-                Access Portals
-            </a>
-            <a href="#demo" className="pointer-events-auto bg-white text-black font-semibold py-2.5 sm:py-3.5 px-6 sm:px-8 rounded-2xl transition duration-300 hover:scale-105 flex items-center justify-center w-full sm:w-auto">
-               <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-cyan-400" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                   <path d="M12 4C11.4477 4 11 4.44772 11 5V11H5C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13H11V19C11 19.5523 11.4477 20 12 20C12.5523 20 13 19.5523 13 19V13H19C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11H13V5C13 4.44772 12.5523 4 12 4Z" fill="currentColor" />
-               </svg>
-               Watch Demo
-            </a>
+        <div className="flex pointer-events-auto flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-4 mb-8">
+            <Link href="/login?role=CITIZEN" className="relative group overflow-hidden rounded-2xl p-[2px] w-full sm:w-auto">
+              <span className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-500 rounded-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-300 animate-pulse" />
+              <div className="relative bg-[#050505] text-white font-semibold py-2.5 sm:py-3.5 px-6 sm:px-8 rounded-2xl transition-all duration-300 group-hover:bg-transparent flex items-center justify-center gap-2">
+                Citizen Login
+              </div>
+            </Link>
+
+            <Link href="/register" className="bg-white text-black font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-2xl transition duration-300 hover:scale-105 flex items-center justify-center w-full sm:w-auto shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)]">
+               Sign Up Free
+            </Link>
         </div>
         
         <div className="flex items-center space-x-4 pointer-events-auto mt-4">
@@ -110,10 +111,10 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <Link href="/#portals" className="text-gray-300 hover:text-white text-sm font-medium transition duration-300 hidden sm:block">
+          <Link href="/login?role=CITIZEN" className="text-gray-300 hover:text-white text-sm font-medium transition duration-300 hidden sm:block">
               Sign In
           </Link>
-          <Link href="/#portals" className="border border-white text-white px-5 py-2 rounded-full text-sm hover:bg-white hover:text-black transition duration-300">
+          <Link href="/register" className="border border-white text-white px-5 py-2 rounded-full text-sm hover:bg-white hover:text-black transition duration-300">
               Sign Up
           </Link>
         </div>
