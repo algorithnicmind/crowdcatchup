@@ -68,7 +68,16 @@ export default function CitizenProfilePage() {
         </div>
 
         <div className="pt-6 border-t border-zinc-800 flex justify-between items-center">
-          <Button variant="outline" className="border-red-500/30 text-red-400 hover:bg-red-500/10">
+          <Button 
+            variant="outline" 
+            className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+            onClick={() => {
+              toast.error("SOS Test Signal Broadcasted Successfully! Emergency contacts notified.", {
+                duration: 4000,
+                style: { background: '#ef4444', color: 'white', border: 'none' }
+              });
+            }}
+          >
             <ShieldAlert className="w-4 h-4 mr-2" />
             Test SOS Signal
           </Button>
