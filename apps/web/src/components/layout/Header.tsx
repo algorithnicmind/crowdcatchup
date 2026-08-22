@@ -30,6 +30,8 @@ export function Header() {
   const isOwner = pathname?.startsWith('/owner');
   const isCitizen = pathname?.startsWith('/citizen');
 
+  const [hasUnread, setHasUnread] = React.useState(true);
+
   return (
     <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-zinc-800 bg-zinc-950/80 px-4 shadow-sm backdrop-blur-md md:px-6">
       <div className="flex items-center gap-4">
@@ -68,18 +70,18 @@ export function Header() {
         <DropdownMenu>
           <DropdownMenuTrigger className="relative h-9 w-9 inline-flex items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-800 hover:text-white cursor-pointer outline-none transition-colors border-0 bg-transparent">
             <Bell className="h-5 w-5" />
-            <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+            {hasUnread && <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>}
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-80 bg-zinc-950 border-zinc-800 text-zinc-300 p-0" align="end">
             <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
               <span className="font-semibold text-white">Notifications</span>
-              <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full border border-red-500/30">2 New</span>
+              {hasUnread && <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full border border-red-500/30">2 New</span>}
             </div>
             
             <div className="max-h-[300px] overflow-y-auto">
               {/* Notification Item 1 */}
               <div className="flex flex-col gap-1 px-4 py-3 border-b border-zinc-800 hover:bg-zinc-900/50 cursor-pointer transition-colors relative">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500 rounded-r-md"></div>
+                {hasUnread && <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500 rounded-r-md"></div>}
                 <span className="text-sm font-medium text-white">High density detected at Gate 3</span>
                 <span className="text-xs text-zinc-500">Zone B is nearing maximum safe capacity.</span>
                 <span className="text-[10px] text-zinc-600 mt-1">2 mins ago</span>
@@ -87,7 +89,7 @@ export function Header() {
               
               {/* Notification Item 2 */}
               <div className="flex flex-col gap-1 px-4 py-3 border-b border-zinc-800 hover:bg-zinc-900/50 cursor-pointer transition-colors relative">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r-md"></div>
+                {hasUnread && <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r-md"></div>}
                 <span className="text-sm font-medium text-white">Units Deployed</span>
                 <span className="text-xs text-zinc-500">2 Police tactical units have arrived at Sector 4.</span>
                 <span className="text-[10px] text-zinc-600 mt-1">15 mins ago</span>
@@ -102,7 +104,15 @@ export function Header() {
             </div>
             
             <div className="p-2 border-t border-zinc-800">
-              <Button variant="ghost" className="w-full text-xs text-zinc-400 hover:text-white h-8">
+              <Button 
+                variant="ghost" 
+                className="w-full text-xs text-zinc-400 hover:text-white h-8"
+                onClick={() => {
+                  setHasUnread(false);
+                  import('sonner').then(({ toast }) => toast.success('All notifications marked as read'));
+                }}
+                disabled={!hasUnread}
+              >
                 Mark all as read
               </Button>
             </div>
