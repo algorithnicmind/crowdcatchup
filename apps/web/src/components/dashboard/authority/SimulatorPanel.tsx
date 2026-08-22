@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { X } from 'lucide-react';
 
 const SCENARIOS = [
   { id: 'normal', name: '🟢 Normal Flow', desc: 'Standard crowd movement' },
@@ -10,6 +11,7 @@ const SCENARIOS = [
 ];
 
 export function SimulatorPanel() {
+  const [isVisible, setIsVisible] = useState(true);
   const [loading, setLoading] = useState(false);
   const [activeScenario, setActiveScenario] = useState<string | null>(null);
 
@@ -38,6 +40,8 @@ export function SimulatorPanel() {
     }
   };
 
+  if (!isVisible) return null;
+
   return (
     <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-black/80 backdrop-blur-md border border-white/10 rounded-xl p-4 w-[400px] shadow-2xl">
       <div className="flex items-center justify-between mb-4">
@@ -45,7 +49,15 @@ export function SimulatorPanel() {
           <span className="animate-pulse h-2 w-2 rounded-full bg-red-500"></span>
           Live Simulator Controls
         </h3>
-        <span className="text-xs text-white/50 bg-white/5 px-2 py-1 rounded">HACKATHON DEMO</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-white/50 bg-white/5 px-2 py-1 rounded">HACKATHON DEMO</span>
+          <button 
+            onClick={() => setIsVisible(false)}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
       </div>
       
       <div className="space-y-2">

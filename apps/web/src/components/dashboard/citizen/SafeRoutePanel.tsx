@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MagicCard } from '@/components/ui/magic-card';
-import { Navigation, Users, ShieldAlert, HeartPulse, Search, MapPin, ArrowRight } from 'lucide-react';
+import { Navigation, Users, ShieldAlert, HeartPulse, Search, MapPin, ArrowRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useMapStore } from '@/stores/map-store';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
@@ -25,6 +25,7 @@ function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: num
 }
 
 export function SafeRoutePanel() {
+  const [isVisible, setIsVisible] = useState(true);
   const [isPlanning, setIsPlanning] = useState(false);
   const [routeFound, setRouteFound] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -131,6 +132,8 @@ export function SafeRoutePanel() {
     }
   };
 
+  if (!isVisible) return null;
+
   return (
     <div className="absolute bottom-24 md:bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-96 z-40 pointer-events-none">
       <AnimatePresence>
@@ -146,9 +149,17 @@ export function SafeRoutePanel() {
               gradientColor="rgba(16, 185, 129, 0.1)"
             >
               <div className="p-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <Navigation className="w-5 h-5 text-emerald-400" />
-                  <h3 className="text-white font-bold tracking-wide">Plan Safe Journey</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Navigation className="w-5 h-5 text-emerald-400" />
+                    <h3 className="text-white font-bold tracking-wide">Plan Safe Journey</h3>
+                  </div>
+                  <button 
+                    onClick={() => setIsVisible(false)}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
 
                 <div className="space-y-3 mb-4">

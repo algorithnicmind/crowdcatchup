@@ -12,7 +12,8 @@ import {
   Camera,
   Wifi,
   Save,
-  Trash2
+  Trash2,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -101,7 +102,15 @@ export function OwnerPropertiesPanel() {
               <Settings2 className="w-5 h-5 text-purple-400" />
               <h3 className="text-white font-bold tracking-wider text-sm uppercase">Properties</h3>
             </div>
-            <div className="text-[10px] text-zinc-500 font-mono">ID: {draftZone ? 'NEW-ZONE' : 'ZN-04'}</div>
+            <div className="flex items-center gap-3">
+              <div className="text-[10px] text-zinc-500 font-mono">ID: {draftZone ? 'NEW-ZONE' : 'ZN-04'}</div>
+              <button 
+                onClick={() => setIsVisible(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           <div className="p-5 space-y-5">

@@ -4,7 +4,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMapStore } from '@/stores/map-store';
 import { MagicCard } from '@/components/ui/magic-card';
-import { AlertTriangle, CheckCircle, ShieldAlert } from 'lucide-react';
+import { AlertTriangle, CheckCircle, ShieldAlert, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function AlertsPanel() {
@@ -33,9 +33,17 @@ export function AlertsPanel() {
               <div className="p-4 relative">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-orange-500" />
                 
-                <div className="flex items-center gap-2 mb-3 mt-1">
-                  <AlertTriangle className="w-5 h-5 text-red-500 animate-pulse" />
-                  <h3 className="text-white font-semibold text-sm tracking-wide uppercase">AI Recommendation</h3>
+                <div className="flex items-center justify-between mb-3 mt-1">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5 text-red-500 animate-pulse" />
+                    <h3 className="text-white font-semibold text-sm tracking-wide uppercase">AI Recommendation</h3>
+                  </div>
+                  <button 
+                    onClick={() => useMapStore.getState().removeRecommendation(rec.recommendation_id)}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
 
                 <div className="space-y-3">

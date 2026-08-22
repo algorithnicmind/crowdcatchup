@@ -4,7 +4,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMapStore } from '@/stores/map-store';
 import { MagicCard } from '@/components/ui/magic-card';
-import { Navigation, CheckCircle2, ShieldAlert, Users } from 'lucide-react';
+import { Navigation, CheckCircle2, ShieldAlert, Users, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function TaskCard() {
@@ -44,8 +44,16 @@ export function TaskCard() {
                     <p className="text-orange-400 text-xs font-semibold">Zone: {currentTask.zone_id}</p>
                   </div>
                 </div>
-                <div className="bg-orange-500/20 px-2 py-1 rounded text-orange-300 text-xs font-bold border border-orange-500/30">
-                  {currentTask.distance}m AWAY
+                <div className="flex items-center gap-2">
+                  <div className="bg-orange-500/20 px-2 py-1 rounded text-orange-300 text-xs font-bold border border-orange-500/30">
+                    {currentTask.distance}m AWAY
+                  </div>
+                  <button 
+                    onClick={() => removeTask(currentTask.task_id)}
+                    className="text-gray-400 hover:text-white transition-colors ml-1"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
 

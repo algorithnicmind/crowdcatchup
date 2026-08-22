@@ -1,18 +1,28 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useMapStore } from '@/stores/map-store';
 import { MagicCard } from '@/components/ui/magic-card';
+import { X } from 'lucide-react';
 
 export function SourceHealthPanel() {
+  const [isVisible, setIsVisible] = useState(true);
   const sourceHealth = useMapStore(s => s.sourceHealth);
 
-  if (sourceHealth.length === 0) return null;
+  if (sourceHealth.length === 0 || !isVisible) return null;
 
   return (
     <div className="absolute bottom-4 left-4 z-[1000] w-72 pointer-events-none">
       <MagicCard className="bg-black/80 backdrop-blur-md border border-white/10 p-4">
-        <h3 className="text-white text-sm font-semibold mb-3 tracking-wide">Data Source Health</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-white text-sm font-semibold tracking-wide">Data Source Health</h3>
+          <button 
+            onClick={() => setIsVisible(false)}
+            className="text-gray-400 hover:text-white transition-colors pointer-events-auto"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
         <div className="space-y-3">
           {sourceHealth.map(s => (
             <div key={s.source_id} className="flex items-center justify-between pointer-events-auto bg-white/5 p-2 rounded-lg border border-white/10">

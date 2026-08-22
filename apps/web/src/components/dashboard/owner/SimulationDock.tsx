@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Play, Pause, FastForward, RotateCcw, AlertCircle } from 'lucide-react';
+import { Play, Pause, FastForward, RotateCcw, AlertCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { MagicCard } from '@/components/ui/magic-card';
 import { ScenarioController } from '@/components/dashboard/authority/digital-twin/ScenarioController';
 
 export function SimulationDock() {
+  const [isVisible, setIsVisible] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [time, setTime] = useState(0);
@@ -19,12 +20,20 @@ export function SimulationDock() {
     return `T+${m}:${s}`;
   };
 
+  if (!isVisible) return null;
+
   return (
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] w-full max-w-xl px-4 pointer-events-auto">
       <MagicCard 
-        className="bg-black/90 backdrop-blur-2xl border border-white/10 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-visible"
+        className="bg-black/90 backdrop-blur-2xl border border-white/10 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-visible relative"
         gradientColor="rgba(255, 255, 255, 0.05)"
       >
+        <button 
+          onClick={() => setIsVisible(false)}
+          className="absolute -top-2 -right-2 bg-black/80 text-gray-400 hover:text-white p-1.5 rounded-full border border-white/10 shadow-lg z-10 transition-colors hover:bg-white/10"
+        >
+          <X className="w-4 h-4" />
+        </button>
         <div className="flex items-center gap-4 px-6 py-3">
           
           {/* Controls */}
@@ -60,7 +69,7 @@ export function SimulationDock() {
               value={[time]} 
               max={600} 
               step={1} 
-              onValueChange={(val: number | number[]) => setTime(Array.isArray(val) ? val[0] : val)}
+              onValueChange={(val) => setTime(Array.isArray(val) ? val[0] : val)}
               className="flex-1 [&_[role=slider]]:bg-purple-500 [&_[role=slider]]:border-purple-300" 
             />
             <div className="text-xs font-mono text-zinc-500 w-16">

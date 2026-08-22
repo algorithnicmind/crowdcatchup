@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMapStore } from '@/stores/map-store';
-import { Video, Activity, Wifi, WifiOff, AlertCircle, ChevronUp, ChevronDown } from 'lucide-react';
+import { Video, Activity, Wifi, WifiOff, AlertCircle, ChevronUp, ChevronDown, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function CctvGrid() {
@@ -33,9 +33,15 @@ export function CctvGrid() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 200, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="bg-black/90 backdrop-blur-xl border-t border-white/10 p-4 rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)] pointer-events-auto h-64 overflow-y-auto"
+            className="bg-black/90 backdrop-blur-xl border-t border-white/10 p-4 rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)] pointer-events-auto h-64 overflow-y-auto relative"
           >
-            <div className="flex gap-6 h-full">
+            <button 
+              onClick={() => setIsOpen(false)}
+              className="absolute top-2 right-2 text-gray-400 hover:text-white transition-colors bg-black/50 p-1 rounded-full z-10"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex gap-6 h-full mt-2">
               {/* Left Side: CCTV Grid (Mocked Feeds) */}
               <div className="flex-1 grid grid-cols-3 gap-3">
                 {[1, 2, 3].map((camId) => (
