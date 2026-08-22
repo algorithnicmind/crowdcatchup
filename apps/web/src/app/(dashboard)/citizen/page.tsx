@@ -102,19 +102,19 @@ export default function CitizenDashboard() {
             <Button 
               variant="destructive" 
               size="icon" 
-              className="rounded-full shadow-[0_0_25px_rgba(239,68,68,0.6)] w-14 h-14 animate-pulse bg-red-600 hover:bg-red-700 border-2 border-red-400"
+              className="rounded-full shadow-[0_0_25px_rgba(239,68,68,0.6)] w-12 h-12 animate-pulse bg-red-600 hover:bg-red-700 border-2 border-red-400"
               onClick={handleSosTrigger}
             >
-              <ShieldAlert className="w-7 h-7 text-white" />
+              <ShieldAlert className="w-6 h-6 text-white" />
             </Button>
             
             <Button 
               variant="default" 
               size="icon" 
-              className="rounded-full bg-blue-600 hover:bg-blue-700 border-2 border-blue-400 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)] w-14 h-14"
+              className="rounded-full bg-blue-600 hover:bg-blue-700 border-2 border-blue-400 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)] w-12 h-12"
               onClick={handleTestAlert}
             >
-              <BellRing className="w-6 h-6 text-white" />
+              <BellRing className="w-5 h-5 text-white" />
             </Button>
           </div>
         </div>
