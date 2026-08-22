@@ -76,6 +76,79 @@ class SimulationService:
         In a production setting, this would orchestrate data injection into Redis.
         """
         logger.info(f"Triggering Scenario: {scenario_id} for Event: {event_id}")
-        # In a real environment, we'd inject this via RedisPubSub
-        # For the hackathon, we assume synthetic_simulator.py is listening or we push directly.
-        pass
+        
+        import asyncio
+        from core.redis import get_redis
+        from features.fusion.api.schemas import StandardObservation
+        import random
+        from datetime import datetime, timezone
+        
+        # Fire and forget background loop
+        asyncio.create_task(self._run_scenario_loop(event_id, scenario_id))
+        
+    async def _run_scenario_loop(self, event_id: str, scenario_id: str):
+        import asyncio
+        from core.redis import get_redis
+        from features.fusion.api.schemas import StandardObservation
+        import random
+        from datetime import datetime, timezone
+        
+        logger.info(f"Started synthetic simulation loop for {scenario_id}")
+        
+        # Determine base metrics based on scenario
+        metrics = {
+            "ZONE-A": {"people_count": 500, "avg_speed": 1.2, "entry_rate": 20, "exit_rate": 20},
+            "ZONE-B": {"people_count": 800, "avg_speed": 1.1, "entry_rate": 30, "exit_rate": 30}
+        }
+        
+        if scenario_id == "sudden_surge":
+            metrics["ZONE-A"]["entry_rate"] = 150
+            metrics["ZONE-A"]["people_count"] = 1200
+            metrics["ZONE-A"]["avg_speed"] = 0.8
+        elif scenario_id == "gate_blockage":
+            metrics["ZONE-B"]["exit_rate"] = 2
+            metrics["ZONE-B"]["people_count"] = 1500
+            metrics["ZONE-B"]["avg_speed"] = 0.5
+        elif scenario_id == "crowd_surge":
+            metrics["ZONE-B"]["people_count"] = 2500
+            metrics["ZONE-B"]["entry_rate"] = 200
+            metrics["ZONE-B"]["exit_rate"] = 50
+            metrics["ZONE-B"]["avg_speed"] = 0.1
+            
+        redis = await get_redis()
+        
+        # Run for 30 seconds, injecting every 2 seconds
+        for _ in range(15):
+            try:
+                timestamp = datetime.now(timezone.utc).isoformat()
+                observations = []
+                
+                # Add random noise and generate observations
+                for zone in metrics:
+                    for metric, val in metrics[zone].items():
+                        noise = random.uniform(-0.1, 0.1) * val
+                        current_val = max(0, val + noise)
+                        
+                        observations.append(StandardObservation(
+                            event_id=event_id,
+                            source_id=f"SIM-CCTV-{zone}",
+                            source_type="SYNTHETIC",
+                            zone_id=zone,
+                            timestamp=timestamp,
+                            metric=metric,
+                            value=current_val,
+                            confidence=0.95,
+                            latency_ms=100,
+                            health="SIMULATED"
+                        ))
+                
+                # Publish to Redis so Fusion Engine picks it up
+                for obs in observations:
+                    await redis.publish("crowd_observations", obs.model_dump_json())
+                    
+            except Exception as e:
+                logger.error(f"Error in simulation loop: {e}")
+                
+            await asyncio.sleep(2)
+            
+        logger.info(f"Finished synthetic simulation loop for {scenario_id}")

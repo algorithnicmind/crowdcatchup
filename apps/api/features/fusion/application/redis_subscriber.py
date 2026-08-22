@@ -33,14 +33,47 @@ async def process_observation_pipeline(obs: StandardObservation):
     else: crowd_state.risk_level = "CRITICAL"
     
     # 3. Rules/Recommendations
+    recommendations = []
     try:
         from ...recommendations.application.rules_engine import RecommendationEngine
-        RecommendationEngine.generate_recommendations(crowd_state)
-    except Exception:
-        pass
+        recommendations = RecommendationEngine.generate_recommendations(crowd_state)
+    except Exception as e:
+        logger.error(f"Failed to generate recommendations: {e}")
         
-    # 4. Broadcast
     ws_manager = get_ws_manager()
+    if recommendations:
+        for rec in recommendations:
+            # Give it a unique ID based on timestamp and target
+            import uuid
+            rec["recommendation_id"] = str(uuid.uuid4())
+            
+            # Broadcast the recommendation to Authority
+            await ws_manager.broadcast_to_event(
+                event_id=crowd_state.event_id,
+                message={"type": "RECOMMENDATION_ALERT", "data": rec}
+            )
+            
+            # Automatically create a police task if the AI suggests it
+            if rec["type"] in ["DEPLOY_POLICE", "RESTRICT_ACCESS"]:
+                try:
+                    from ...police.application.task_manager import TaskManager
+                    from core.database import async_session_factory
+                    
+                    needed = 5 if rec["type"] == "DEPLOY_POLICE" else 3
+                    
+                    async with async_session_factory() as db:
+                        await TaskManager.create_task(
+                            db=db,
+                            event_id=crowd_state.event_id,
+                            zone_id=rec["target"],
+                            instructions=rec["message"],
+                            risk_level="CRITICAL",
+                            required_officers=needed
+                        )
+                except Exception as e:
+                    logger.error(f"Failed to create police task from recommendation: {e}")
+        
+    # 4. Broadcast Crowd State
     await ws_manager.broadcast_to_event(
         event_id=crowd_state.event_id,
         message={"type": "CROWD_STATE_UPDATE", "data": crowd_state.model_dump()}

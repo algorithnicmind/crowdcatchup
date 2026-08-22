@@ -148,5 +148,9 @@ class FusionService:
         # Overall confidence is max of recent observations for now
         state.confidence = max((o.confidence for o in recent_obs), default=0.0)
         
+        # 6. Apply Analytics Engine
+        from features.analytics.application.analytics_engine import AnalyticsEngine
+        state = AnalyticsEngine.enrich_crowd_state(state)
+        
         zone_states[zone_id] = state
         return state

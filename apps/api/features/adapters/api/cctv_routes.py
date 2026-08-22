@@ -1,11 +1,25 @@
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, UploadFile, File, Form
 from pydantic import BaseModel
 from typing import Optional
 import logging
 from datetime import datetime
+import cv2
+import numpy as np
 
 from ...fusion.api.schemas import StandardObservation
 from ...fusion.api.routes import ingest_observation
+import sys
+import os
+
+# Add ai module to path
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../../ai/models"))
+try:
+    from yolo_detector import Yolov8Detector
+    yolo_model = Yolov8Detector()
+except Exception as e:
+    logger = logging.getLogger(__name__)
+    logger.error(f"Failed to load YOLO model: {e}")
+    yolo_model = None
 
 router = APIRouter(prefix="/adapters/cctv", tags=["CCTV Telemetry"])
 logger = logging.getLogger(__name__)
@@ -74,3 +88,48 @@ async def process_cctv_frame(payload: YOLOv8Payload, background_tasks: Backgroun
         
     # We await the density ingestion last so we can return its status
     return await ingest_observation(obs_density, background_tasks)
+
+
+@router.post("/upload")
+async def upload_cctv_image(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    source_id: str = Form(...),
+    zone_id: str = Form(...),
+    event_id: str = Form("evt-technova")
+):
+    """
+    Endpoint that accepts an image, runs YOLOv8 to count people, 
+    and ingests the density observation automatically.
+    """
+    if not yolo_model:
+        return {"status": "error", "message": "YOLO model not initialized"}
+        
+    contents = await file.read()
+    nparr = np.frombuffer(contents, np.uint8)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    
+    # Run inference
+    detections = yolo_model.detect(img)
+    people_count = len(detections)
+    
+    # Calculate dummy density for demo (assume 1000sqm)
+    density = people_count / 1000.0
+    
+    # Post to regular endpoint logic
+    payload = YOLOv8Payload(
+        source_id=source_id,
+        zone_id=zone_id,
+        event_id=event_id,
+        density=density,
+        confidence=0.9
+    )
+    
+    await process_cctv_frame(payload, background_tasks)
+    
+    return {
+        "status": "success", 
+        "people_count": people_count,
+        "density": density,
+        "message": "Image processed by YOLOv8 and ingested."
+    }

@@ -5,6 +5,7 @@ import { GoogleEventMap } from '@/components/map/GoogleEventMap';
 import { AlertsPanel } from '@/components/dashboard/authority/AlertsPanel';
 import { CctvGrid } from '@/components/dashboard/authority/CctvGrid';
 import { SourceHealthPanel } from '@/components/dashboard/authority/SourceHealthPanel';
+import { SimulatorPanel } from '@/components/dashboard/authority/SimulatorPanel';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
 import { useMapStore, CrowdState, RiskUpdate, ActionPlan, SourceHealth } from '@/stores/map-store';
 import { useGpsTelemetry } from '@/shared/hooks/useGpsTelemetry';
@@ -58,6 +59,7 @@ export default function AuthorityDashboard() {
       <GoogleEventMap role="authority" />
       
       {/* 2. Authority Specific Overlays */}
+      <SimulatorPanel />
       <AlertsPanel />
       <CctvGrid />
       <SourceHealthPanel />

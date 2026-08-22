@@ -81,6 +81,8 @@ async def add_security_headers(request, call_next):
 # Register domain exception handlers
 register_error_handlers(app)
 
+from features.police.api.routes import router as police_router
+
 # Include API Routers
 app.include_router(auth_router)
 app.include_router(events_router)
@@ -96,6 +98,7 @@ app.include_router(gps_telemetry_router, prefix="/api/v1")
 app.include_router(cctv_router, prefix="/api/v1")
 app.include_router(smart_gate_router, prefix="/api/v1")
 app.include_router(announcements_router, prefix="/api/v1")
+app.include_router(police_router)
 
 
 @app.get("/")
