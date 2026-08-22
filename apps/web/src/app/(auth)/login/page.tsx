@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore, UserRole } from '@/stores/auth-store';
 import { useUserStore } from '@/stores/user-store';
@@ -11,12 +11,12 @@ import { Shield, Loader2, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
-export default function LoginPage() {
+function LoginPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect_url');
   const queryRole = searchParams.get('role');
-  const initialRole = queryRole 
+  const initialRole = queryRole
     ? (queryRole.toUpperCase() as UserRole)
     : 'AUTHORITY';
 
@@ -25,7 +25,7 @@ export default function LoginPage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [role, setRole] = useState<UserRole>(initialRole);
-  const [identifier, setIdentifier] = useState(''); // ID, Email, or Phone
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -159,5 +159,13 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center"><Loader2 className="w-8 h-8 text-emerald-500 animate-spin" /></div>}>
+      <LoginPageInner />
+    </Suspense>
   );
 }
