@@ -46,6 +46,7 @@ venv/
 ENV/
 lib/
 lib64/
+!apps/web/src/lib/
 *.egg-info/
 .installed.cfg
 *.egg
