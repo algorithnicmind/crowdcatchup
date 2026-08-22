@@ -22,18 +22,38 @@ services:
       - "8000:8000"
     environment:
       - REDIS_URL=redis://redis:6379/0
-      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://user:password@localhost:5432/neondb}
+      - DATABASE_URL=postgresql+asyncpg://crowdshield:crowdshield@postgres:5432/crowdshield
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-key-change-me}
       - DEBUG=False
     depends_on:
       redis:
         condition: service_started
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 10s
       timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  postgres:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: crowdshield-postgres
+    environment:
+      POSTGRES_USER: crowdshield
+      POSTGRES_PASSWORD: crowdshield
+      POSTGRES_DB: crowdshield
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crowdshield"]
+      interval: 5s
+      timeout: 5s
       retries: 5
-      start_period: 15s
     restart: unless-stopped
 
   redis:
@@ -48,3 +68,4 @@ services:
 
 volumes:
   redis_data:
+  postgres_data:

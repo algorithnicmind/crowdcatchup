@@ -7,12 +7,16 @@ import { CctvGrid } from '@/components/dashboard/authority/CctvGrid';
 import { SourceHealthPanel } from '@/components/dashboard/authority/SourceHealthPanel';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
 import { useMapStore, CrowdState, RiskUpdate, ActionPlan, SourceHealth } from '@/stores/map-store';
+import { useGpsTelemetry } from '@/shared/hooks/useGpsTelemetry';
 
 export default function AuthorityDashboard() {
   const eventId = "EVT-001"; // Hardcoded for hackathon demo
   
   // Wire up the live WebSocket connection
   const { subscribe } = useWebSocket(eventId);
+  
+  // Wire up global GPS Telemetry
+  useGpsTelemetry('authority', eventId);
   
   const updateCrowdState = useMapStore((state) => state.updateCrowdState);
   const updateRisk = useMapStore((state) => state.updateRisk);

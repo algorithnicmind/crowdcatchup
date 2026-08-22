@@ -57,8 +57,10 @@ async def init_db():
         try:
             await conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
         except Exception as e:
-            # Might fail if user doesn't have superuser rights or extension missing on OS
+            # Might fail if PostGIS extension is not available
             pass
+    
+    async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
 

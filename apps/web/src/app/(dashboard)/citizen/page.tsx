@@ -6,10 +6,12 @@ import { SafeRoutePanel } from '@/components/dashboard/citizen/SafeRoutePanel';
 import { ShieldAlert, BellRing } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
+import { useGpsTelemetry } from '@/shared/hooks/useGpsTelemetry';
 
 export default function CitizenDashboard() {
   const eventId = "EVT-001";
   const { subscribe } = useWebSocket(eventId);
+  const { isSharingLocation } = useGpsTelemetry('citizen', eventId);
 
   React.useEffect(() => {
     // Request notification permissions for PWA requirement
@@ -97,6 +99,13 @@ export default function CitizenDashboard() {
             <span className="w-3 h-3 rounded-full bg-white animate-pulse shadow-[0_0_10px_white]" />
             YOUR AREA IS SAFE
           </div>
+
+          {isSharingLocation && (
+            <div className="bg-blue-600/90 backdrop-blur-sm border border-blue-400 px-3 py-1.5 rounded-full text-white text-xs font-bold tracking-wider flex items-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+              <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+              GPS SYNCING
+            </div>
+          )}
 
           <div className="flex flex-row gap-4 pointer-events-auto mt-2">
             <Button 

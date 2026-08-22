@@ -5,12 +5,16 @@ import { GoogleEventMap } from '@/components/map/GoogleEventMap';
 import { TaskCard } from '@/components/dashboard/police/TaskCard';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
 import { useMapStore, SecurityTask } from '@/stores/map-store';
+import { useGpsTelemetry } from '@/shared/hooks/useGpsTelemetry';
 
 export default function PoliceDashboard() {
   const eventId = "EVT-001"; // Hardcoded for hackathon demo
   
   // Wire up the live WebSocket connection
   const { subscribe } = useWebSocket(eventId);
+  
+  // Wire up global GPS Telemetry
+  const { isSharingLocation } = useGpsTelemetry('police', eventId);
   
   const addTask = useMapStore((state) => state.addTask);
 
@@ -59,6 +63,18 @@ export default function PoliceDashboard() {
               <span className="text-blue-400 font-bold text-sm tracking-wide">Zone A</span>
               <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Location</span>
             </div>
+            {isSharingLocation && (
+              <>
+                <div className="w-px h-10 bg-white/10" />
+                <div className="flex flex-col items-center gap-1 min-w-[100px]">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
+                    <span className="text-[10px] text-blue-400 font-bold uppercase tracking-wider">Telemetry</span>
+                  </div>
+                  <span className="text-sm text-zinc-300 font-semibold tracking-wide">ACTIVE</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
