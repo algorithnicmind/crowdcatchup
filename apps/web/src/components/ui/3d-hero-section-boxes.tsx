@@ -105,31 +105,7 @@ export function Navbar() {
 
           <div className="hidden md:flex items-center space-x-6">
             <Link href="/" className="text-gray-300 hover:text-white text-sm transition duration-150">Home</Link>
-            <Dialog>
-              <DialogTrigger className="text-gray-300 hover:text-white text-sm transition duration-150 outline-none">
-                About
-              </DialogTrigger>
-              <DialogContent className="bg-zinc-950 border border-zinc-800 text-slate-200 sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2 mb-2">
-                    <ShieldAlert className="w-6 h-6 text-cyan-400" />
-                    About CrowdShield
-                  </DialogTitle>
-                  <DialogDescription className="text-zinc-400 text-base leading-relaxed">
-                    <span className="block mb-4">
-                      CrowdShield is a state-of-the-art Multi-Source Early Warning System designed exclusively for the safety and security of citizens during large-scale events and mass gatherings.
-                    </span>
-                    <span className="block mb-6">
-                      By utilizing advanced AI algorithms, real-time crowd density tracking, and secure communication portals, CrowdShield empowers individuals with safe routing, instant emergency SOS alerts, and a direct line to authorities to prevent crowd crushes and ensure public safety.
-                    </span>
-                    <span className="block border-t border-zinc-800 pt-4 text-xs text-zinc-500 mt-6">
-                      &copy; {new Date().getFullYear()} CrowdShield Inc. All rights reserved. <br/>
-                      Built for the citizens. Protecting communities.
-                    </span>
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+            <Link href="/about" className="text-gray-300 hover:text-white text-sm transition duration-150">About</Link>
           </div>
         </div>
 
