@@ -103,6 +103,11 @@ def read_root():
     return {"status": "operational", "service": settings.APP_NAME}
 
 
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     """

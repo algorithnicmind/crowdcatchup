@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:20 AS builder
 
 WORKDIR /app
 
@@ -10,8 +10,8 @@ COPY apps/web/package.json ./apps/web/
 COPY packages/config/package.json ./packages/config/
 COPY packages/types/package.json ./packages/types/
 
-# Install dependencies
-RUN npm install
+# Install dependencies — skip lockfile to force Linux platform resolution
+RUN npm install --no-package-lock
 
 # Copy the rest of the monorepo source code
 COPY . .
@@ -21,15 +21,16 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build:web
 
 # Production runner stage
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Just copy the built standalone or run via npm
+# Copy built output from builder
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/web ./apps/web
+COPY --from=builder /app/packages ./packages
 
 EXPOSE 3000
 
