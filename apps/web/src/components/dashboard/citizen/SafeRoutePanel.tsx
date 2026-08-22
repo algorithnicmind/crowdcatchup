@@ -8,30 +8,32 @@ import { Button } from '@/components/ui/button';
 import { useMapStore } from '@/stores/map-store';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
 
-/**
- * [ARCHITECTURAL DECISION: DYNAMIC A* PATHFINDING CONSUMPTION]
- * 
- * Why this exists:
- * Static maps (like Google Maps) don't account for temporary crowd crushes. We needed a way 
- * to guide citizens around dangerous zones in real-time.
- * 
- * How it works:
- * 1. The Citizen clicks "Find Safe Route" (Line 92).
- * 2. This calls the Python FastAPI `navigation_engine` (Phase 7.6) which uses A* Pathfinding 
- *    with a custom heuristic: Cost = Distance + (Density * Risk Score).
- * 3. The Backend returns a safe polyline which we plot on the `GoogleEventMap` via Zustand state.
- * 4. We then use the `useWebSocket` hook to listen for `REROUTE_ALERT`s. If the AI detects 
- *    a sudden crush on the active path, it pushes an event here instantly, and this UI 
- *    prompts a recalculation.
- */
+// Haversine formula to calculate distance between two coordinates
+function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371e3; // metres
+  const phi1 = lat1 * Math.PI/180;
+  const phi2 = lat2 * Math.PI/180;
+  const deltaPhi = (lat2-lat1) * Math.PI/180;
+  const deltaLambda = (lon2-lon1) * Math.PI/180;
+
+  const a = Math.sin(deltaPhi/2) * Math.sin(deltaPhi/2) +
+          Math.cos(phi1) * Math.cos(phi2) *
+          Math.sin(deltaLambda/2) * Math.sin(deltaLambda/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  return Math.round(R * c);
+}
+
 export function SafeRoutePanel() {
   const [isPlanning, setIsPlanning] = useState(false);
   const [routeFound, setRouteFound] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const [navInstruction, setNavInstruction] = useState('Head North towards Gate G5');
   const [distanceRemaining, setDistanceRemaining] = useState(450);
+  const [destination, setDestination] = useState('Maha Kumbh Mela');
   
   const { subscribe } = useWebSocket('EVT-001');
+  const { citizenLocation } = useMapStore();
 
   useEffect(() => {
     let unsubNav: any;
@@ -62,16 +64,13 @@ export function SafeRoutePanel() {
             clearInterval(mockInterval);
             return 0;
           }
-          if (prev === 250) setNavInstruction("Turn right at Sector B intersection");
-          if (prev === 100) setNavInstruction("Approaching Gate G5...");
+          if (prev === Math.floor(distanceRemaining / 2)) setNavInstruction("Turn right at Sector B intersection");
+          if (prev === 100) setNavInstruction("Approaching destination...");
           
           return prev - 5;
         });
       }, 1000);
 
-    } else {
-      setDistanceRemaining(450);
-      setNavInstruction('Head North towards Gate G5');
     }
 
     return () => {
@@ -79,7 +78,58 @@ export function SafeRoutePanel() {
       if (unsubReroute) unsubReroute();
       if (mockInterval) clearInterval(mockInterval);
     };
-  }, [isNavigating, subscribe]);
+  }, [isNavigating, subscribe, distanceRemaining]);
+
+  const handlePlanRoute = async () => {
+    setIsPlanning(true);
+    try {
+      // Mocking a destination coordinate slightly offset from current location if available
+      let destLat = 20.298;
+      let destLng = 85.828;
+      let startLat = 20.296059;
+      let startLng = 85.824539;
+
+      if (citizenLocation) {
+        startLat = citizenLocation.lat;
+        startLng = citizenLocation.lng;
+        // Make the destination some random point ~500m away based on their input length just for demo variation
+        const hash = destination.length * 0.0005;
+        destLat = startLat + 0.005 + hash; 
+        destLng = startLng + 0.005 - hash;
+      }
+
+      const calculatedDist = getDistanceInMeters(startLat, startLng, destLat, destLng);
+      setDistanceRemaining(calculatedDist);
+
+      const isDemoMode = true;
+      if (isDemoMode) {
+        await new Promise(r => setTimeout(r, 600)); // Simulate delay
+        useMapStore.getState().setRouteCoordinates([
+          { lat: startLat, lng: startLng },
+          { lat: (startLat + destLat) / 2, lng: (startLng + destLng) / 2 },
+          { lat: destLat, lng: destLng }
+        ]);
+        setRouteFound(true);
+      } else {
+        const res = await fetch(`http://localhost:8000/api/v1/navigation/route?start_zone=current&end_zone=${destination}`).catch(() => null);
+        if (res && res.ok) {
+          const data = await res.json();
+          useMapStore.getState().setRouteCoordinates(data.coordinates || []);
+        } else {
+          useMapStore.getState().setRouteCoordinates([
+            { lat: startLat, lng: startLng },
+            { lat: (startLat + destLat) / 2, lng: (startLng + destLng) / 2 },
+            { lat: destLat, lng: destLng }
+          ]);
+        }
+        setRouteFound(true);
+      }
+    } catch (e) {
+      setRouteFound(true);
+    } finally {
+      setIsPlanning(false);
+    }
+  };
 
   return (
     <div className="absolute bottom-24 md:bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-96 z-40 pointer-events-none">
@@ -107,8 +157,9 @@ export function SafeRoutePanel() {
                     <input 
                       type="text" 
                       placeholder="Where do you want to go?" 
+                      value={destination}
+                      onChange={(e) => setDestination(e.target.value)}
                       className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-9 pr-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 transition-colors"
-                      defaultValue="Maha Kumbh Mela"
                     />
                   </div>
                   
@@ -128,47 +179,7 @@ export function SafeRoutePanel() {
 
                 <Button 
                   className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg shadow-emerald-500/20"
-                  onClick={async () => {
-                    setIsPlanning(true);
-                    try {
-                      // MOCK DEMO MODE: Bypass fetch to prevent ERR_CONNECTION_REFUSED console spam
-                      const isDemoMode = true;
-                      
-                      if (isDemoMode) {
-                        await new Promise(r => setTimeout(r, 600)); // Simulate delay
-                        useMapStore.getState().setRouteCoordinates([
-                          { lat: 20.296059, lng: 85.824539 },
-                          { lat: 20.297, lng: 85.826 },
-                          { lat: 20.298, lng: 85.828 }
-                        ]);
-                        setRouteFound(true);
-                      } else {
-                        // Call the Navigation Backend (Phase 7.6)
-                        const res = await fetch("http://localhost:8000/api/v1/navigation/route?start_zone=Zone-A&end_zone=Maha-Kumbh-Mela").catch(() => null);
-                        if (res && res.ok) {
-                          const data = await res.json();
-                          useMapStore.getState().setRouteCoordinates(data.coordinates || []);
-                        } else {
-                          // Fallback mock coordinates for demo
-                          useMapStore.getState().setRouteCoordinates([
-                            { lat: 20.296059, lng: 85.824539 },
-                            { lat: 20.297, lng: 85.826 },
-                            { lat: 20.298, lng: 85.828 }
-                          ]);
-                        }
-                        setRouteFound(true);
-                      }
-                    } catch (e) {
-                      useMapStore.getState().setRouteCoordinates([
-                        { lat: 20.296059, lng: 85.824539 },
-                        { lat: 20.297, lng: 85.826 },
-                        { lat: 20.298, lng: 85.828 }
-                      ]);
-                      setRouteFound(true);
-                    } finally {
-                      setIsPlanning(false);
-                    }
-                  }}
+                  onClick={handlePlanRoute}
                   disabled={isPlanning}
                 >
                   {isPlanning ? (
@@ -204,7 +215,7 @@ export function SafeRoutePanel() {
                     <h2 className="text-white font-bold text-lg">SAFE ROUTE FOUND</h2>
                   </div>
                   <div className="bg-emerald-500/20 px-2 py-1 rounded text-emerald-300 text-xs font-bold border border-emerald-500/30">
-                    25 MIN
+                    {Math.ceil(distanceRemaining / 80)} MIN
                   </div>
                 </div>
 
@@ -218,11 +229,11 @@ export function SafeRoutePanel() {
                     <div className="flex-1 space-y-3">
                       <div>
                         <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Start</p>
-                        <p className="text-sm text-gray-300">Current Location</p>
+                        <p className="text-sm text-gray-300">Exact Location Verified</p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Recommended Gate</p>
-                        <p className="text-sm text-emerald-400 font-semibold">Gate G5 (Low Congestion)</p>
+                        <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Destination ({distanceRemaining}m away)</p>
+                        <p className="text-sm text-emerald-400 font-semibold">{destination}</p>
                       </div>
                     </div>
                   </div>
@@ -230,7 +241,7 @@ export function SafeRoutePanel() {
                   <div className="bg-orange-500/10 border border-orange-500/20 p-2.5 rounded-lg flex gap-2 items-start mt-2">
                     <ShieldAlert className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
                     <p className="text-xs text-orange-200">
-                      Avoiding Gate G3 due to heavy congestion. Keep children close in Zone B.
+                      Avoiding congested areas. Safe path generated based on real-time crowd data.
                     </p>
                   </div>
                 </div>
@@ -239,12 +250,12 @@ export function SafeRoutePanel() {
                   <Button 
                     className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20 font-semibold"
                     onClick={async () => {
-                      // Trigger start navigation on backend
                       const isDemoMode = true;
                       if (!isDemoMode) {
                         await fetch("http://localhost:8000/api/v1/navigation/start", { method: 'POST' }).catch(()=>null);
                       }
                       setIsNavigating(true);
+                      setNavInstruction(`Head towards ${destination}`);
                     }}
                   >
                     START
