@@ -25,13 +25,23 @@ class Settings(BaseSettings):
     # --- Redis (in-memory fallback if not configured) ---
     REDIS_URL: str = ""  # Empty = use in-memory fallback
 
-    # --- JWT / Security ---
+    # --- Security & HTTPS ---
+    ENFORCE_HTTPS: bool = False
+    SSL_KEYFILE: str = ""
+    SSL_CERTFILE: str = ""
     JWT_SECRET: str = "crowdshield-dev-secret-change-in-production"
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRY_MINUTES: int = 60
 
     # --- CORS ---
-    CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:3001"]
+    CORS_ORIGINS: list[str] = [
+        "https://localhost:3000",
+        "http://localhost:3000",
+        "https://localhost:3001",
+        "http://localhost:3001",
+        "https://127.0.0.1:3000",
+        "http://127.0.0.1:3000"
+    ]
 
     model_config = {
         "env_file": (ENV_FILE_PATH, ".env"),

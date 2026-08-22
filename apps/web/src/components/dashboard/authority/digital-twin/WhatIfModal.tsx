@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { CrowdState } from '@/stores/map-store';
+import { apiClient } from '@/lib/api-client';
 
 export function WhatIfModal({ eventId }: { eventId: string }) {
   const [zoneId, setZoneId] = useState('ZONE-A');
@@ -13,9 +14,8 @@ export function WhatIfModal({ eventId }: { eventId: string }) {
     setLoading(true);
     setResult(null);
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/simulation/what-if`, {
+      const data = await apiClient<any>('/simulation/what-if', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           event_id: eventId,
           zone_id: zoneId,
@@ -23,13 +23,7 @@ export function WhatIfModal({ eventId }: { eventId: string }) {
           modifications: {}
         })
       });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setResult(data);
-      } else {
-        console.error("Failed to run what-if");
-      }
+      setResult(data);
     } catch (err) {
       console.error(err);
     } finally {
