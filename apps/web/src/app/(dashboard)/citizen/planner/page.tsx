@@ -200,6 +200,7 @@ export default function CitizenPlannerPage() {
               </div>
             </div>
           )}
+          </div>
         </div>
       ) : (
         <div className="absolute top-4 left-4 right-4 md:w-96 md:left-4 z-50 bg-zinc-900 border border-emerald-500/30 p-4 rounded-2xl shadow-2xl flex items-center justify-between">
