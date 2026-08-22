@@ -16,6 +16,7 @@ interface SafeRoute {
 }
 
 export default function CitizenPlannerPage() {
+  const [isNavigating, setIsNavigating] = useState(false);
   const [isPlanning, setIsPlanning] = useState(false);
   const [routeData, setRouteData] = useState<SafeRoute | null>(null);
   const [groupSize, setGroupSize] = useState(4);
@@ -60,7 +61,8 @@ export default function CitizenPlannerPage() {
   return (
     <div className="h-[calc(100vh-64px)] w-full flex flex-col md:flex-row bg-black relative">
       {/* Sidebar Planner Panel */}
-      <div className="w-full md:w-96 bg-zinc-950 border-r border-zinc-800 flex flex-col z-10 shadow-2xl">
+      {!isNavigating ? (
+        <div className="w-full md:w-96 bg-zinc-950 border-r border-zinc-800 flex flex-col z-10 shadow-2xl overflow-y-auto">
         <div className="p-6 border-b border-zinc-800">
           <div className="flex items-center gap-3 mb-2">
             <Navigation className="w-6 h-6 text-emerald-400" />
@@ -187,7 +189,10 @@ export default function CitizenPlannerPage() {
               <div className="flex gap-3">
                 <Button 
                   className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold h-12 shadow-lg shadow-emerald-900/20"
-                  onClick={() => toast.success('Navigation started! Follow the blue line on the map.')}
+                  onClick={() => {
+                    setIsNavigating(true);
+                    toast.success('Navigation started! Follow the blue line on the map.');
+                  }}
                 >
                   START NAVIGATION
                 </Button>
@@ -196,7 +201,15 @@ export default function CitizenPlannerPage() {
             </div>
           )}
         </div>
-      </div>
+      ) : (
+        <div className="absolute top-4 left-4 right-4 md:w-96 md:left-4 z-50 bg-zinc-900 border border-emerald-500/30 p-4 rounded-2xl shadow-2xl flex items-center justify-between">
+          <div>
+            <h3 className="text-emerald-400 font-bold text-sm truncate max-w-[150px]">Navigating to {destination || 'Destination'}</h3>
+            <p className="text-zinc-400 text-xs">{routeData?.estimated_time_mins ? Math.round(routeData.estimated_time_mins) : 15} min remaining</p>
+          </div>
+          <Button variant="destructive" size="sm" onClick={() => setIsNavigating(false)}>Exit</Button>
+        </div>
+      )}
 
       {/* Map Area */}
       <div className="flex-1 relative">
