@@ -33,6 +33,7 @@ export function OwnerPropertiesPanel() {
   // Sync with draft zone from map drawing
   React.useEffect(() => {
     if (draftZone) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setName(draftZone.name);
       setCapacity(draftZone.capacity.toString());
       setType(draftZone.type);

@@ -38,21 +38,23 @@ export function SafeRoutePanel() {
   const { citizenLocation } = useMapStore();
 
   useEffect(() => {
-    let unsubNav: any;
-    let unsubReroute: any;
-    let mockInterval: any;
+    let unsubNav: (() => void) | undefined;
+    let unsubReroute: (() => void) | undefined;
+    let mockInterval: ReturnType<typeof setInterval> | undefined;
 
     if (isNavigating) {
-      unsubNav = subscribe('NAVIGATION_UPDATE', (wsEvent: any) => {
-        if (wsEvent.payload) {
+      unsubNav = subscribe('NAVIGATION_UPDATE', (payload: unknown) => {
+        const wsEvent = payload as { payload?: { next_instruction?: string, remaining_distance?: number } };
+        if (wsEvent?.payload) {
           setNavInstruction(wsEvent.payload.next_instruction || 'Continue on route');
           setDistanceRemaining(wsEvent.payload.remaining_distance || 0);
         }
       });
-      unsubReroute = subscribe('REROUTE_ALERT', (wsEvent: any) => {
-        if (wsEvent.payload) {
+      unsubReroute = subscribe('REROUTE_ALERT', (payload: unknown) => {
+        const wsEvent = payload as { payload?: { reason?: string } };
+        if (wsEvent?.payload) {
           import('sonner').then(({ toast }) => {
-            toast.error('REROUTE: ' + wsEvent.payload.reason, { duration: 10000 });
+            toast.error('REROUTE: ' + (wsEvent.payload?.reason || 'Unknown reason'), { duration: 10000 });
           });
           setNavInstruction('Recalculating route...');
         }
@@ -113,7 +115,7 @@ export function SafeRoutePanel() {
         ]);
         setRouteFound(true);
       } else {
-        const data = await apiClient<any>(`/navigation/route?start_zone=current&end_zone=${destination}`).catch(() => null);
+        const data = await apiClient<{ coordinates: { lat: number; lng: number }[] }>(`/navigation/route?start_zone=current&end_zone=${destination}`).catch(() => null);
         if (data && data.coordinates) {
           useMapStore.getState().setRouteCoordinates(data.coordinates || []);
         } else {
@@ -125,7 +127,7 @@ export function SafeRoutePanel() {
         }
         setRouteFound(true);
       }
-    } catch (e) {
+    } catch {
       setRouteFound(true);
     } finally {
       setIsPlanning(false);
