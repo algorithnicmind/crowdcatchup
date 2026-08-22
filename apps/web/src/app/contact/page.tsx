@@ -1,10 +1,34 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Navbar } from "@/components/ui/3d-hero-section-boxes";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Loader2, CheckCircle2 } from "lucide-react";
+import { sendContactEmail } from "@/app/actions/contact";
 
 export default function ContactPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError("");
+    setSuccess(false);
+
+    const formData = new FormData(e.currentTarget);
+    const res = await sendContactEmail(formData);
+
+    if (res?.error) {
+      setError(res.error);
+    } else if (res?.success) {
+      setSuccess(true);
+      (e.target as HTMLFormElement).reset();
+    }
+    
+    setIsSubmitting(false);
+  }
+
   return (
     <div className="min-h-screen bg-[#050505] text-slate-200">
       <Navbar />
@@ -52,14 +76,29 @@ export default function ContactPage() {
         </div>
         
         <div className="w-full md:w-1/2">
-          <form className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-8 space-y-6" onSubmit={(e) => e.preventDefault()}>
+          <form className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-8 space-y-6" onSubmit={handleSubmit}>
             <h2 className="text-2xl font-semibold text-white mb-6">Send a Message</h2>
+            
+            {error && (
+              <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm">
+                {error}
+              </div>
+            )}
+            
+            {success && (
+              <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-sm flex items-center">
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Message sent successfully! We'll get back to you soon.
+              </div>
+            )}
             
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-zinc-400 mb-2">Full Name</label>
                 <input 
                   type="text" 
+                  name="name"
+                  required
                   className="w-full bg-white/[0.05] border border-white/[0.1] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors"
                   placeholder="Your name"
                 />
@@ -69,6 +108,8 @@ export default function ContactPage() {
                 <label className="block text-sm font-medium text-zinc-400 mb-2">Email Address</label>
                 <input 
                   type="email" 
+                  name="email"
+                  required
                   className="w-full bg-white/[0.05] border border-white/[0.1] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors"
                   placeholder="Your email"
                 />
@@ -78,15 +119,25 @@ export default function ContactPage() {
                 <label className="block text-sm font-medium text-zinc-400 mb-2">Message</label>
                 <textarea 
                   rows={4}
+                  name="message"
+                  required
                   className="w-full bg-white/[0.05] border border-white/[0.1] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors resize-none"
                   placeholder="Your message"
                 />
               </div>
             </div>
             
-            <button className="w-full bg-white text-black font-semibold py-3.5 rounded-xl flex items-center justify-center space-x-2 hover:bg-zinc-200 transition-colors">
-              <span>Send Message</span>
-              <Send className="w-4 h-4" />
+            <button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="w-full bg-white text-black font-semibold py-3.5 rounded-xl flex items-center justify-center space-x-2 hover:bg-zinc-200 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
+              {isSubmitting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
             </button>
           </form>
         </div>
