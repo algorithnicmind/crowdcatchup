@@ -22,9 +22,16 @@ class NotFoundError(DomainError):
 
 
 class AuthorizationError(DomainError):
-    """User does not have required permissions."""
+    """User does not have required permissions (403)."""
 
     def __init__(self, message: str = "Not authorized"):
+        super().__init__(message)
+
+
+class AuthenticationError(DomainError):
+    """User could not be authenticated (401)."""
+
+    def __init__(self, message: str = "Authentication failed"):
         super().__init__(message)
 
 
