@@ -131,20 +131,33 @@ export function SafeRoutePanel() {
                   onClick={async () => {
                     setIsPlanning(true);
                     try {
-                      // Call the Navigation Backend (Phase 7.6)
-                      const res = await fetch("http://localhost:8000/api/v1/navigation/route?start_zone=Zone-A&end_zone=Maha-Kumbh-Mela").catch(() => null);
-                      if (res && res.ok) {
-                        const data = await res.json();
-                        useMapStore.getState().setRouteCoordinates(data.coordinates || []);
-                      } else {
-                        // Fallback mock coordinates for demo
+                      // MOCK DEMO MODE: Bypass fetch to prevent ERR_CONNECTION_REFUSED console spam
+                      const isDemoMode = true;
+                      
+                      if (isDemoMode) {
+                        await new Promise(r => setTimeout(r, 600)); // Simulate delay
                         useMapStore.getState().setRouteCoordinates([
                           { lat: 20.296059, lng: 85.824539 },
                           { lat: 20.297, lng: 85.826 },
                           { lat: 20.298, lng: 85.828 }
                         ]);
+                        setRouteFound(true);
+                      } else {
+                        // Call the Navigation Backend (Phase 7.6)
+                        const res = await fetch("http://localhost:8000/api/v1/navigation/route?start_zone=Zone-A&end_zone=Maha-Kumbh-Mela").catch(() => null);
+                        if (res && res.ok) {
+                          const data = await res.json();
+                          useMapStore.getState().setRouteCoordinates(data.coordinates || []);
+                        } else {
+                          // Fallback mock coordinates for demo
+                          useMapStore.getState().setRouteCoordinates([
+                            { lat: 20.296059, lng: 85.824539 },
+                            { lat: 20.297, lng: 85.826 },
+                            { lat: 20.298, lng: 85.828 }
+                          ]);
+                        }
+                        setRouteFound(true);
                       }
-                      setRouteFound(true);
                     } catch (e) {
                       useMapStore.getState().setRouteCoordinates([
                         { lat: 20.296059, lng: 85.824539 },
@@ -227,7 +240,10 @@ export function SafeRoutePanel() {
                     className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20 font-semibold"
                     onClick={async () => {
                       // Trigger start navigation on backend
-                      await fetch("http://localhost:8000/api/v1/navigation/start", { method: 'POST' }).catch(()=>null);
+                      const isDemoMode = true;
+                      if (!isDemoMode) {
+                        await fetch("http://localhost:8000/api/v1/navigation/start", { method: 'POST' }).catch(()=>null);
+                      }
                       setIsNavigating(true);
                     }}
                   >
