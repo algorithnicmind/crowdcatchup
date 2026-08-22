@@ -185,7 +185,12 @@ export default function CitizenPlannerPage() {
               </div>
 
               <div className="flex gap-3">
-                <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold h-12 shadow-lg shadow-emerald-900/20">START NAVIGATION</Button>
+                <Button 
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold h-12 shadow-lg shadow-emerald-900/20"
+                  onClick={() => toast.success('Navigation started! Follow the blue line on the map.')}
+                >
+                  START NAVIGATION
+                </Button>
                 <Button variant="outline" className="flex-1 h-12 border-zinc-700 text-zinc-300 hover:bg-zinc-800" onClick={() => setRouteData(null)}>Cancel</Button>
               </div>
             </div>

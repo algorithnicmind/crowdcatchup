@@ -82,3 +82,5 @@ runs/
 datasets/
 models/weights/
 .ipynb_checkpoints/
+.vercel
+.env*.local
