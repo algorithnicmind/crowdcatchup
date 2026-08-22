@@ -39,7 +39,7 @@ export default function RegisterPage() {
       return;
     }
 
-    const otp = "123456";
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
     setGeneratedOtp(otp);
 
     try {
