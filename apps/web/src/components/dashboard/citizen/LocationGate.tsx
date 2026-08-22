@@ -31,13 +31,19 @@ export function LocationGate({ children }: { children: React.ReactNode }) {
         toast.success('Location acquired successfully!');
       },
       (err) => {
-        setError(err.message || 'Failed to acquire location. Please enable location permissions.');
+        console.warn('Location error:', err);
+        // DEMO FALLBACK: If phone GPS times out or denies permission, don't block the demo!
+        toast.warning('GPS failed. Using default event location for demo.');
+        setCitizenLocation({
+          lat: 20.4789, // Default to Cuttack event center
+          lng: 85.8741,
+        });
         setIsLoading(false);
       },
       {
-        enableHighAccuracy: true,
+        enableHighAccuracy: false, // Turn off high accuracy to prevent timeouts indoors
         timeout: 10000,
-        maximumAge: 0,
+        maximumAge: 30000, // Allow 30-second old cached locations
       }
     );
   };
