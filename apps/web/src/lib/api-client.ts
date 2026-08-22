@@ -24,7 +24,8 @@ export async function apiClient<T>(
     }
     return response.json();
   } catch (error) {
-    console.error('API Client Error:', error);
+    // Only throw the error to be caught by the caller's fallback logic.
+    // Avoid console.error here because Next.js dev mode intercepts it and shows a red error overlay.
     throw error;
   }
 }

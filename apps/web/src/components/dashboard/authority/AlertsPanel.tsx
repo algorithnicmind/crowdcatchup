@@ -81,7 +81,7 @@ export function AlertsPanel() {
                             const { apiClient } = await import('@/lib/api-client');
                             await apiClient(`/interventions/${rec.recommendation_id}/approve`, { method: 'POST' });
                           } catch (apiErr) {
-                            console.warn("Backend unavailable, simulating success for demo...", apiErr);
+                            console.warn("Backend unavailable, simulating success for demo...");
                             // Simulate network delay for realistic demo
                             await new Promise(resolve => setTimeout(resolve, 600));
                           }

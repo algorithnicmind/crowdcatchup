@@ -58,7 +58,7 @@ export default function CitizenDashboard() {
           body: JSON.stringify(payload)
         });
       } catch (err) {
-        console.warn("Backend unavailable, simulating SOS for demo...", err);
+        console.warn("Backend unavailable, simulating SOS for demo...");
         await new Promise(r => setTimeout(r, 600)); // Simulate delay
       }
       

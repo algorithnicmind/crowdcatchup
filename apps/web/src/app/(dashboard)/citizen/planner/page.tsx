@@ -37,7 +37,7 @@ export default function CitizenPlannerPage() {
       setRouteData(result);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.warn("Backend unavailable, simulating route for demo...", error);
+      console.warn("Backend unavailable, simulating route for demo...");
       
       // Simulate network delay for demo
       await new Promise(resolve => setTimeout(resolve, 1200));
