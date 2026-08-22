@@ -8,26 +8,6 @@ import { HoverEffect } from "@/components/ui/card-hover-effect";
 
 const portals = [
   {
-    id: "authority",
-    title: "Authority Command",
-    description: "City officials, emergency dispatchers, and high-level command operations.",
-    icon: ShieldAlert,
-    actions: [{ label: "Sign In (Generated Credentials)", href: "/login?role=AUTHORITY" }],
-    gradient: "from-cyan-500/20 to-emerald-500/0",
-    borderHover: "hover:border-cyan-500/50",
-    iconColor: "text-cyan-400",
-  },
-  {
-    id: "police",
-    title: "Police Tactical",
-    description: "On-ground officers, tactical units, and crowd control response.",
-    icon: Shield,
-    actions: [{ label: "Sign In (Generated Credentials)", href: "/login?role=POLICE" }],
-    gradient: "from-blue-600/20 to-indigo-600/0",
-    borderHover: "hover:border-blue-500/50",
-    iconColor: "text-blue-500",
-  },
-  {
     id: "citizen",
     title: "Citizen Access",
     description: "Live crowd density, safe routing, and emergency public alerts.",
@@ -39,16 +19,6 @@ const portals = [
     gradient: "from-emerald-400/20 to-teal-500/0",
     borderHover: "hover:border-emerald-500/50",
     iconColor: "text-emerald-400",
-  },
-  {
-    id: "owner",
-    title: "Event Owner",
-    description: "Venue managers, event organizers, and private security coordination.",
-    icon: CalendarCheck,
-    actions: [{ label: "Sign In (Generated Credentials)", href: "/login?role=OWNER" }],
-    gradient: "from-purple-500/20 to-fuchsia-500/0",
-    borderHover: "hover:border-purple-500/50",
-    iconColor: "text-purple-400",
   }
 ];
 
