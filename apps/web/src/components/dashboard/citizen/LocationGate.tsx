@@ -10,6 +10,7 @@ export function LocationGate({ children }: { children: React.ReactNode }) {
   const { citizenLocation, setCitizenLocation } = useMapStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isSkipped, setIsSkipped] = useState(false);
 
   const requestLocation = () => {
     setIsLoading(true);
@@ -48,7 +49,7 @@ export function LocationGate({ children }: { children: React.ReactNode }) {
     );
   };
 
-  if (citizenLocation) {
+  if (citizenLocation || isSkipped) {
     return <>{children}</>;
   }
 
@@ -73,13 +74,23 @@ export function LocationGate({ children }: { children: React.ReactNode }) {
           </div>
         )}
 
-        <Button 
-          onClick={requestLocation} 
-          disabled={isLoading}
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-12 text-lg font-semibold tracking-wide"
-        >
-          {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Share Location'}
-        </Button>
+        <div className="flex flex-col gap-3">
+          <Button 
+            onClick={requestLocation} 
+            disabled={isLoading}
+            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-12 text-lg font-semibold tracking-wide"
+          >
+            {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Share Location'}
+          </Button>
+          <Button
+            onClick={() => setIsSkipped(true)}
+            variant="ghost"
+            disabled={isLoading}
+            className="w-full text-zinc-400 hover:text-white hover:bg-zinc-800 h-12"
+          >
+            Continue without location
+          </Button>
+        </div>
       </div>
     </div>
   );

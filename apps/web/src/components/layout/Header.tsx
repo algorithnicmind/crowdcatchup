@@ -21,10 +21,11 @@ import { CitizenLayoutSidebar } from './CitizenLayoutSidebar';
 import { useMapStore } from '@/stores/map-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { usePathname } from 'next/navigation';
-
 export function Header() {
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
+  const citizenLocation = useMapStore(state => state.citizenLocation);
+  const setCitizenLocation = useMapStore(state => state.setCitizenLocation);
   const isPolice = pathname?.startsWith('/police');
   const isAuthority = pathname?.startsWith('/authority');
   const isOwner = pathname?.startsWith('/owner');
@@ -66,6 +67,29 @@ export function Header() {
       </div>
 
       <div className="flex items-center gap-4">
+        {/* Enable Location Button (for citizens who skipped) */}
+        {isCitizen && !citizenLocation && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="hidden md:flex border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300 h-9"
+            onClick={() => {
+              if ('geolocation' in navigator) {
+                import('sonner').then(({ toast }) => toast.info('Acquiring location...'));
+                navigator.geolocation.getCurrentPosition(
+                  (pos) => setCitizenLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+                  () => import('sonner').then(({ toast }) => {
+                    toast.warning('GPS failed. Using default location.');
+                    setCitizenLocation({ lat: 20.4789, lng: 85.8741 });
+                  })
+                );
+              }
+            }}
+          >
+            Enable Location
+          </Button>
+        )}
+
         {/* Notifications Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger className="relative h-9 w-9 inline-flex items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-800 hover:text-white cursor-pointer outline-none transition-colors border-0 bg-transparent">
