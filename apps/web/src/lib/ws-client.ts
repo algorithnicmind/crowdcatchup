@@ -1,3 +1,5 @@
+import { getWsBaseUrl } from './api-client';
+
 type MessageHandler = (data: unknown) => void;
 
 class WebSocketClient {
@@ -9,9 +11,7 @@ class WebSocketClient {
   private isConnecting = false;
 
   constructor() {
-    // Determine WS URL based on current host or env var
-    const wsBaseUrl = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000/ws";
-    this.url = wsBaseUrl;
+    this.url = getWsBaseUrl();
   }
 
   connect(token?: string) {

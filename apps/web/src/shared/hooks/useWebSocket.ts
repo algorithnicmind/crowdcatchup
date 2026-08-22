@@ -1,6 +1,8 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 
+import { getWsBaseUrl } from '@/lib/api-client';
+
 export type WebSocketEvent = 
   | 'CROWD_STATE_UPDATE'
   | 'RISK_UPDATE'
@@ -47,8 +49,9 @@ export function useWebSocket(eventId: string) {
         return;
       }
 
-      // Use ws:// localhost for development
-      const wsUrl = `ws://localhost:8000/ws?token=${token}&event_id=${eventId}&role=${role}&user_id=${userId}`;
+      // Use secure WSS/WS endpoint dynamically
+      const wsBase = getWsBaseUrl();
+      const wsUrl = `${wsBase}?token=${token}&event_id=${eventId}&role=${role}&user_id=${userId}`;
       
       // MOCK DEMO MODE: Bypass real WebSocket to prevent ERR_CONNECTION_REFUSED console spam
       const isDemoMode = true;
