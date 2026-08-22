@@ -60,6 +60,11 @@ lib64/
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.cert
+secrets/
+keys/
 
 # ========================
 # Database
