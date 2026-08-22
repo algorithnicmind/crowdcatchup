@@ -29,6 +29,12 @@ function LoginPageInner() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  React.useEffect(() => {
+    if (queryRole) {
+      setRole(queryRole.toUpperCase() as UserRole);
+    }
+  }, [queryRole]);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
