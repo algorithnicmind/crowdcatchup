@@ -35,58 +35,52 @@ function LoginPageInner() {
     }
   }, [queryRole]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      const { apiClient } = await import('@/lib/api-client');
+      // 1. Call Backend Login
+      const data = await apiClient<{ access_token: string }>('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ identifier, password })
+      });
+
+      // 2. Fetch User Profile
+      const meResponse = await apiClient<any>('/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${data.access_token}`
+        }
+      });
+      
+      const finalRole = meResponse.role as UserRole;
+      const validUser = {
+        id: meResponse.id,
+        name: meResponse.full_name,
+        email: meResponse.email,
+        phone: meResponse.phone_number
+      };
+
+      setAuth(validUser, finalRole, data.access_token);
+      
+      let defaultRoute = `/${finalRole.toLowerCase()}`;
+      if (finalRole === 'EVENT_OWNER') {
+        defaultRoute = '/owner';
+      }
+      
+      let targetUrl = redirectUrl || defaultRoute;
+      
+      if (targetUrl.startsWith('/event_owner')) {
+        targetUrl = targetUrl.replace('/event_owner', '/owner');
+      }
+      
+      router.push(targetUrl);
+    } catch (error: any) {
+      toast.error(error.message || 'Invalid credentials or user not found.');
+    } finally {
       setIsLoading(false);
-      let validUser = null;
-
-      if (role === 'AUTHORITY') {
-        if (identifier === 'admin' && password === 'admin123') {
-          validUser = { id: 'admin_1', name: 'Command Center Admin' };
-        } else {
-          toast.error('Invalid Authority credentials. Use admin / admin123');
-          return;
-        }
-      } else if (role === 'POLICE' || role === 'EVENT_OWNER') {
-        const found = getUserByGeneratedId(identifier, role);
-        if (found && found.password === password) {
-          validUser = { id: found.id, name: found.name };
-        } else {
-          toast.error(`Invalid ${role} ID or password.`);
-          return;
-        }
-      } else if (role === 'CITIZEN') {
-        const found = getUserByEmailOrPhone(identifier, role);
-        if (found && found.password === password) {
-          validUser = { id: found.id, name: found.name, email: found.email, phone: found.phone };
-        } else {
-          toast.error('Invalid Email/Phone or password.');
-          return;
-        }
-      }
-
-      if (validUser) {
-        const mockToken = "mock_jwt_token_" + Date.now();
-        setAuth(validUser, role, mockToken);
-        
-        let defaultRoute = `/${role.toLowerCase()}`;
-        if (role === 'EVENT_OWNER') {
-          defaultRoute = '/owner';
-        }
-        
-        let targetUrl = redirectUrl || defaultRoute;
-        
-        // Prevent redirect loop if the user somehow got a redirect_url of /event_owner
-        if (targetUrl.startsWith('/event_owner')) {
-          targetUrl = targetUrl.replace('/event_owner', '/owner');
-        }
-        
-        router.push(targetUrl);
-      }
-    }, 1000);
+    }
   };
 
   return (
@@ -102,43 +96,20 @@ function LoginPageInner() {
             <Shield className="w-8 h-8 text-emerald-500" />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-wider">CROWDSHIELD</h1>
-          <p className="text-zinc-500 text-sm mt-2">Secure Access Portal</p>
+          <p className="text-zinc-500 text-sm mt-2">Universal Access Portal</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
-          {/* Role Selection */}
-          <div className="flex flex-col space-y-2">
-            <Label className="text-zinc-400 uppercase text-xs tracking-widest font-bold text-center mb-2">Select Login Role</Label>
-            <div className="grid grid-cols-2 gap-2">
-              {(['AUTHORITY', 'POLICE', 'EVENT_OWNER', 'CITIZEN'] as UserRole[]).map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => setRole(r)}
-                  className={`py-2 px-3 rounded-lg text-xs font-semibold tracking-wider transition-colors border ${
-                    role === r 
-                      ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' 
-                      : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300'
-                  }`}
-                >
-                  {r === 'AUTHORITY' ? 'AUTHORITY' :
-                   r === 'POLICE' ? 'POLICE' :
-                   r === 'EVENT_OWNER' ? 'EVENT OWNER' : 'CITIZEN'}
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div className="space-y-2">
             <Label className="text-zinc-400 uppercase text-xs tracking-widest font-bold">
-              {role === 'CITIZEN' ? 'Email or Phone Number' : 'Assigned ID'}
+              Email, Phone, or Assigned ID
             </Label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
               <Input 
                 required
                 type="text" 
-                placeholder={role === 'AUTHORITY' ? "admin" : (role === 'CITIZEN' ? 'name@example.com' : 'ID-XXXXXX')}
+                placeholder="name@example.com or ID-XXXXXX"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-700 pl-10"

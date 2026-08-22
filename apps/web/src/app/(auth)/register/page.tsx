@@ -67,33 +67,51 @@ export default function RegisterPage() {
     }
   };
 
-  const handleVerifyOtp = (e: React.FormEvent) => {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      
+    try {
       if (userOtp === generatedOtp) {
-        // Create user in store
-        const newUser = addUser({
-          name,
-          email,
-          phone,
-          password,
-          role: 'CITIZEN'
+        const { apiClient } = await import('@/lib/api-client');
+        
+        // 1. Register User in Backend
+        const newUser = await apiClient<any>('/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email,
+            phone_number: phone,
+            password,
+            full_name: name,
+            role: 'CITIZEN'
+          })
         });
 
-        // Log them in automatically
-        const mockToken = "mock_jwt_token_" + Date.now();
-        setAuth(newUser, 'CITIZEN', mockToken);
+        // 2. Automatically Log them in
+        const loginData = await apiClient<{ access_token: string }>('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ identifier: email, password })
+        });
+        
+        const validUser = {
+          id: newUser.id,
+          name: newUser.full_name,
+          email: newUser.email,
+          phone: newUser.phone_number
+        };
+
+        setAuth(validUser, 'CITIZEN', loginData.access_token);
         
         toast.success('Registration successful!');
         router.push('/citizen');
       } else {
         toast.error('Invalid OTP. Please try again.');
       }
-    }, 1000);
+    } catch (error: any) {
+      toast.error(error.message || 'Registration failed.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

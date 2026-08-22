@@ -65,6 +65,34 @@ export function CctvGrid() {
                         <div className="absolute top-1/2 left-1/2 w-10 h-20 border border-emerald-500/50 rounded-sm" />
                       </>
                     )}
+
+                    {/* Simulation Trigger Button */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 backdrop-blur-sm">
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        className="scale-90 hover:scale-100 transition-transform"
+                        onClick={async () => {
+                          try {
+                            const { apiClient } = await import('@/lib/api-client');
+                            await apiClient('/adapters/cctv/frame', {
+                              method: 'POST',
+                              body: JSON.stringify({
+                                source_id: `cctv_cam_${camId}`,
+                                zone_id: camId === 1 ? 'GATE_A' : camId === 2 ? 'VIP_ZONE' : 'NORTH_STAND',
+                                event_id: 'EVT-001',
+                                density: 0.95, // Simulate critical crowd density!
+                                confidence: 0.98
+                              })
+                            });
+                          } catch (e) {
+                            console.error('Failed to trigger simulation:', e);
+                          }
+                        }}
+                      >
+                        Simulate Crowd
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>

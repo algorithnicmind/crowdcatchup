@@ -63,15 +63,25 @@ export default function SettingsPage() {
     setErrorMsg('');
 
     try {
-      // Simulate network request for UI
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const { apiClient } = await import('@/lib/api-client');
       
-      useAuthStore.getState().updateProfile(fullName.trim(), phoneNumber.trim(), avatarStr || undefined);
+      const response = await apiClient<any>('/auth/me/profile', {
+        method: 'PATCH',
+        headers: {
+          'X-User-Email': user?.email || user?.id || ''
+        },
+        body: JSON.stringify({
+          full_name: fullName.trim(),
+          phone_number: phoneNumber.trim()
+        })
+      });
+      
+      useAuthStore.getState().updateProfile(response.full_name, response.phone_number, avatarStr || undefined);
 
       setSaveStatus('success');
       setTimeout(() => setSaveStatus('idle'), 3000);
-    } catch (err: unknown) {
-      setErrorMsg('An unexpected error occurred.');
+    } catch (err: any) {
+      setErrorMsg(err.message || 'An unexpected error occurred.');
       setSaveStatus('error');
       setTimeout(() => setSaveStatus('idle'), 5000);
     }

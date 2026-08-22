@@ -10,6 +10,14 @@ export function useGpsTelemetry(role: 'citizen' | 'police' | 'authority' | 'owne
       watchId = navigator.geolocation.watchPosition(
         async (position) => {
           setIsSharingLocation(true);
+          
+          // Save to local store so we can display it on the map immediately
+          const { useMapStore } = await import('@/stores/map-store');
+          useMapStore.getState().setCitizenLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+
           try {
             const { apiClient } = await import('@/lib/api-client');
             await apiClient('/adapters/gps/telemetry', {

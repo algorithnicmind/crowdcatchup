@@ -215,14 +215,23 @@ import { Crosshair, Plus, Minus } from 'lucide-react';
 
 function CustomMapControls() {
   const map = useMap();
+  const { citizenLocation } = useMapStore();
 
   return (
     <div className="absolute bottom-24 right-4 z-10 flex flex-col gap-2">
       <button 
         onClick={() => {
-          if (map) map.panTo(EVENT_CENTER);
+          if (map) {
+            if (citizenLocation) {
+              map.panTo(citizenLocation);
+              map.setZoom(18);
+            } else {
+              map.panTo(EVENT_CENTER);
+            }
+          }
         }}
-        className="w-10 h-10 bg-white rounded-xl shadow-md flex items-center justify-center text-zinc-700 hover:text-black transition-colors"
+        className="w-10 h-10 bg-white rounded-xl shadow-md flex items-center justify-center text-zinc-700 hover:text-blue-500 transition-colors"
+        title={citizenLocation ? "Go to my location" : "Go to event center"}
       >
         <Crosshair className="w-5 h-5" />
       </button>
@@ -241,6 +250,21 @@ function CustomMapControls() {
         </button>
       </div>
     </div>
+  );
+}
+
+function UserLocationPin() {
+  const { citizenLocation } = useMapStore();
+  
+  if (!citizenLocation) return null;
+  
+  return (
+    <AdvancedMarker position={citizenLocation} zIndex={9999}>
+      <div className="relative flex items-center justify-center w-8 h-8">
+        <span className="absolute w-full h-full rounded-full bg-blue-500 opacity-40 animate-ping"></span>
+        <div className="relative w-4 h-4 bg-blue-600 rounded-full border-2 border-white shadow-[0_0_10px_rgba(37,99,235,0.8)]"></div>
+      </div>
+    </AdvancedMarker>
   );
 }
 
@@ -287,6 +311,7 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
           <RoutePolyline />
           <HeatmapOverlay />
           <LiveMarkers />
+          <UserLocationPin />
           {searchResultPin && (
             <AdvancedMarker position={searchResultPin} />
           )}

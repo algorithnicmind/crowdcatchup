@@ -11,6 +11,7 @@ import { AuthorityLayoutSidebar } from '@/components/layout/AuthorityLayoutSideb
 import { OwnerLayoutSidebar } from '@/components/layout/OwnerLayoutSidebar';
 import { CitizenLayoutSidebar } from '@/components/layout/CitizenLayoutSidebar';
 import { Header } from '@/components/layout/Header';
+import { LocationGate } from '@/components/dashboard/citizen/LocationGate';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -62,7 +63,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto bg-[#09090b]">
-          {children}
+          <LocationGate>
+            {children}
+          </LocationGate>
         </main>
       </div>
     </div>

@@ -6,10 +6,18 @@ export async function apiClient<T>(
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
   
-  const headers = {
+  // Dynamically import store to avoid Next.js SSR issues if needed, but Zustand can be imported directly
+  const { useAuthStore } = await import('@/stores/auth-store');
+  const token = useAuthStore.getState().token;
+  
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(options.headers || {}),
+    ...(options.headers as Record<string, string> || {}),
   };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
 
   const config = {
     ...options,
