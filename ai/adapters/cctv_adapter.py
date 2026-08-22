@@ -74,11 +74,12 @@ class CctvAdapter(IDataSource):
             logger.error(f"Failed to push observation: {e}")
 
 if __name__ == "__main__":
+    import os
     logging.basicConfig(level=logging.INFO)
     adapter = CctvAdapter(
         source_id="SIM-CCTV-01", 
         video_path="crowd.mp4", 
-        api_url="http://localhost:8000/api/v1",
+        api_url=os.getenv("API_URL", "https://localhost:8000/api/v1"),
         is_mock=True # As per Rule 11, recorded video is simulated
     )
     adapter.run()

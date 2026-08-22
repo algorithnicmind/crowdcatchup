@@ -59,10 +59,11 @@ class GpsAdapter:
             logger.error(f"Failed to push observation: {e}")
 
 if __name__ == "__main__":
+    import os
     logging.basicConfig(level=logging.INFO)
     adapter = GpsAdapter(
         source_id="SIM-GPS-AGG", 
-        api_url="http://localhost:8000/api/v1",
+        api_url=os.getenv("API_URL", "https://localhost:8000/api/v1"),
         is_mock=True
     )
     adapter.run()
