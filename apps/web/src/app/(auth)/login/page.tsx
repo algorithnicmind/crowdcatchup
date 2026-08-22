@@ -71,7 +71,19 @@ function LoginPageInner() {
       if (validUser) {
         const mockToken = "mock_jwt_token_" + Date.now();
         setAuth(validUser, role, mockToken);
-        const targetUrl = redirectUrl || `/${role.toLowerCase()}`;
+        
+        let defaultRoute = `/${role.toLowerCase()}`;
+        if (role === 'EVENT_OWNER') {
+          defaultRoute = '/owner';
+        }
+        
+        let targetUrl = redirectUrl || defaultRoute;
+        
+        // Prevent redirect loop if the user somehow got a redirect_url of /event_owner
+        if (targetUrl.startsWith('/event_owner')) {
+          targetUrl = targetUrl.replace('/event_owner', '/owner');
+        }
+        
         router.push(targetUrl);
       }
     }, 1000);
@@ -94,18 +106,13 @@ function LoginPageInner() {
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
-          <div className="space-y-2">
-            <Label className="text-zinc-400 uppercase text-xs tracking-widest font-bold">Role Access</Label>
-            <select 
-              value={role}
-              onChange={(e) => setRole(e.target.value as UserRole)}
-              className="w-full h-10 px-3 rounded-md border border-zinc-800 bg-zinc-900 text-white text-sm outline-none focus:border-emerald-500 transition-colors"
-            >
-              <option value="AUTHORITY">Command Center Authority</option>
-              <option value="POLICE">Field Police Officer</option>
-              <option value="EVENT_OWNER">Event Owner</option>
-              <option value="CITIZEN">Citizen</option>
-            </select>
+          {/* Role Display */}
+          <div className="flex items-center justify-center p-3 rounded-lg bg-zinc-900 border border-zinc-800">
+            <span className="text-emerald-500 font-semibold text-sm tracking-widest uppercase">
+              {role === 'AUTHORITY' ? 'Command Center Authority' :
+               role === 'POLICE' ? 'Field Police Officer' :
+               role === 'EVENT_OWNER' ? 'Event Owner' : 'Citizen Portal'}
+            </span>
           </div>
 
           <div className="space-y-2">

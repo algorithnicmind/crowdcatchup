@@ -60,7 +60,7 @@ export function SimulationDock() {
               value={[time]} 
               max={600} 
               step={1} 
-              onValueChange={(val) => setTime((val as number[])[0])}
+              onValueChange={(val: number | number[]) => setTime(Array.isArray(val) ? val[0] : val)}
               className="flex-1 [&_[role=slider]]:bg-purple-500 [&_[role=slider]]:border-purple-300" 
             />
             <div className="text-xs font-mono text-zinc-500 w-16">

@@ -49,15 +49,15 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
 
   // Fetch settings when modal opens
   useEffect(() => {
+    let active = true;
     if (open && email) {
-      setFetching(true);
-      fetch(`http://localhost:8000/api/v1/officers/settings/${email}`)
-        .then(res => {
+      const fetchSettings = async () => {
+        setFetching(true);
+        try {
+          const res = await fetch(`http://localhost:8000/api/v1/officers/settings/${email}`);
           if (!res.ok) throw new Error("API not ready");
-          return res.json();
-        })
-        .then(data => {
-          if (data && data.settings) {
+          const data = await res.json();
+          if (active && data && data.settings) {
             setCallsign(data.settings.callsign || "Bravo-Actual");
             setAssignedZone(data.settings.assigned_zone || "Sector 7G (Downtown)");
             setPriorityAlert(data.settings.priority_alert_override ?? true);
@@ -68,13 +68,15 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
             setBuildingGeometry(data.settings.building_geometry_3d ?? true);
             setUnitRadar(data.settings.unit_radar_overlay ?? true);
           }
-        })
-        .catch(err => {
-          // Graceful fallback for demo if backend is offline
+        } catch (err: any) {
           console.warn("[Demo Mode] Using local defaults. Backend offline:", err.message);
-        })
-        .finally(() => setFetching(false));
+        } finally {
+          if (active) setFetching(false);
+        }
+      };
+      fetchSettings();
     }
+    return () => { active = false; };
   }, [open, email]);
 
   const handleSave = async () => {
@@ -269,7 +271,7 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
                   <div className="text-xs text-zinc-400 mb-3">Alert Volume</div>
                   <Slider 
                     value={[alertVolume]} 
-                    onValueChange={(val) => setAlertVolume(val[0])}
+                    onValueChange={(val: number | number[]) => setAlertVolume(Array.isArray(val) ? val[0] : val)}
                     max={100} step={1} 
                     className="[&_[role=slider]]:bg-[#93c5fd] [&_[role=slider]]:border-none" 
                   />

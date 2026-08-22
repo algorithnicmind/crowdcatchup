@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 const SCENARIOS = [
   { id: 'normal', name: 'Normal Flow', desc: 'Baseline operations.' },
@@ -23,9 +24,13 @@ export function ScenarioController({ eventId }: { eventId: string }) {
       });
       if (response.ok) {
         setActiveScenario(scenarioId);
+        toast.success(`Scenario injected: ${scenarioId}`);
+      } else {
+        toast.error("Failed to trigger scenario on backend.");
       }
     } catch (err) {
-      console.error("Failed to trigger scenario", err);
+      console.warn("Failed to trigger scenario (backend offline)", err);
+      toast.error("Backend offline. Cannot inject scenario.");
     } finally {
       setIsLoading(false);
     }

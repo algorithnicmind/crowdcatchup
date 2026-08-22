@@ -3,8 +3,9 @@
 import { useEffect, useState, useRef } from 'react';
 import { useMap } from '@vis.gl/react-google-maps';
 import { Button } from '@/components/ui/button';
-import { Edit3, Save, Trash2, Route as RouteIcon } from 'lucide-react';
+import { Save, Trash2, Route as RouteIcon, Edit3 } from 'lucide-react';
 import { useMapStore } from '@/stores/map-store';
+import { toast } from 'sonner';
 
 export function MapDrawingManager() {
   const map = useMap();
@@ -45,12 +46,12 @@ export function MapDrawingManager() {
                  headers: { 'Content-Type': 'application/json' },
                  body: JSON.stringify({ lat, lng })
                });
-             } catch (e) {
-               console.error("Failed to send GPS point", e);
-             }
+              } catch (e) {
+               console.warn("Failed to send GPS point (backend offline)", e);
+              }
           }
         },
-        (error) => console.error(error),
+        (error) => console.warn(error),
         { enableHighAccuracy: true, maximumAge: 0 }
       );
     }
@@ -90,13 +91,16 @@ export function MapDrawingManager() {
       if (gpsSessionId) {
         try {
           const res = await fetch(`http://localhost:8000/api/v1/gps-recording/${gpsSessionId}/stop`, { method: 'POST' });
+          if (!res.ok) throw new Error("API failed");
           const data = await res.json();
           console.log('[Owner] GPS Route saved:', data);
-          setGpsSessionId(null);
-          // Keep the line on map for a bit or clear it, we'll clear and let normal route render handle it eventually
-          setGpsPoints([]); 
+          toast.success("GPS Route saved to backend.");
         } catch(e) {
-          console.error(e);
+          console.warn("Failed to stop GPS recording on backend", e);
+          toast.error("Backend offline. Route stopped locally.");
+        } finally {
+          setGpsSessionId(null);
+          setGpsPoints([]); 
         }
       }
     } else {
@@ -107,11 +111,17 @@ export function MapDrawingManager() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ event_owner_id: 'owner-123' })
         });
+        if (!res.ok) throw new Error("API failed");
         const data = await res.json();
         setGpsSessionId(data.session_id);
         setIsRecordingGps(true);
+        toast.success("Recording GPS route...");
       } catch(e) {
-        console.error("Failed to start GPS recording", e);
+        console.warn("Failed to start GPS recording on backend", e);
+        toast.error("Backend offline. Cannot record GPS to server.");
+        // Still toggle locally for visual effect
+        setIsRecordingGps(true);
+        setGpsSessionId("mock-session-" + Date.now());
       }
     }
   };
@@ -174,6 +184,18 @@ export function MapDrawingManager() {
   const handleSave = () => {
     if (points.length > 2) {
       console.log('[Owner] New Zone Polygon created:', points);
+      
+      // Access the store directly since we only need the setter
+      import('@/stores/event-config-store').then(({ useEventConfigStore }) => {
+        useEventConfigStore.getState().setDraftZone({
+          name: "New Zone",
+          polygon: points,
+          capacity: 1000,
+          type: "Zone (Normal Density)"
+        });
+        toast.success("Zone polygon saved. Configure properties in the panel.");
+      });
+      
       setIsDrawing(false);
     }
   };

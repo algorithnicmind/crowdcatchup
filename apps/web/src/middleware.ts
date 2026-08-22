@@ -56,6 +56,13 @@ export default function proxy(req: NextRequest) {
     }
   }
 
+  // Fallback: If user somehow navigates to /event_owner, redirect to /owner
+  if (pathname.startsWith('/event_owner')) {
+    const newUrl = new URL(req.url);
+    newUrl.pathname = pathname.replace('/event_owner', '/owner');
+    return NextResponse.redirect(newUrl);
+  }
+
   return NextResponse.next();
 }
 

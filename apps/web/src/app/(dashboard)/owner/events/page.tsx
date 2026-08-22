@@ -54,8 +54,16 @@ export default function OwnerEventsPage() {
       const data = await apiClient<EventDTO[]>('/events');
       setEvents(data);
     } catch (error) {
-      toast.error('Failed to load events');
-      console.error(error);
+      console.warn('Backend offline, skipping initial event fetch', error);
+      // Demo Mode: Load from localStorage
+      const cached = localStorage.getItem('demo_events');
+      if (cached) {
+        try {
+          setEvents(JSON.parse(cached));
+        } catch (e) {
+          console.error("Failed to parse cached demo events", e);
+        }
+      }
     } finally {
       setIsLoading(false);
     }
@@ -98,7 +106,29 @@ export default function OwnerEventsPage() {
       fetchEvents();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(error.message || 'Failed to create event');
+      // Demo Mode Fallback
+      toast.success('Event created locally (Demo Mode)', {
+        description: 'Backend is offline. Saved locally so it survives refreshes.'
+      });
+      const newEvent: EventDTO = {
+        id: 'mock-evt-' + Date.now(),
+        name: formData.name || 'Untitled Event',
+        description: formData.description,
+        expected_attendance: parseInt(formData.expected_attendance) || 0,
+        max_capacity: parseInt(formData.max_capacity) || 0,
+        start_date: formData.start_date ? new Date(formData.start_date).toISOString() : new Date().toISOString(),
+        end_date: formData.end_date ? new Date(formData.end_date).toISOString() : new Date().toISOString(),
+        status: 'DRAFT'
+      };
+      
+      setEvents(prev => {
+        const updated = [...prev, newEvent];
+        localStorage.setItem('demo_events', JSON.stringify(updated));
+        return updated;
+      });
+      
+      setOpen(false);
+      setFormData({ name: '', description: '', expected_attendance: '', max_capacity: '', start_date: '', end_date: '' });
     } finally {
       setIsCreating(false);
     }
@@ -115,11 +145,13 @@ export default function OwnerEventsPage() {
           </div>
           
           <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
-                <Plus className="w-4 h-4 mr-2" />
-                Create New Event
-              </Button>
+            <DialogTrigger 
+              render={
+                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold" />
+              }
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Create New Event
             </DialogTrigger>
             <DialogContent className="bg-zinc-950 border-zinc-800 text-zinc-100 sm:max-w-[425px]">
               <DialogHeader>
@@ -194,8 +226,8 @@ export default function OwnerEventsPage() {
                   </div>
                 </div>
                 <DialogFooter className="pt-4 border-t border-zinc-800">
-                  <DialogClose asChild>
-                    <Button type="button" variant="ghost" className="text-zinc-400 hover:text-white">Cancel</Button>
+                  <DialogClose render={<Button type="button" variant="ghost" className="text-zinc-400 hover:text-white" />}>
+                    Cancel
                   </DialogClose>
                   <Button type="submit" disabled={isCreating} className="bg-emerald-600 hover:bg-emerald-700">
                     {isCreating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
