@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MagicCard } from '@/components/ui/magic-card';
-import { Navigation, Users, ShieldAlert, HeartPulse, Search, MapPin, ArrowRight, X } from 'lucide-react';
+import { Navigation, Users, ShieldAlert, HeartPulse, Search, MapPin, ArrowRight, X, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useMapStore } from '@/stores/map-store';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
@@ -33,7 +33,48 @@ export function SafeRoutePanel() {
   const [navInstruction, setNavInstruction] = useState('Head North towards Gate G5');
   const [distanceRemaining, setDistanceRemaining] = useState(450);
   const [destination, setDestination] = useState('Maha Kumbh Mela');
-  
+  const [destPredictions, setDestPredictions] = useState<google.maps.places.AutocompletePrediction[]>([]);
+  const [destCoords, setDestCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [showDestDropdown, setShowDestDropdown] = useState(false);
+  const destDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autocompleteRef = useRef<google.maps.places.AutocompleteService | null>(null);
+  const placesRef = useRef<google.maps.places.PlacesService | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.google?.maps?.places) {
+      autocompleteRef.current = new window.google.maps.places.AutocompleteService();
+      const div = document.createElement('div');
+      placesRef.current = new window.google.maps.places.PlacesService(div);
+    }
+  }, []);
+
+  const handleDestInput = (value: string) => {
+    setDestination(value);
+    setDestCoords(null);
+    if (destDebounce.current) clearTimeout(destDebounce.current);
+    if (!value.trim() || !autocompleteRef.current) { setDestPredictions([]); setShowDestDropdown(false); return; }
+    destDebounce.current = setTimeout(() => {
+      autocompleteRef.current!.getPlacePredictions({ input: value }, (results, status) => {
+        if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
+          setDestPredictions(results);
+          setShowDestDropdown(true);
+        }
+      });
+    }, 300);
+  };
+
+  const handleDestSelect = (pred: google.maps.places.AutocompletePrediction) => {
+    setDestination(pred.description);
+    setShowDestDropdown(false);
+    setDestPredictions([]);
+    if (!placesRef.current) return;
+    placesRef.current.getDetails({ placeId: pred.place_id, fields: ['geometry'] }, (place, status) => {
+      if (status === window.google.maps.places.PlacesServiceStatus.OK && place?.geometry?.location) {
+        setDestCoords({ lat: place.geometry!.location!.lat(), lng: place.geometry!.location!.lng() });
+      }
+    });
+  };
+
   const { subscribe } = useWebSocket('EVT-001');
   const { citizenLocation } = useMapStore();
 
@@ -137,7 +178,7 @@ export function SafeRoutePanel() {
   if (!isVisible) return null;
 
   return (
-    <div className="absolute bottom-24 md:bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-96 z-40 pointer-events-none">
+    <div className="absolute bottom-[100px] md:bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-96 z-40 pointer-events-none">
       <AnimatePresence>
         {!routeFound && !isNavigating && (
           <motion.div
@@ -166,14 +207,32 @@ export function SafeRoutePanel() {
 
                 <div className="space-y-3 mb-4">
                   <div className="relative">
-                    <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
+                    <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-500 z-10" />
                     <input 
                       type="text" 
                       placeholder="Where do you want to go?" 
                       value={destination}
-                      onChange={(e) => setDestination(e.target.value)}
+                      onChange={(e) => handleDestInput(e.target.value)}
+                      onFocus={() => { if (destPredictions.length > 0) setShowDestDropdown(true); }}
                       className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-9 pr-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 transition-colors"
                     />
+                    {showDestDropdown && destPredictions.length > 0 && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-zinc-900 border border-white/10 rounded-lg overflow-hidden shadow-2xl z-50">
+                        {destPredictions.map(pred => (
+                          <button
+                            key={pred.place_id}
+                            onMouseDown={() => handleDestSelect(pred)}
+                            className="w-full text-left px-3 py-2.5 hover:bg-white/10 border-b border-white/5 last:border-0 flex items-start gap-2"
+                          >
+                            <MapPin className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0" />
+                            <div>
+                              <p className="text-xs font-medium text-white truncate">{pred.structured_formatting.main_text}</p>
+                              <p className="text-[11px] text-gray-500 truncate">{pred.structured_formatting.secondary_text}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   
                   <div className="flex gap-2">
@@ -338,22 +397,3 @@ export function SafeRoutePanel() {
   );
 }
 
-function CheckCircle(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-      <polyline points="22 4 12 14.01 9 11.01" />
-    </svg>
-  );
-}

@@ -1,107 +1,141 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useMap } from '@vis.gl/react-google-maps';
-import { Search, MapPin, Navigation } from 'lucide-react';
+import { Search, MapPin, Navigation, Loader2 } from 'lucide-react';
 import { useMapStore } from '@/stores/map-store';
-
-interface NominatimResult {
-  place_id: number;
-  lat: string;
-  lon: string;
-  display_name: string;
-}
 
 export function SearchBar() {
   const map = useMap();
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<NominatimResult[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [predictions, setPredictions] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
+  const placesService = useRef<google.maps.places.PlacesService | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { citizenLocation } = useMapStore();
 
-  // Close dropdown when clicking outside
+  // Initialize Google Places services
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    if (typeof window === 'undefined' || !window.google?.maps?.places) return;
+    autocompleteService.current = new window.google.maps.places.AutocompleteService();
+    // PlacesService needs a map div
+    const div = document.createElement('div');
+    placesService.current = new window.google.maps.places.PlacesService(div);
   }, []);
 
-  // Debounced search fetch
+  // Close on outside click
   useEffect(() => {
-    if (!query.trim()) {
-      const t = setTimeout(() => {
-        setResults([]);
+    const handler = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setIsOpen(false);
-      }, 0);
-      return () => clearTimeout(t);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const handleInput = (value: string) => {
+    setQuery(value);
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+
+    if (!value.trim()) {
+      setPredictions([]);
+      setIsOpen(false);
+      return;
     }
 
-    const delayDebounceFn = setTimeout(async () => {
+    debounceTimer.current = setTimeout(() => {
+      if (!autocompleteService.current) return;
       setIsLoading(true);
-      try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`);
-        const data = await response.json();
-        setResults(data);
-        setIsOpen(true);
-      } catch (error) {
-        console.error('Error fetching search results:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }, 500);
+      autocompleteService.current.getPlacePredictions(
+        { input: value },
+        (results, status) => {
+          setIsLoading(false);
+          if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
+            setPredictions(results);
+            setIsOpen(true);
+          } else {
+            setPredictions([]);
+          }
+        }
+      );
+    }, 300);
+  };
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [query]);
-
-  const handleSelect = (result: NominatimResult) => {
-    setQuery(result.display_name);
+  const handleSelect = (prediction: google.maps.places.AutocompletePrediction) => {
+    setQuery(prediction.description);
     setIsOpen(false);
-    
-    if (map) {
-      const lat = parseFloat(result.lat);
-      const lng = parseFloat(result.lon);
-      map.panTo({ lat, lng });
-      map.setZoom(17);
-      useMapStore.getState().setSearchResultPin({ lat, lng });
+    setPredictions([]);
+
+    if (!placesService.current) return;
+    placesService.current.getDetails(
+      { placeId: prediction.place_id, fields: ['geometry'] },
+      (place, status) => {
+        if (status === window.google.maps.places.PlacesServiceStatus.OK && place?.geometry?.location) {
+          const lat = place.geometry.location.lat();
+          const lng = place.geometry.location.lng();
+          map?.panTo({ lat, lng });
+          map?.setZoom(17);
+          useMapStore.getState().setSearchResultPin({ lat, lng });
+        }
+      }
+    );
+  };
+
+  const handleGoToMyLocation = () => {
+    if (citizenLocation && map) {
+      map.panTo(citizenLocation);
+      map.setZoom(18);
+    } else if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        useMapStore.getState().setCitizenLocation(loc);
+        map?.panTo(loc);
+        map?.setZoom(18);
+      });
     }
   };
 
   return (
     <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-[400px] pointer-events-auto" ref={wrapperRef}>
-      <div className="flex items-center gap-3 bg-white px-4 py-3 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-shadow border border-zinc-200 focus-within:ring-2 focus-within:ring-[#0f8b8d]/50">
-        <Search className={`h-5 w-5 ${isLoading ? 'text-blue-500 animate-pulse' : 'text-zinc-500'}`} />
-        <input 
-          type="text" 
+      <div className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-full shadow-[0_4px_16px_rgba(0,0,0,0.18)] border border-zinc-200 focus-within:shadow-[0_4px_20px_rgba(0,0,0,0.22)] transition-shadow">
+        {isLoading
+          ? <Loader2 className="h-5 w-5 text-blue-500 animate-spin shrink-0" />
+          : <Search className="h-5 w-5 text-zinc-400 shrink-0" />
+        }
+        <input
+          type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => { if (results.length > 0) setIsOpen(true) }}
+          onChange={(e) => handleInput(e.target.value)}
+          onFocus={() => { if (predictions.length > 0) setIsOpen(true); }}
           placeholder="Search Google Maps"
-          className="flex-1 bg-transparent border-none outline-none text-[15px] font-medium text-zinc-800 w-full placeholder:text-zinc-600"
+          className="flex-1 bg-transparent border-none outline-none text-[15px] text-zinc-800 placeholder:text-zinc-500 min-w-0"
         />
-        <div className="flex items-center gap-2 pl-2">
-          <button className="text-white bg-[#0f8b8d] hover:bg-[#0d787a] rounded-md flex items-center justify-center p-1.5 transition-colors transform rotate-45 w-7 h-7 shadow-sm shrink-0">
-            <div className="-rotate-45">
-              <Navigation className="h-4 w-4 fill-current" />
-            </div>
-          </button>
-        </div>
+        <button
+          onClick={handleGoToMyLocation}
+          title="Go to my location"
+          className="text-white bg-[#0f8b8d] hover:bg-[#0d787a] rounded-full flex items-center justify-center w-8 h-8 transition-colors shrink-0 shadow-sm"
+        >
+          <Navigation className="h-4 w-4 fill-current" />
+        </button>
       </div>
 
-      {isOpen && results.length > 0 && (
-        <div className="mt-2 bg-zinc-900/95 backdrop-blur-xl border border-zinc-800 rounded-xl shadow-2xl overflow-hidden max-h-80 overflow-y-auto animate-in fade-in slide-in-from-top-2">
-          {results.map((result) => (
+      {isOpen && predictions.length > 0 && (
+        <div className="mt-2 bg-white border border-zinc-200 rounded-2xl shadow-2xl overflow-hidden max-h-72 overflow-y-auto">
+          {predictions.map((pred) => (
             <button
-              key={result.place_id}
-              onClick={() => handleSelect(result)}
-              className="w-full text-left px-4 py-3 hover:bg-zinc-800 border-b border-zinc-800/50 last:border-0 flex items-start gap-3 transition-colors"
+              key={pred.place_id}
+              onClick={() => handleSelect(pred)}
+              className="w-full text-left px-4 py-3 hover:bg-zinc-50 border-b border-zinc-100 last:border-0 flex items-start gap-3 transition-colors"
             >
               <MapPin className="h-4 w-4 text-zinc-400 mt-0.5 shrink-0" />
-              <span className="text-sm text-zinc-300 line-clamp-2">{result.display_name}</span>
+              <div className="min-w-0">
+                <span className="text-sm font-medium text-zinc-800 block truncate">{pred.structured_formatting.main_text}</span>
+                <span className="text-xs text-zinc-500 block truncate">{pred.structured_formatting.secondary_text}</span>
+              </div>
             </button>
           ))}
         </div>

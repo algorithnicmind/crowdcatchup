@@ -11,8 +11,9 @@ export function LocationGate({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isSkipped, setIsSkipped] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
 
-  const requestLocation = () => {
+  const requestLocation = React.useCallback(() => {
     setIsLoading(true);
     setError('');
 
@@ -29,46 +30,72 @@ export function LocationGate({ children }: { children: React.ReactNode }) {
           lng: position.coords.longitude,
         });
         setIsLoading(false);
+        setCountdown(null);
         toast.success('Location acquired successfully!');
       },
       (err) => {
         console.warn('Location error:', err);
-        // DEMO FALLBACK: If phone GPS times out or denies permission, don't block the demo!
         toast.warning('GPS failed. Using default event location for demo.');
         setCitizenLocation({
-          lat: 20.4789, // Default to Cuttack event center
+          lat: 20.4789,
           lng: 85.8741,
         });
         setIsLoading(false);
+        setCountdown(null);
       },
       {
-        enableHighAccuracy: false, // Turn off high accuracy to prevent timeouts indoors
+        enableHighAccuracy: false,
         timeout: 10000,
-        maximumAge: 30000, // Allow 30-second old cached locations
+        maximumAge: 30000,
       }
     );
-  };
+  }, [setCitizenLocation]);
+
+  // Auto-request GPS on mount
+  useEffect(() => {
+    requestLocation();
+    // Start countdown to auto-skip after 12 seconds
+    let count = 12;
+    setCountdown(count);
+    const interval = setInterval(() => {
+      count -= 1;
+      setCountdown(count);
+      if (count <= 0) {
+        clearInterval(interval);
+        setIsSkipped(true);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (citizenLocation || isSkipped) {
     return <>{children}</>;
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-md p-4">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500"></div>
         
-        <div className="mx-auto w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6">
-          <MapPin className="w-8 h-8 text-emerald-500" />
+        <div className="mx-auto w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 relative">
+          {isLoading && (
+            <span className="absolute inset-0 rounded-full border-2 border-emerald-500/30 border-t-emerald-500 animate-spin" />
+          )}
+          <MapPin className={`w-9 h-9 ${isLoading ? 'text-emerald-400 animate-pulse' : 'text-emerald-500'}`} />
         </div>
         
-        <h2 className="text-2xl font-bold text-white mb-2">Location Required</h2>
-        <p className="text-zinc-400 mb-8 text-sm leading-relaxed">
-          For your safety and to navigate the event effectively, CrowdShield requires your exact location. Without this, we cannot provide emergency routing or distance estimates.
+        <h2 className="text-xl font-bold text-white mb-2">
+          {isLoading ? 'Finding Your Location…' : 'Enable Location'}
+        </h2>
+        <p className="text-zinc-500 mb-6 text-sm leading-relaxed">
+          {isLoading
+            ? 'Allow location access in the browser prompt to get started.'
+            : 'CrowdShield needs your location for safe routing and emergency alerts.'}
         </p>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg flex items-start gap-2 mb-6 text-sm text-left">
+          <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg flex items-start gap-2 mb-4 text-sm text-left">
             <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
             <p>{error}</p>
           </div>
@@ -78,20 +105,22 @@ export function LocationGate({ children }: { children: React.ReactNode }) {
           <Button 
             onClick={requestLocation} 
             disabled={isLoading}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-12 text-lg font-semibold tracking-wide"
+            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-12 font-semibold tracking-wide"
           >
-            {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Share Location'}
+            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Share My Location'}
           </Button>
           <Button
             onClick={() => setIsSkipped(true)}
             variant="ghost"
-            disabled={isLoading}
-            className="w-full text-zinc-400 hover:text-white hover:bg-zinc-800 h-12"
+            className="w-full text-zinc-500 hover:text-white hover:bg-zinc-800 h-10 text-sm"
           >
-            Continue without location
+            {countdown !== null && countdown > 0
+              ? `Skip (auto in ${countdown}s)`
+              : 'Continue without location'}
           </Button>
         </div>
       </div>
     </div>
   );
 }
+

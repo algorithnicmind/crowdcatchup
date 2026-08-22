@@ -306,7 +306,7 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
 
   return (
     <div className="h-full w-full relative">
-      <APIProvider apiKey={apiKey} libraries={['drawing', 'visualization']} version="3.64">
+      <APIProvider apiKey={apiKey} libraries={['drawing', 'places']} version="3.64">
         <Map
           defaultCenter={EVENT_CENTER}
           defaultZoom={16}

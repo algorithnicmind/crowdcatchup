@@ -84,8 +84,30 @@ function LoginPageInner() {
       }
       
       router.push(targetUrl);
-    } catch (error: any) {
-      toast.error(error.message || 'Invalid credentials or user not found.');
+    } catch {
+      // Demo Mode Fallback: if backend is offline, allow known test credentials
+      const DEMO_ACCOUNTS: Record<string, { name: string; role: UserRole }> = {
+        'admin@test.com':   { name: 'Admin Authority', role: 'AUTHORITY' },
+        'police@test.com':  { name: 'Police Officer',  role: 'POLICE' },
+        'owner@test.com':   { name: 'Event Owner',     role: 'EVENT_OWNER' },
+        'citizen@test.com': { name: 'Citizen One',     role: 'CITIZEN' },
+        'citizen2@test.com':{ name: 'Citizen Two',     role: 'CITIZEN' },
+        'citizen3@test.com':{ name: 'Citizen Three',   role: 'CITIZEN' },
+      };
+
+      const demo = DEMO_ACCOUNTS[identifier.toLowerCase()];
+      if (demo && password === 'Password123!') {
+        toast.info('Backend offline — signing in with demo account.');
+        setAuth(
+          { id: `demo-${identifier}`, name: demo.name, email: identifier, phone: '' },
+          demo.role,
+          'demo-token'
+        );
+        const defaultRoute = demo.role === 'EVENT_OWNER' ? '/owner' : `/${demo.role.toLowerCase()}`;
+        router.push(redirectUrl || defaultRoute);
+      } else {
+        toast.error('Invalid credentials. Backend may be offline — try a demo account.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -123,7 +145,10 @@ function LoginPageInner() {
                 className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-700 pl-10"
               />
             </div>
-            {role === 'AUTHORITY' && <p className="text-xs text-zinc-500">Hint: admin / admin123</p>}
+            {role === 'AUTHORITY' && <p className="text-xs text-zinc-500">Demo: admin@test.com / Password123!</p>}
+            {role === 'POLICE' && <p className="text-xs text-zinc-500">Demo: police@test.com / Password123!</p>}
+            {role === 'CITIZEN' && <p className="text-xs text-zinc-500">Demo: citizen@test.com / Password123!</p>}
+            {role === 'EVENT_OWNER' && <p className="text-xs text-zinc-500">Demo: owner@test.com / Password123!</p>}
           </div>
 
           <div className="space-y-2">
