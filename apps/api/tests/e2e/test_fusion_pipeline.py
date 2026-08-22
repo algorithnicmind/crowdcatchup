@@ -2,14 +2,20 @@ import pytest
 from fastapi.testclient import TestClient
 from main import app
 from datetime import datetime
+from unittest.mock import AsyncMock
 
 client = TestClient(app)
 
-def test_ingest_observation_e2e():
+def test_ingest_observation_e2e(monkeypatch):
     """
     End-to-End Test for the Data Ingestion and Fusion Pipeline.
     Validates Phase 3 (Data Hub) functionality.
     """
+    # Mock Redis so it doesn't fail trying to connect to localhost:6379
+    mock_redis = AsyncMock()
+    mock_get_redis = AsyncMock(return_value=mock_redis)
+    monkeypatch.setattr("features.fusion.api.routes.get_redis", mock_get_redis)
+    
     payload = {
         "event_id": "test-event-123",
         "source_id": "CCTV-01",

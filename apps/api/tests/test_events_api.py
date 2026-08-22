@@ -16,7 +16,7 @@ async def auth_token_and_headers(client: AsyncClient):
     
     # Login
     response = await client.post("/api/v1/auth/login", json={
-        "email": email,
+        "identifier": email,
         "password": password
     })
     

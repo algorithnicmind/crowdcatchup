@@ -27,6 +27,10 @@ from features.navigation.api.routes import router as navigation_router
 from features.simulation.api.routes import router as simulation_router
 from features.reports.api.routes import router as reports_router
 from features.incidents.api.routes import router as incidents_router
+from features.adapters.api.gps_telemetry_routes import router as gps_telemetry_router
+from features.adapters.api.cctv_routes import router as cctv_router
+from features.adapters.api.smart_gate_routes import router as smart_gate_router
+from features.announcements.api.routes import router as announcements_router
 
 settings = get_settings()
 logging.basicConfig(level=logging.INFO if not settings.DEBUG else logging.DEBUG)
@@ -88,6 +92,10 @@ app.include_router(navigation_router, prefix="/api/v1/navigation", tags=["Naviga
 app.include_router(simulation_router, prefix="/api/v1/simulation", tags=["Simulation"])
 app.include_router(reports_router, prefix="/api/v1/reports", tags=["Reports"])
 app.include_router(incidents_router, prefix="/api/v1/incidents", tags=["Incidents"])
+app.include_router(gps_telemetry_router, prefix="/api/v1")
+app.include_router(cctv_router, prefix="/api/v1")
+app.include_router(smart_gate_router, prefix="/api/v1")
+app.include_router(announcements_router, prefix="/api/v1")
 
 
 @app.get("/")

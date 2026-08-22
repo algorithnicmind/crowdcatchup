@@ -20,6 +20,7 @@ class GetCurrentUserUseCase:
         return UserDTO(
             id=user.id,
             email=user.email,
+            phone_number=user.phone_number,
             full_name=user.full_name,
             role=user.role.value,
             is_active=user.is_active,

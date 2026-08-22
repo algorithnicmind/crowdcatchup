@@ -42,6 +42,8 @@ class SQLAlchemyUserRepository(BaseRepository[User]):
             role=entity.role.value,
             full_name=entity.full_name,
             is_active=entity.is_active,
+            created_at=entity.created_at,
+            updated_at=entity.updated_at,
         )
 
     async def get_by_id(self, entity_id: str) -> User | None:
@@ -76,6 +78,7 @@ class SQLAlchemyUserRepository(BaseRepository[User]):
         model = self._to_model(entity)
         merged = await self._session.merge(model)
         await self._session.flush()
+        await self._session.refresh(merged)
         return self._to_entity(merged)
 
     async def delete(self, entity_id: str) -> bool:

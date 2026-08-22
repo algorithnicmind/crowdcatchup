@@ -90,6 +90,12 @@ class InterventionService:
             "intervention_type": intervention.intervention_type.value
         }
         
+        # Broadcast to all Authority clients that the intervention was approved
+        await ws_manager.broadcast_to_role(intervention.event_id, "AUTHORITY", {
+            "type": "INTERVENTION_APPROVED",
+            "payload": payload
+        })
+        
         if intervention.intervention_type == InterventionType.DEPLOY_POLICE:
             await ws_manager.broadcast_to_role(intervention.event_id, "POLICE", {
                 "type": "SECURITY_TASK",

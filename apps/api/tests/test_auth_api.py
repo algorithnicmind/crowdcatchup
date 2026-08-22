@@ -9,7 +9,7 @@ async def test_register_user_success(client: AsyncClient):
         "email": unique_email,
         "password": "StrongPassword123",
         "full_name": "Test User",
-        "role": "CITIZEN"
+        "role": "AUTHORITY"
     }
     response = await client.post("/api/v1/auth/register", json=payload)
     assert response.status_code == 201
@@ -24,7 +24,7 @@ async def test_register_duplicate_email(client: AsyncClient):
         "email": email,
         "password": "StrongPassword123",
         "full_name": "Test User",
-        "role": "CITIZEN"
+        "role": "AUTHORITY"
     }
     # First registration
     response1 = await client.post("/api/v1/auth/register", json=payload)
@@ -50,7 +50,7 @@ async def test_login_success(client: AsyncClient):
     
     # Login
     response = await client.post("/api/v1/auth/login", json={
-        "email": email,
+        "identifier": email,
         "password": password
     })
     
@@ -66,11 +66,11 @@ async def test_login_invalid_password(client: AsyncClient):
         "email": email,
         "password": "CorrectPassword123",
         "full_name": "Invalid Login User",
-        "role": "CITIZEN"
+        "role": "AUTHORITY"
     })
     
     response = await client.post("/api/v1/auth/login", json={
-        "email": email,
+        "identifier": email,
         "password": "WrongPassword123"
     })
     
