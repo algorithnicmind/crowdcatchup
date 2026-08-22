@@ -7,20 +7,15 @@ import Link from "next/link";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#050505] text-slate-200">
+    <div className="min-h-screen bg-[#050505] text-slate-200 flex flex-col">
       <Navbar />
       
-      <div className="pt-32 pb-16 px-4 max-w-5xl mx-auto">
-        <div className="text-center mb-16 space-y-4">
-          <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] shadow-2xl backdrop-blur-xl mb-4">
-            <ShieldAlert className="w-12 h-12 text-cyan-400" strokeWidth={1.5} />
-          </div>
-          <h1 className="text-5xl md:text-7xl font-light tracking-tight text-white">
+      <div className="flex-1 flex flex-col justify-center px-4 max-w-5xl mx-auto w-full pt-20">
+        
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-light tracking-tight text-white mb-4">
             About <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">CrowdShield</span>
           </h1>
-          <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light leading-relaxed">
-            A state-of-the-art Multi-Source Early Warning System designed exclusively for the safety and security of citizens.
-          </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 mb-16">
@@ -45,14 +40,7 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-10 text-center space-y-8 flex flex-col items-center">
-          <h3 className="text-3xl font-semibold text-white">Ready to join the network?</h3>
-          <Link href="/#portals" className="bg-white text-black font-semibold py-4 px-8 rounded-full hover:scale-105 transition-transform duration-300 flex items-center gap-2">
-            Access Citizen Portal <ArrowRight className="w-5 h-5" />
-          </Link>
-        </div>
-
-        <div className="mt-24 pt-8 border-t border-zinc-800/50 text-center space-y-2">
+        <div className="text-center space-y-2 mt-auto pb-12">
           <p className="text-zinc-500 text-sm font-medium">
             &copy; {new Date().getFullYear()} CrowdShield Inc. All rights reserved.
           </p>
