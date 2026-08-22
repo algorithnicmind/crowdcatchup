@@ -67,6 +67,7 @@ class SQLAlchemyZoneRepository(BaseRepository[Zone]):
         model = self._to_model(entity)
         merged = await self._session.merge(model)
         await self._session.flush()
+        await self._session.commit()
         return self._to_entity(merged)
 
     async def delete(self, entity_id: str) -> bool:
@@ -77,6 +78,7 @@ class SQLAlchemyZoneRepository(BaseRepository[Zone]):
         if model:
             await self._session.delete(model)
             await self._session.flush()
+            await self._session.commit()
             return True
         return False
 
@@ -136,6 +138,7 @@ class SQLAlchemyGateRepository(BaseRepository[Gate]):
         model = self._to_model(entity)
         merged = await self._session.merge(model)
         await self._session.flush()
+        await self._session.commit()
         return self._to_entity(merged)
 
     async def delete(self, entity_id: str) -> bool:
@@ -146,6 +149,7 @@ class SQLAlchemyGateRepository(BaseRepository[Gate]):
         if model:
             await self._session.delete(model)
             await self._session.flush()
+            await self._session.commit()
             return True
         return False
 
@@ -199,6 +203,7 @@ class SQLAlchemyRouteRepository(BaseRepository[Route]):
         model = self._to_model(entity)
         merged = await self._session.merge(model)
         await self._session.flush()
+        await self._session.commit()
         return self._to_entity(merged)
 
     async def delete(self, entity_id: str) -> bool:
@@ -209,5 +214,6 @@ class SQLAlchemyRouteRepository(BaseRepository[Route]):
         if model:
             await self._session.delete(model)
             await self._session.flush()
+            await self._session.commit()
             return True
         return False

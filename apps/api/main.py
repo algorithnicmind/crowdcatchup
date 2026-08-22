@@ -31,6 +31,7 @@ from features.adapters.api.gps_telemetry_routes import router as gps_telemetry_r
 from features.adapters.api.cctv_routes import router as cctv_router
 from features.adapters.api.smart_gate_routes import router as smart_gate_router
 from features.announcements.api.routes import router as announcements_router
+from features.contact.api.routes import router as contact_router
 
 settings = get_settings()
 logging.basicConfig(level=logging.INFO if not settings.DEBUG else logging.DEBUG)
@@ -44,8 +45,9 @@ async def lifespan(app: FastAPI):
     await init_db()  # Creates PostgreSQL tables if they don't exist
 
     logger.info("Seeding database...")
-    from core.seed import seed_users
+    from core.seed import seed_users, seed_demo_event
     await seed_users()
+    await seed_demo_event()
 
     # Start background Redis subscriber for fusion engine
     subscriber_task = asyncio.create_task(start_redis_subscriber())
@@ -108,6 +110,7 @@ app.include_router(cctv_router, prefix="/api/v1")
 app.include_router(smart_gate_router, prefix="/api/v1")
 app.include_router(announcements_router, prefix="/api/v1")
 app.include_router(police_router)
+app.include_router(contact_router, prefix="/api/v1", tags=["Contact"])
 
 
 @app.get("/")

@@ -1,7 +1,5 @@
 "use server";
 
-import { Resend } from "resend";
-
 export async function sendContactEmail(formData: FormData) {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
@@ -11,42 +9,24 @@ export async function sendContactEmail(formData: FormData) {
     return { error: "All fields are required" };
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-
-  // Graceful fallback if Resend API key is not configured
-  if (!apiKey || apiKey.trim() === "" || apiKey.includes("your_resend_api_key")) {
-    console.log("[Contact Form Received - Dev Mode / No API Key]:", {
-      name,
-      email,
-      message,
-      timestamp: new Date().toISOString()
-    });
-    return { success: true };
-  }
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
   try {
-    const resend = new Resend(apiKey);
-    const { data, error } = await resend.emails.send({
-      from: "CrowdShield Contact <onboarding@resend.dev>",
-      to: "basudevmuna111@gmail.com",
-      subject: `New Message from ${name}`,
-      reply_to: email,
-      text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+    const res = await fetch(`${apiUrl}/api/v1/contact`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, message }),
     });
 
-    if (error) {
-      console.warn("[Resend Warning]:", error.message);
-      // If API key is invalid in development, still gracefully succeed after logging
-      if (error.message.toLowerCase().includes("api key") || error.message.toLowerCase().includes("invalid")) {
-        console.log("[Contact Form Fallback]: Logged message locally due to invalid key:", { name, email, message });
-        return { success: true };
-      }
-      return { error: error.message };
+    const data = await res.json();
+
+    if (!res.ok) {
+      return { error: data.detail || "Failed to send message" };
     }
 
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     console.error("[Contact Action Error]:", error);
-    return { success: true };
+    return { error: "Failed to connect to server" };
   }
 }

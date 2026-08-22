@@ -61,7 +61,10 @@ async def init_db():
             pass
     
     async with engine.begin() as conn:
+        from features.fusion.infrastructure.models.crowd_state_model import CrowdStateSnapshotModel
+        from features.contact.infrastructure.models.contact_model import ContactSubmissionModel
         await conn.run_sync(Base.metadata.create_all)
+
 
 
 async def close_db():
