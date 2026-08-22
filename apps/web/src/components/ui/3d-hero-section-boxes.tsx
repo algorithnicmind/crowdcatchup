@@ -75,7 +75,7 @@ function HeroContent() {
               </div>
             </Link>
 
-            <Link href="/register" className="bg-white text-black font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-2xl transition duration-300 hover:scale-105 flex items-center justify-center w-full sm:w-auto shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)]">
+            <Link href="/register?role=CITIZEN" className="bg-white text-black font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-2xl transition duration-300 hover:scale-105 flex items-center justify-center w-full sm:w-auto shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)]">
                Sign Up Free
             </Link>
         </div>
@@ -114,7 +114,7 @@ export function Navbar() {
           <Link href="/login?role=CITIZEN" className="text-gray-300 hover:text-white text-sm font-medium transition duration-300 hidden sm:block">
               Sign In
           </Link>
-          <Link href="/register" className="border border-white text-white px-5 py-2 rounded-full text-sm hover:bg-white hover:text-black transition duration-300">
+          <Link href="/register?role=CITIZEN" className="border border-white text-white px-5 py-2 rounded-full text-sm hover:bg-white hover:text-black transition duration-300">
               Sign Up
           </Link>
         </div>

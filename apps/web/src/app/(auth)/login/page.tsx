@@ -163,7 +163,7 @@ function LoginPageInner() {
             <div className="text-center pt-4 border-t border-zinc-800 mt-6">
               <p className="text-zinc-500 text-sm">
                 Don't have an account?{' '}
-                <Link href="/register" className="text-emerald-500 hover:text-emerald-400 transition-colors">
+                <Link href="/register?role=CITIZEN" className="text-emerald-500 hover:text-emerald-400 transition-colors">
                   Register here
                 </Link>
               </p>
