@@ -26,8 +26,16 @@ export default function proxy(req: NextRequest) {
     }
   }
 
-  // If user is logged in, prevent them from going to login/register
+  // If user is logged in, prevent them from going to login/register unless explicitly requesting a role change
   if (pathname === '/login' || pathname === '/register') {
+    const requestedRole = req.nextUrl.searchParams.get('role');
+    
+    // If they explicitly clicked a button for a specific role, let them see the login page
+    // so they can log in as that new role or create an account.
+    if (requestedRole) {
+      return NextResponse.next();
+    }
+
     const token = req.cookies.get('auth_token')?.value;
     const role = req.cookies.get('auth_role')?.value;
     
@@ -38,8 +46,13 @@ export default function proxy(req: NextRequest) {
         return NextResponse.redirect(new URL('/police', req.url));
       } else if (role === 'EVENT_OWNER') {
         return NextResponse.redirect(new URL('/owner', req.url));
+      } else if (role === 'AUTHORITY') {
+        return NextResponse.redirect(new URL('/authority', req.url));
       }
-      return NextResponse.redirect(new URL('/authority', req.url));
+      
+      // If we have a token but no role (legacy cookie), we should ideally clear it,
+      // but for safety, we'll just let them reach the login page to re-authenticate.
+      return NextResponse.next();
     }
   }
 

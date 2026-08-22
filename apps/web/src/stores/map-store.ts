@@ -86,6 +86,8 @@ interface MapState {
   toggleSidebar: () => void;
   searchResultPin: { lat: number, lng: number } | null;
   setSearchResultPin: (pin: { lat: number, lng: number } | null) => void;
+  citizenLocation: { lat: number; lng: number } | null;
+  setCitizenLocation: (loc: { lat: number; lng: number } | null) => void;
 }
 
 export const useMapStore = create<MapState>((set) => ({
@@ -173,5 +175,7 @@ export const useMapStore = create<MapState>((set) => ({
   setIsSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
   toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
   searchResultPin: null,
-  setSearchResultPin: (pin) => set({ searchResultPin: pin })
+  setSearchResultPin: (pin) => set({ searchResultPin: pin }),
+  citizenLocation: null,
+  setCitizenLocation: (loc) => set({ citizenLocation: loc })
 }));
