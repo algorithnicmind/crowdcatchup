@@ -39,32 +39,13 @@ export default function RegisterPage() {
       return;
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = "123456";
     setGeneratedOtp(otp);
-
-    try {
-      const res = await fetch('/api/auth/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp })
-      });
-      const data = await res.json();
-      
-      if (data.success) {
-        if (data.mocked) {
-          toast.warning(`OTP sent to console (mocked). Code: ${otp}`);
-        } else {
-          toast.success('Verification code sent to your email.');
-        }
-        setStep('OTP');
-      } else {
-        toast.error('Failed to send OTP email.');
-      }
-    } catch (err) {
-      toast.error('Network error while sending OTP.');
-    } finally {
-      setIsLoading(false);
-    }
+    
+    // DEMO MODE: Instantly proceed to OTP screen
+    toast.success('Demo Mode: Enter 123456 to verify.');
+    setStep('OTP');
+    setIsLoading(false);
   };
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
