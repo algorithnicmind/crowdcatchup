@@ -104,15 +104,16 @@ export function Navbar() {
 
           <div className="hidden md:flex items-center space-x-6">
             <Link href="/" className="text-gray-300 hover:text-white text-sm transition duration-150">Home</Link>
-            <Link href="/#portals" className="text-gray-300 hover:text-white text-sm transition duration-150">Portals</Link>
-            <Link href="/citizen" className="text-gray-300 hover:text-white text-sm transition duration-150">Dashboard</Link>
-            <Link href="/contact" className="text-gray-300 hover:text-white text-sm transition duration-150">Contact</Link>
+            <Link href="/#about" className="text-gray-300 hover:text-white text-sm transition duration-150">About</Link>
           </div>
         </div>
 
-        <div className="flex items-center">
-          <Link href="/#portals" className="border border-white text-white px-5 py-2 rounded-full text-sm hover:bg-white hover:text-black transition duration-300">
+        <div className="flex items-center space-x-4">
+          <Link href="/#portals" className="text-gray-300 hover:text-white text-sm font-medium transition duration-300 hidden sm:block">
               Sign In
+          </Link>
+          <Link href="/#portals" className="border border-white text-white px-5 py-2 rounded-full text-sm hover:bg-white hover:text-black transition duration-300">
+              Sign Up
           </Link>
         </div>
       </div>
