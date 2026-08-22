@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Save, Trash2, Route as RouteIcon, Edit3 } from 'lucide-react';
 import { useMapStore } from '@/stores/map-store';
 import { toast } from 'sonner';
+import { apiClient } from '@/lib/api-client';
 
 export function MapDrawingManager() {
   const map = useMap();
@@ -41,9 +42,8 @@ export function MapDrawingManager() {
           
           if (gpsSessionId) {
              try {
-               await fetch(`http://localhost:8000/api/v1/gps-recording/${gpsSessionId}/point`, {
+               await apiClient(`/gps-recording/${gpsSessionId}/point`, {
                  method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
                  body: JSON.stringify({ lat, lng })
                });
               } catch (e) {
@@ -90,9 +90,7 @@ export function MapDrawingManager() {
       setIsRecordingGps(false);
       if (gpsSessionId) {
         try {
-          const res = await fetch(`http://localhost:8000/api/v1/gps-recording/${gpsSessionId}/stop`, { method: 'POST' });
-          if (!res.ok) throw new Error("API failed");
-          const data = await res.json();
+          const data = await apiClient<any>(`/gps-recording/${gpsSessionId}/stop`, { method: 'POST' });
           console.log('[Owner] GPS Route saved:', data);
           toast.success("GPS Route saved to backend.");
         } catch(e) {
@@ -106,13 +104,10 @@ export function MapDrawingManager() {
     } else {
       setGpsPoints([]);
       try {
-        const res = await fetch(`http://localhost:8000/api/v1/gps-recording/start`, {
+        const data = await apiClient<any>(`/gps-recording/start`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ event_owner_id: 'owner-123' })
         });
-        if (!res.ok) throw new Error("API failed");
-        const data = await res.json();
         setGpsSessionId(data.session_id);
         setIsRecordingGps(true);
         toast.success("Recording GPS route...");

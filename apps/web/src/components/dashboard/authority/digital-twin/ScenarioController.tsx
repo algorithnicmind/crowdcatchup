@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { toast } from 'sonner';
+import { apiClient } from '@/lib/api-client';
 
 const SCENARIOS = [
   { id: 'normal', name: 'Normal Flow', desc: 'Baseline operations.' },
@@ -17,17 +18,12 @@ export function ScenarioController({ eventId }: { eventId: string }) {
   const triggerScenario = async (scenarioId: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/simulation/scenario`, {
+      await apiClient('/simulation/scenario', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ event_id: eventId, scenario_id: scenarioId })
       });
-      if (response.ok) {
-        setActiveScenario(scenarioId);
-        toast.success(`Scenario injected: ${scenarioId}`);
-      } else {
-        toast.error("Failed to trigger scenario on backend.");
-      }
+      setActiveScenario(scenarioId);
+      toast.success(`Scenario injected: ${scenarioId}`);
     } catch (err) {
       console.warn("Failed to trigger scenario (backend offline)", err);
       toast.error("Backend offline. Cannot inject scenario.");

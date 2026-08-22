@@ -7,6 +7,7 @@ import { Navigation, Users, ShieldAlert, HeartPulse, Search, MapPin, ArrowRight,
 import { Button } from '@/components/ui/button';
 import { useMapStore } from '@/stores/map-store';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
+import { apiClient } from '@/lib/api-client';
 
 // Haversine formula to calculate distance between two coordinates
 function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: number) {
@@ -112,9 +113,8 @@ export function SafeRoutePanel() {
         ]);
         setRouteFound(true);
       } else {
-        const res = await fetch(`http://localhost:8000/api/v1/navigation/route?start_zone=current&end_zone=${destination}`).catch(() => null);
-        if (res && res.ok) {
-          const data = await res.json();
+        const data = await apiClient<any>(`/navigation/route?start_zone=current&end_zone=${destination}`).catch(() => null);
+        if (data && data.coordinates) {
           useMapStore.getState().setRouteCoordinates(data.coordinates || []);
         } else {
           useMapStore.getState().setRouteCoordinates([
@@ -263,7 +263,7 @@ export function SafeRoutePanel() {
                     onClick={async () => {
                       const isDemoMode = true;
                       if (!isDemoMode) {
-                        await fetch("http://localhost:8000/api/v1/navigation/start", { method: 'POST' }).catch(()=>null);
+                        await apiClient('/navigation/start', { method: 'POST' }).catch(() => null);
                       }
                       setIsNavigating(true);
                       setNavInstruction(`Head towards ${destination}`);

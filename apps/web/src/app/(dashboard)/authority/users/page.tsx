@@ -41,7 +41,8 @@ export default function UserManagementPage() {
 
   const copyCredentials = () => {
     if (!generatedAccount) return;
-    const text = `Role: ${generatedAccount.role}\nID: ${generatedAccount.generatedId}\nPassword: ${generatedAccount.password}\nLogin at: http://localhost:3000/login`;
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://localhost:3000';
+    const text = `Role: ${generatedAccount.role}\nID: ${generatedAccount.generatedId}\nPassword: ${generatedAccount.password}\nLogin at: ${origin}/login`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);

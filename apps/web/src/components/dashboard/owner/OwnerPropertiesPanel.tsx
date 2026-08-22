@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { apiClient } from '@/lib/api-client';
 
 export function OwnerPropertiesPanel() {
   const draftZone = useEventConfigStore(state => state.draftZone);
@@ -56,13 +57,10 @@ export function OwnerPropertiesPanel() {
     };
 
     try {
-      const res = await fetch('http://localhost:8000/api/v1/events/EVT-001/zones', {
+      await apiClient('/events/EVT-001/zones', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      
-      if (!res.ok) throw new Error("API failed");
       
       toast.success("Zone saved to backend successfully.");
       setDraftZone(null); // Clear draft

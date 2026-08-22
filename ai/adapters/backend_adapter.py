@@ -1,3 +1,4 @@
+import os
 import requests
 import json
 import logging
@@ -10,8 +11,8 @@ class BackendAdapter:
     """
     Adapter to format YOLOv8 output into StandardObservations and POST to the FastAPI backend.
     """
-    def __init__(self, backend_url: str = "http://localhost:8000/api/v1/ingest"):
-        self.backend_url = backend_url
+    def __init__(self, backend_url: Optional[str] = None):
+        self.backend_url = backend_url or os.getenv("BACKEND_INGEST_URL") or os.getenv("API_URL") or "https://localhost:8000/api/v1/ingest"
         # Use a session for connection pooling and better performance in high-frequency POSTing
         self.session = requests.Session()
         self.session.headers.update({"Content-Type": "application/json"})

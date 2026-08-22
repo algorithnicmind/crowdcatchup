@@ -23,6 +23,7 @@ import {
 import Image from "next/image";
 import { useAuthStore } from '@/stores/auth-store';
 import { toast } from 'sonner';
+import { apiClient } from '@/lib/api-client';
 
 interface PoliceSettingsModalProps {
   open: boolean;
@@ -54,9 +55,7 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
       const fetchSettings = async () => {
         setFetching(true);
         try {
-          const res = await fetch(`http://localhost:8000/api/v1/officers/settings/${email}`);
-          if (!res.ok) throw new Error("API not ready");
-          const data = await res.json();
+          const data = await apiClient<any>(`/officers/settings/${email}`);
           if (active && data && data.settings) {
             setCallsign(data.settings.callsign || "Bravo-Actual");
             setAssignedZone(data.settings.assigned_zone || "Sector 7G (Downtown)");
@@ -84,9 +83,8 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
     setLoading(true);
     
     try {
-      const res = await fetch(`http://localhost:8000/api/v1/officers/settings/${email}`, {
+      await apiClient(`/officers/settings/${email}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           callsign,
           assigned_zone: assignedZone,

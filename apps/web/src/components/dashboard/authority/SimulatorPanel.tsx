@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { apiClient } from '@/lib/api-client';
 
 const SCENARIOS = [
   { id: 'normal', name: '🟢 Normal Flow', desc: 'Standard crowd movement' },
@@ -19,20 +20,13 @@ export function SimulatorPanel() {
     setLoading(true);
     setActiveScenario(scenarioId);
     try {
-      const res = await fetch('http://localhost:8000/api/v1/simulation/scenario', {
+      await apiClient('/simulation/scenario', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           event_id: 'EVT-001',
           scenario_id: scenarioId
         }),
       });
-      
-      if (!res.ok) {
-        console.error('Failed to trigger scenario');
-      }
     } catch (err) {
       console.error(err);
     } finally {

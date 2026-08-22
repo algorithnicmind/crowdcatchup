@@ -60,6 +60,11 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
+
+if settings.ENFORCE_HTTPS:
+    app.add_middleware(HTTPSRedirectMiddleware)
+
 # Setup CORS for the Next.js frontend
 app.add_middleware(
     CORSMiddleware,
