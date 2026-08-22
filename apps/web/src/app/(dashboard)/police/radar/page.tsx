@@ -49,16 +49,16 @@ export default function PoliceRadarPage() {
             
             <div className="flex flex-col gap-3">
               {[
-                { callsign: 'OFFICER-2', status: 'Available', distance: '120m', color: 'emerald' },
-                { callsign: 'OFFICER-7', status: 'Available', distance: '340m', color: 'emerald' },
-                { callsign: 'OFFICER-9', status: 'Engaged', distance: '550m', color: 'yellow' },
+                { callsign: 'OFFICER-2', status: 'Available', distance: '120m', active: true },
+                { callsign: 'OFFICER-7', status: 'Available', distance: '340m', active: true },
+                { callsign: 'OFFICER-9', status: 'Engaged', distance: '550m', active: false },
               ].map(unit => (
                 <div key={unit.callsign} className="flex items-center justify-between p-3 rounded-lg bg-[#0A111E] border border-[#1a253a]">
                   <div>
                     <div className="text-white font-bold text-xs">{unit.callsign}</div>
                     <div className="text-zinc-500 text-[10px] mt-0.5">{unit.distance} away</div>
                   </div>
-                  <div className={`text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-${unit.color}-500/10 text-${unit.color}-500`}>
+                  <div className={`text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded ${unit.active ? 'bg-emerald-500/10 text-emerald-500' : 'bg-yellow-500/10 text-yellow-500'}`}>
                     {unit.status}
                   </div>
                 </div>

@@ -16,7 +16,7 @@ export default function PoliceMapPage() {
       </div>
       
       {/* Map Component */}
-      <GoogleEventMap />
+      <GoogleEventMap role="police" />
     </div>
   );
 }

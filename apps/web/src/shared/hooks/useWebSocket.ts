@@ -53,8 +53,8 @@ export function useWebSocket(eventId: string) {
       const wsBase = getWsBaseUrl();
       const wsUrl = `${wsBase}?token=${token}&event_id=${eventId}&role=${role}&user_id=${userId}`;
       
-      // MOCK DEMO MODE: Bypass real WebSocket to prevent ERR_CONNECTION_REFUSED console spam
-      const isDemoMode = true;
+      // Real WebSocket connection to backend
+      const isDemoMode = false;
       if (isDemoMode) {
         console.log(`[WS] DEMO MODE: Mocking connection to event ${eventId} as ${role}`);
         ws.current = {
@@ -108,6 +108,10 @@ export function useWebSocket(eventId: string) {
         } else {
           console.warn('[WS] Max reconnection attempts reached. Please ensure the Python backend is running on port 8000.');
         }
+      };
+
+      ws.current.onerror = (err) => {
+        console.warn('[WS] Connection error. Backend may be offline.');
       };
     } catch (error) {
       console.error("[WS] Failed to connect", error);

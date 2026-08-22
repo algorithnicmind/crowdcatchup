@@ -11,4 +11,4 @@ class ContactSubmissionModel(Base):
     email = Column(String, nullable=False, index=True)
     message = Column(Text, nullable=False)
     status = Column(String, default="NEW", nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)

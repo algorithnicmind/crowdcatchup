@@ -9,75 +9,83 @@ This guide will help you record a professional, high-impact demonstration video 
 
 ---
 
-## 🎭 The 4 User Roles & Their Dashboards
+## 🔐 Credentials Checklist
+*All passwords are exactly:* `Password123!`
 
-Before recording, understand that CrowdShield is a **multi-tenant** platform. You will want to show all four perspectives to prove how interconnected the system is.
+| Role | Email to Login | What to highlight |
+|---|---|---|
+| **Authority** | `admin@test.com` | High-level heatmaps, risk metrics, AI recommendations |
+| **Police** | `police@test.com` | Incident resolution, task assignment, zone lockdown |
+| **Event Owner** | `owner@test.com` | Zone drawing, geofencing, resource allocation |
+| **Citizen** | `citizen@test.com` | GPS tracking, safe routing, SOS trigger |
 
-### 1. 👑 Authority Command Center (`/authority`)
-*   **The Brain:** This is the central hub for event commanders.
-*   **Key Features to Show:**
-    *   **Live Simulator Controls:** This panel lets you inject fake data (like a "Crowd Surge") to test the system.
-    *   **AI Recommendations:** When a risk is detected, the AI generates a plan. Show how it explains *why* it made the decision (Source Agreement, Confidence %).
-    *   **CCTV & Source Health:** Show the panels that monitor the health of the hardware.
-
-### 2. 👮 Police / Security Staff (`/police`)
-*   **The Muscle:** The on-the-ground responders.
-*   **Key Features to Show:**
-    *   **Task Card (Priority Alert):** When the Authority approves an AI plan, it instantly appears here telling the police exactly where to go.
-    *   **Live Telemetry:** Shows that the officer's GPS is syncing with the command center.
-
-### 3. 🧍 Citizen / Attendee (`/citizen`)
-*   **The Public:** This is the PWA (Progressive Web App) interface for people attending the event.
-*   **Key Features to Show:**
-    *   **Emergency SOS:** The big red button that alerts police.
-    *   **Safe Route Planner:** A navigation system that calculates routes *around* congested areas.
-    *   **Emergency Broadcasts:** Real-time push notifications when danger occurs.
-
-### 4. 🏗️ Event Owner / Organizer (`/owner`)
-*   **The Architect:** The setup phase.
-*   **Key Features to Show:**
-    *   **Properties Panel:** How an organizer clicks on the map to define zones, set max capacities, and define risk thresholds before the event even starts.
+*(Note: There are also `citizen2@test.com` and `citizen3@test.com` if you need to show multiple phones.)*
 
 ---
 
 ## 🎬 Step-by-Step Demo Script (The "Golden Flow")
 
-To make a killer demo video, we recommend following this exact sequence. **Pro Tip:** Open 3 or 4 different browser windows (or tabs) side-by-side, each logged into a different role, so the judges can see the real-time syncing!
+To make a killer demo video, we recommend following this exact sequence. **Pro Tip:** Open 4 different browser windows (or tabs) side-by-side, each logged into a different role, so the judges can see the real-time syncing!
 
-### **Step 1: The Setup (Owner)**
-1.  Open the **Owner Dashboard**.
+### **Step 1: The Offline Fallback (Highlighting Resilience)**
+1. **Explain the feature:** Start by explaining that CrowdShield is designed for extreme conditions where network connectivity might drop.
+2. **Demonstrate Login Fallback:** Go to the login page as `citizen@test.com`. *Voiceover:* "If the backend servers go down during a crowd crush, our system gracefully degrades. Watch as I log in—even if the backend is unreachable, the system recognizes demo accounts and allows local fallback access."
+3. **Show GPS Fallback:** When logged into the Citizen Dashboard, if the user denies GPS or if it times out, point out how the system automatically defaults to a safe known location instead of crashing.
+
+### **Step 2: The Citizen Experience (Safe Routing & UI)**
+1.  **Show the Map & Badges:** Point out the "YOUR AREA IS SAFE" badge and the blinking "GPS ACTIVE" indicator on the Citizen dashboard.
+2.  **Trigger a Safe Route:** 
+    - Open the Route Planner (bottom nav).
+    - Use the **Google Places Search** (type a location).
+    - Click "Find Safe Route".
+3.  **Highlight the AI:** Point out the warning message: *"Avoiding congested areas. Safe path generated based on real-time crowd data."* Show the calculated distance and time.
+
+### **Step 3: The Event Owner (Setup & Geofencing)**
+1.  Switch to the **Owner Dashboard** (`owner@test.com`).
 2.  *Voiceover:* "Before the event begins, organizers use CrowdShield to map out the venue."
-3.  Click on a zone on the map, and show the **Properties Panel** on the right. 
-4.  Show how you can define the "Max Capacity" and "Risk Threshold". (Click the X to close it when done).
+3.  Show the drawing tools on the left side (Polygon tool). Mention how organizers can digitally map out zones (Gate A, Food Court) before the event starts to set max capacities.
+4.  Show the "Event Status" card showing Peak Density and Flow Conflicts.
 
-### **Step 2: The Incident (Authority)**
-1.  Switch to the **Authority Dashboard**.
-2.  *Voiceover:* "During the event, the Authority dashboard monitors everything. Let's see what happens when our AI detects a sudden crowd surge using CCTV cameras."
-3.  Open the **Live Simulator Controls** and click **"🚨 Extreme Crowd Surge (Zone B)"**.
-4.  *Wait a few seconds.*
+### **Step 4: The Authority Dashboard (The "AI Brain")**
+1.  Switch to the **Authority Dashboard** (`admin@test.com`).
+2.  **The Heatmap:** Show the dynamic SVG heatmap overlaying the venue. *Voiceover:* "This heat map isn't just static data; it's fed by our AI pipeline running YOLOv8 on CCTV feeds and XGBoost for risk scoring, combined with live citizen GPS telemetry."
+3.  **Trigger an AI Recommendation:**
+    - Click the **Red Shield (!)** button on the right side of the map to simulate the AI detecting a sudden critical density spike.
+    - A recommendation panel will pop up.
+    - *Voiceover:* "Instantly, our AI processes the data and generates an Action Plan. Notice the Explainable AI—it tells us *why* it made this choice with a 91% prediction confidence."
+    - Click the red **"Approve Plan"** button. Explain the *Ripple Effect*: "Approving this instantly dispatches police and reroutes citizens."
 
-### **Step 3: AI Decision Support (Authority)**
-1.  The **AI Recommendation** panel will pop up automatically.
-2.  *Voiceover:* "Instantly, our Fusion Engine processes the data and generates an Action Plan. Notice the Explainable AI—it tells us *why* it's recommending this (e.g., 88% prediction confidence)."
-3.  Click the red **"Approve Plan"** button.
-
-### **Step 4: The Response (Police & Citizen)**
-1.  **Immediately switch to the Police Dashboard.**
+### **Step 5: The Response (Police Dashboard)**
+1.  **Immediately switch to the Police Dashboard** (`police@test.com`).
 2.  *Voiceover:* "The moment the plan is approved, ground units receive a Priority Alert."
-3.  Show the orange **Task Card** that just popped up, instructing them to navigate to the zone.
-4.  **Immediately switch to the Citizen Dashboard.**
-5.  *Voiceover:* "Simultaneously, citizens in the danger zone receive an Emergency Broadcast."
-6.  Show the Red Warning Toast at the top.
-7.  Open the **Plan Safe Journey** panel, type in a destination, and click "Find Safe Route". 
-8.  *Voiceover:* "Citizens can use the app to dynamically route *away* from the congestion."
+3.  Show the orange **Task Card** that just popped up on the left side, instructing them to navigate to the danger zone.
+4.  Click **Mark In Progress** to show real-time task management.
 
-### **Step 5: Bidirectional SOS (Citizen)**
-1.  While still on the Citizen dashboard, click the big red **SOS (Shield)** button.
-2.  *Voiceover:* "If a citizen is trapped, they can trigger an SOS, which instantly pings their exact GPS coordinates back to the Command Center."
+### **Step 6: The Grand Finale (Bi-directional SOS)**
+1.  Go back to the **Citizen Dashboard** (`citizen@test.com`).
+2.  Click the big red **SOS (Shield)** button in the bottom left.
+3.  *Voiceover:* "If a citizen is trapped, they can trigger an SOS, which instantly pings their exact GPS coordinates back to the Command Center."
+4.  Switch back to the **Police Dashboard** to show the emergency alert notification appearing instantly via WebSockets.
+5.  *Voiceover:* "Everything runs on real-time WebSockets powered by Redis, ensuring zero-latency communication when seconds matter most."
 
-### **Step 6: Wrap up (UI/UX)**
-1.  Spend the last 15 seconds showing off the smooth UI. Open the **CCTV Grid** and close it using the 'X' button. Open the **Data Source Health** panel and close it. 
-2.  *Voiceover:* "Everything is built as a PWA, meaning it installs natively on phones and works flawlessly in high-stress environments with real-time WebSockets."
+---
+
+## 🚀 Innovations & Talking Points for Judges
+
+While presenting, you should actively mention these architectural choices and real-world adaptations:
+
+### 1. The Data Fusion Simulator (Real World vs. Demo)
+*   **The Problem:** In a real-world scenario, data comes from fragmented sources (CCTV cameras, Thermal Imaging, Police Drones, Smart Turnstile Gates, and Telecom cell tower loads).
+*   **Our Solution (Data Fusion):** CrowdShield normalizes all these inputs into a single "Live Crowd State".
+*   **For the Demo:** Point out that because you don't have physical access to a stadium's CCTV, you built a **Simulator** into the Authority Dashboard. This simulator programmatically generates realistic density numbers at specific time intervals for different zones, proving that the system can handle multi-source data ingestion at scale.
+
+### 2. Open Spaces vs. Closed Arenas (The Stadium Case)
+*   Our primary demo might show an open event (like Kumbh Mela or Bali Yatra) where people move freely, but CrowdShield adapts perfectly to **Closed Spaces like Stadiums**.
+*   **If a judge asks about Stadiums, explain how the 4 roles adapt:**
+    *   **Citizen:** Instead of just navigating open paths, they are routed to their specific Section/Seat avoiding crowded stairwells. During evacuation, the shortest safe exit is pushed to their phone.
+    *   **Event Owner (Setup):** They map out Entry Gates, Exit Gates, Restrooms, and VIP Cantinas, setting hard capacity limits for each "block".
+    *   **Authority (Monitor):** They watch the flow *between* blocks (e.g., when the match ends, everyone rushes the exit). They can remotely instruct smart gates to hold or open to pace the crowd.
+    *   **Police (Action):** Instead of wandering, they are dispatched to specific gate choke-points to manually control flow if the automated system detects a crush risk.
 
 ---
 
