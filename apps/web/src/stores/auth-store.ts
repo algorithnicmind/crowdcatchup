@@ -32,6 +32,7 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       setAuth: (user, role, token) => {
         Cookies.set('auth_token', token, { expires: 7 }); // Set cookie for middleware
+        Cookies.set('auth_role', role, { expires: 7 }); // Save role for middleware
         set({ user, role, token, isAuthenticated: true });
       },
       setRole: (role) => set({ role }),
@@ -40,6 +41,7 @@ export const useAuthStore = create<AuthState>()(
       })),
       logout: () => {
         Cookies.remove('auth_token');
+        Cookies.remove('auth_role');
         set({ user: null, role: null, token: null, isAuthenticated: false });
       },
     }),

@@ -29,8 +29,16 @@ export default function proxy(req: NextRequest) {
   // If user is logged in, prevent them from going to login/register
   if (pathname === '/login' || pathname === '/register') {
     const token = req.cookies.get('auth_token')?.value;
+    const role = req.cookies.get('auth_role')?.value;
+    
     if (token) {
-      // Decode or check role in a real app, here we just redirect to dashboard root
+      if (role === 'CITIZEN') {
+        return NextResponse.redirect(new URL('/citizen', req.url));
+      } else if (role === 'POLICE') {
+        return NextResponse.redirect(new URL('/police', req.url));
+      } else if (role === 'EVENT_OWNER') {
+        return NextResponse.redirect(new URL('/owner', req.url));
+      }
       return NextResponse.redirect(new URL('/authority', req.url));
     }
   }
