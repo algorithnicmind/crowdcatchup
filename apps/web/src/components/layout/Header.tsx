@@ -66,11 +66,9 @@ export function Header() {
       <div className="flex items-center gap-4">
         {/* Notifications Dropdown */}
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative text-zinc-400 hover:text-white cursor-pointer outline-none">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
-            </Button>
+          <DropdownMenuTrigger className="relative h-9 w-9 inline-flex items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-800 hover:text-white cursor-pointer outline-none transition-colors border-0 bg-transparent">
+            <Bell className="h-5 w-5" />
+            <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-80 bg-zinc-950 border-zinc-800 text-zinc-300 p-0" align="end">
             <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
