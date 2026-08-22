@@ -76,7 +76,7 @@ async def process_observation_pipeline(obs: StandardObservation):
     # 4. Broadcast Crowd State
     await ws_manager.broadcast_to_event(
         event_id=crowd_state.event_id,
-        message={"type": "CROWD_STATE_UPDATE", "data": crowd_state.model_dump()}
+        message=        {"type": "CROWD_STATE_UPDATE", "data": crowd_state.model_dump(mode='json')}
     )
 
 async def start_redis_subscriber():

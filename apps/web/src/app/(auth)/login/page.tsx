@@ -48,7 +48,15 @@ function LoginPageInner() {
       });
 
       // 2. Fetch User Profile
-      const meResponse = await apiClient<any>('/auth/me', {
+      interface UserProfileResponse {
+        id: string;
+        full_name: string;
+        email: string;
+        phone_number: string;
+        role: string;
+      }
+      
+      const meResponse = await apiClient<UserProfileResponse>('/auth/me', {
         headers: {
           'Authorization': `Bearer ${data.access_token}`
         }

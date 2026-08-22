@@ -43,6 +43,10 @@ async def lifespan(app: FastAPI):
     logger.info("Initializing database...")
     await init_db()  # Creates PostgreSQL tables if they don't exist
 
+    logger.info("Seeding database...")
+    from core.seed import seed_users
+    await seed_users()
+
     # Start background Redis subscriber for fusion engine
     subscriber_task = asyncio.create_task(start_redis_subscriber())
     yield

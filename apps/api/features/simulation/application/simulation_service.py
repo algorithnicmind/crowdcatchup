@@ -139,7 +139,7 @@ class SimulationService:
                             value=current_val,
                             confidence=0.95,
                             latency_ms=100,
-                            health="SIMULATED"
+                            health="ONLINE"
                         ))
                 
                 # Publish to Redis so Fusion Engine picks it up
