@@ -36,6 +36,8 @@ export function SafeRoutePanel() {
   useEffect(() => {
     let unsubNav: any;
     let unsubReroute: any;
+    let mockInterval: any;
+
     if (isNavigating) {
       unsubNav = subscribe('NAVIGATION_UPDATE', (wsEvent: any) => {
         if (wsEvent.payload) {
@@ -51,10 +53,31 @@ export function SafeRoutePanel() {
           setNavInstruction('Recalculating route...');
         }
       });
+
+      // MOCK DEMO LOGIC: Simulate citizen walking if backend is offline
+      mockInterval = setInterval(() => {
+        setDistanceRemaining(prev => {
+          if (prev <= 5) {
+            setNavInstruction("You have safely arrived!");
+            clearInterval(mockInterval);
+            return 0;
+          }
+          if (prev === 250) setNavInstruction("Turn right at Sector B intersection");
+          if (prev === 100) setNavInstruction("Approaching Gate G5...");
+          
+          return prev - 5;
+        });
+      }, 1000);
+
+    } else {
+      setDistanceRemaining(450);
+      setNavInstruction('Head North towards Gate G5');
     }
+
     return () => {
       if (unsubNav) unsubNav();
       if (unsubReroute) unsubReroute();
+      if (mockInterval) clearInterval(mockInterval);
     };
   }, [isNavigating, subscribe]);
 
