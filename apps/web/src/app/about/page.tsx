@@ -18,26 +18,16 @@ export default function AboutPage() {
           </h1>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
-          <div className="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-8 space-y-6 hover:bg-white/[0.03] transition-colors">
-            <div className="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
-              <Users className="w-6 h-6 text-cyan-400" />
-            </div>
-            <h2 className="text-2xl font-bold text-white">Citizen First</h2>
-            <p className="text-zinc-400 leading-relaxed text-lg">
-              During large-scale events and mass gatherings, the individual is often the most vulnerable. CrowdShield empowers citizens with real-time crowd density tracking, dynamic safe routing, and an instant emergency SOS network to prevent crowd crushes before they happen.
-            </p>
-          </div>
-
-          <div className="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-8 space-y-6 hover:bg-white/[0.03] transition-colors">
-            <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-              <Shield className="w-6 h-6 text-emerald-400" />
-            </div>
-            <h2 className="text-2xl font-bold text-white">AI-Powered Security</h2>
-            <p className="text-zinc-400 leading-relaxed text-lg">
-              By utilizing advanced XGBoost risk-scoring algorithms and YOLOv8 computer vision integrations, CrowdShield provides a direct line to authorities, guaranteeing that tactical response teams are deployed precisely where they are needed most.
-            </p>
-          </div>
+        <div className="max-w-3xl mx-auto space-y-8 mt-12 text-zinc-300 text-lg leading-relaxed font-light">
+          <p>
+            CrowdShield is a state-of-the-art Multi-Source Early Warning System designed exclusively for the safety and security of citizens during large-scale events and mass gatherings.
+          </p>
+          <p>
+            During massive gatherings, the individual is often the most vulnerable. We recognized that static maps and traditional event management tools fail to account for temporary crowd crushes and sudden bottlenecks. CrowdShield bridges this gap by actively monitoring venues in real-time.
+          </p>
+          <p>
+            By utilizing advanced AI algorithms like XGBoost for risk-scoring and YOLOv8 for crowd density tracking, CrowdShield empowers individuals with dynamic safe routing, instant emergency SOS alerts, and a direct line to authorities to prevent crowd crushes before they ever happen.
+          </p>
         </div>
 
         <div className="text-center space-y-2 mt-auto pb-12">
