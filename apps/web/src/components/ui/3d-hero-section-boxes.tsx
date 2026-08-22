@@ -89,28 +89,31 @@ function HeroContent() {
   );
 }
 
-function Navbar() {
+import { ShieldAlert } from 'lucide-react';
+import Link from 'next/link';
+
+export function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-20" style={{ backgroundColor: 'rgba(13, 13, 24, 0.3)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', borderRadius: '0 0 0.75rem 0.75rem' }}>
       <div className="container mx-auto px-4 py-4 md:px-6 lg:px-8 flex items-center justify-between">
         <div className="flex items-center space-x-6 lg:space-x-8">
-          <div className="text-white flex items-center justify-center" style={{ width: '32px', height: '32px' }}>
-             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" clipRule="evenodd" d="M16 32C24.8366 32 32 24.8366 32 16C32 7.16344 24.8366 0 16 0C7.16344 0 0 7.16344 0 16C0 24.8366 7.16344 32 16 32ZM12.4306 9.70695C12.742 9.33317 13.2633 9.30058 13.6052 9.62118L19.1798 14.8165C19.4894 15.1054 19.4894 15.5841 19.1798 15.873L13.6052 21.0683C13.2633 21.3889 12.742 21.3563 12.4306 19.9991V9.70695Z" fill="currentColor" />
-            </svg>
-          </div>
+          <Link href="/" className="text-white flex items-center space-x-2 group">
+            <ShieldAlert className="w-8 h-8 text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
+            <span className="font-bold text-lg tracking-wide hidden sm:block">CrowdShield</span>
+          </Link>
 
           <div className="hidden md:flex items-center space-x-6">
-            <a href="#" className="text-gray-300 hover:text-white text-sm transition duration-150">Home</a>
-            <a href="#portals" className="text-gray-300 hover:text-white text-sm transition duration-150">Portals</a>
-            <a href="#" className="text-gray-300 hover:text-white text-sm transition duration-150">Dashboard</a>
+            <Link href="/" className="text-gray-300 hover:text-white text-sm transition duration-150">Home</Link>
+            <Link href="/#portals" className="text-gray-300 hover:text-white text-sm transition duration-150">Portals</Link>
+            <Link href="/citizen" className="text-gray-300 hover:text-white text-sm transition duration-150">Dashboard</Link>
+            <Link href="/contact" className="text-gray-300 hover:text-white text-sm transition duration-150">Contact</Link>
           </div>
         </div>
 
         <div className="flex items-center">
-          <a href="#portals" className="border border-white text-white px-5 py-2 rounded-full text-sm hover:bg-white hover:text-black transition duration-300">
+          <Link href="/#portals" className="border border-white text-white px-5 py-2 rounded-full text-sm hover:bg-white hover:text-black transition duration-300">
               Sign In
-          </a>
+          </Link>
         </div>
       </div>
     </nav>
