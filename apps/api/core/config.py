@@ -7,6 +7,10 @@ from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 
+import os
+
+ENV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
@@ -16,7 +20,7 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # --- Database (Neon DB - Cloud PostgreSQL) ---
-    DATABASE_URL: str = "postgresql+asyncpg://<neon_user>:<neon_password>@<neon_host>/<neon_db>?sslmode=require"
+    DATABASE_URL: str = "postgresql+asyncpg://<neon_user>:<neon_password>@<neon_host>/<neon_db>?ssl=require"
 
     # --- Redis (in-memory fallback if not configured) ---
     REDIS_URL: str = ""  # Empty = use in-memory fallback
@@ -29,12 +33,11 @@ class Settings(BaseSettings):
     # --- CORS ---
     CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:3001"]
 
-
-
     model_config = {
-        "env_file": ".env",
+        "env_file": (ENV_FILE_PATH, ".env"),
         "env_file_encoding": "utf-8",
         "case_sensitive": True,
+        "extra": "ignore"
     }
 
 
