@@ -58,7 +58,17 @@ export async function apiClient<T>(
     const response = await fetch(url, config);
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || errorData.message || `API Request Failed with status ${response.status}`);
+      let errorMessage = `API Request Failed with status ${response.status}`;
+      if (errorData.detail) {
+        if (Array.isArray(errorData.detail)) {
+          errorMessage = errorData.detail.map((e: any) => e.msg).join(', ');
+        } else if (typeof errorData.detail === 'string') {
+          errorMessage = errorData.detail;
+        }
+      } else if (errorData.message) {
+        errorMessage = errorData.message;
+      }
+      throw new Error(errorMessage);
     }
     return response.json();
   } catch (error) {
