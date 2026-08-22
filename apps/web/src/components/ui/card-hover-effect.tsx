@@ -12,6 +12,7 @@ export const HoverEffect = ({
     title: string;
     description: string;
     link: string;
+    actions?: { label: string; href: string }[];
   }[];
   className?: string;
 }) => {
@@ -25,8 +26,7 @@ export const HoverEffect = ({
       )}
     >
       {items.map((item, idx) => (
-        <Link
-          href={item?.link}
+        <div
           key={item?.link}
           className="relative group block p-2 h-full w-full"
           onMouseEnter={() => setHoveredIndex(idx)}
@@ -52,8 +52,21 @@ export const HoverEffect = ({
           <Card>
             <CardTitle>{item.title}</CardTitle>
             <CardDescription>{item.description}</CardDescription>
+            {item.actions && item.actions.length > 0 && (
+              <div className="mt-8 flex flex-wrap gap-3">
+                {item.actions.map((action, i) => (
+                  <Link 
+                    key={i} 
+                    href={action.href}
+                    className="text-xs bg-zinc-900 border border-zinc-700 hover:bg-zinc-800 text-white px-4 py-2 rounded-lg transition-colors font-semibold"
+                  >
+                    {action.label}
+                  </Link>
+                ))}
+              </div>
+            )}
           </Card>
-        </Link>
+        </div>
       ))}
     </div>
   );
