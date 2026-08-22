@@ -14,17 +14,15 @@ export function CctvGrid() {
   const totalCount = Math.max(sourceHealth.length, 9); // assume 9 for demo
 
   return (
-    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 z-[1000] w-full max-w-5xl pointer-events-none">
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] w-full max-w-5xl pointer-events-none">
       <div className="flex justify-center mb-2 pointer-events-auto">
         <Button 
-          variant="outline" 
-          size="sm" 
           onClick={() => setIsOpen(!isOpen)}
-          className="bg-black/80 backdrop-blur-md border-white/10 text-white rounded-t-xl rounded-b-none border-b-0 hover:bg-white/10 hover:text-white"
+          className="bg-emerald-600 hover:bg-emerald-500 text-white border-2 border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.4)] px-6 py-6 rounded-full font-bold uppercase tracking-widest transition-all hover:scale-105"
         >
-          <Video className="w-4 h-4 mr-2" />
+          <Video className="w-5 h-5 mr-3" />
           Live CCTV Feeds
-          {isOpen ? <ChevronDown className="w-4 h-4 ml-2" /> : <ChevronUp className="w-4 h-4 ml-2" />}
+          {isOpen ? <ChevronDown className="w-5 h-5 ml-3" /> : <ChevronUp className="w-5 h-5 ml-3" />}
         </Button>
       </div>
 
@@ -67,11 +65,11 @@ export function CctvGrid() {
                     )}
 
                     {/* Simulation Trigger Button */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 backdrop-blur-sm">
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
                       <Button 
                         size="sm" 
                         variant="destructive" 
-                        className="scale-90 hover:scale-100 transition-transform"
+                        className="shadow-[0_0_15px_rgba(239,68,68,0.6)] font-bold tracking-wider"
                         onClick={async () => {
                           try {
                             const { apiClient } = await import('@/lib/api-client');
