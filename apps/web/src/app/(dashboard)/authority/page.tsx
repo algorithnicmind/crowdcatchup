@@ -21,23 +21,23 @@ export default function AuthorityDashboard() {
 
   useEffect(() => {
     const unsubCrowd = subscribe('CROWD_STATE_UPDATE', (payload: unknown) => {
-      const data = payload as { state?: CrowdState };
-      if (data.state) updateCrowdState(data.state.zone_id, data.state);
+      const state = payload as CrowdState;
+      if (state.zone_id) updateCrowdState(state.zone_id, state);
     });
 
     const unsubRisk = subscribe('RISK_UPDATE', (payload: unknown) => {
-      const data = payload as { risk?: RiskUpdate };
-      if (data.risk) updateRisk(data.risk.zone_id, data.risk);
+      const risk = payload as RiskUpdate;
+      if (risk.zone_id) updateRisk(risk.zone_id, risk);
     });
 
     const unsubRec = subscribe('RECOMMENDATION_ALERT', (payload: unknown) => {
-      const data = payload as { recommendation?: ActionPlan };
-      if (data.recommendation) addRecommendation(data.recommendation);
+      const recommendation = payload as ActionPlan;
+      if (recommendation.recommendation_id) addRecommendation(recommendation);
     });
     
     const unsubHealth = subscribe('SOURCE_HEALTH', (payload: unknown) => {
-      const data = payload as { health?: SourceHealth };
-      if (data.health) updateSourceHealth(data.health);
+      const health = payload as SourceHealth;
+      if (health.source_id) updateSourceHealth(health);
     });
 
     return () => {

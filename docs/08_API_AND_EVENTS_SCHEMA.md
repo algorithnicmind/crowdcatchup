@@ -120,6 +120,8 @@ interface SourceHealth {
 
 ## 4. Real-Time PWA WebSockets (FastAPI -> Next.js)
 
+> **Important Implementation Detail:** All WebSocket payloads emitted by the backend use the `type` field at the root level to designate the event type (e.g., `{"type": "CROWD_STATE_UPDATE", "data": ...}`). Frontend clients (like `ws-client.ts`) must extract the event name using `payload.type` (or `payload.event` for fallback compatibility).
+
 ### 4.1 `RISK_UPDATE` (To Authority)
 ```typescript
 interface RiskUpdateEvent {

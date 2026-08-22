@@ -33,7 +33,8 @@ class WebSocketClient {
     this.ws.onmessage = (event) => {
       try {
         const payload = JSON.parse(event.data);
-        const { event: eventName, data } = payload;
+        const eventName = payload.type || payload.event;
+        const data = payload.data || payload.payload || payload;
         
         const eventHandlers = this.handlers.get(eventName);
         if (eventHandlers) {

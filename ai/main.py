@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def main():
     parser = argparse.ArgumentParser(description="CrowdShield CV Pipeline")
     parser.add_argument("--source", type=str, default="0", help="Video source (0 for webcam, or path to mp4)")
-    parser.add_argument("--backend", type=str, default="http://localhost:8000/api/v1/ingest", help="Backend ingest URL")
+    parser.add_argument("--backend", type=str, default="http://localhost:8000/v1/ingest", help="Backend ingest URL")
     parser.add_argument("--source-id", type=str, default="camera_main", help="ID of this camera source")
     parser.add_argument("--zone-id", type=str, default="zone_entry", help="ID of the zone this camera monitors")
     parser.add_argument("--interval", type=int, default=5, help="Seconds between sending metrics to the backend")
