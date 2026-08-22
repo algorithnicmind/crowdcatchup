@@ -42,7 +42,15 @@ function HeroSplineBackground() {
 }
 
 
+import { AvatarGroup } from './avatar-group';
+
 function HeroContent() {
+  const teamAvatars = [
+    { src: '/team-ankit.jpg', alt: 'Ankit', label: 'Ankit' },
+    { src: '/team-pragyan.jpg', alt: 'Pragyan', label: 'Pragyan' },
+    { src: '/team-basudev.jpg', alt: 'Basudev', label: 'Basudev' },
+  ];
+
   return (
     <div className="text-white px-4 max-w-screen-xl mx-auto w-full flex flex-col lg:flex-row justify-between items-start lg:items-center py-16">
 
@@ -59,7 +67,7 @@ function HeroContent() {
          <p className="text-base sm:text-lg opacity-80 mb-6 max-w-md">
            Advanced Multi-Source Early Warning System. Monitor crowd density, detect anomalies, and secure your venues in real-time.
         </p>
-        <div className="flex pointer-events-auto flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-3">
+        <div className="flex pointer-events-auto flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-3 mb-8">
              <a href="#portals" className="border border-white text-white font-semibold py-2.5 sm:py-3.5 px-6 sm:px-8 rounded-2xl transition duration-300 w-full sm:w-auto hover:bg-white hover:text-black inline-block text-center">
                 Access Portals
             </a>
@@ -69,6 +77,11 @@ function HeroContent() {
                </svg>
                Watch Demo
             </a>
+        </div>
+        
+        <div className="flex items-center space-x-4 pointer-events-auto mt-4">
+          <div className="text-sm text-gray-400 font-medium">Built by</div>
+          <AvatarGroup avatars={teamAvatars} size={40} overlap={12} />
         </div>
       </div>
 

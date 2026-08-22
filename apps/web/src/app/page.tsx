@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Shield, ShieldAlert, Users, CalendarCheck, ArrowRight } from "lucide-react";
 import { HeroSection } from "@/components/ui/3d-hero-section-boxes";
+import { HoverEffect } from "@/components/ui/card-hover-effect";
 
 const portals = [
   {
@@ -106,50 +107,7 @@ export default function Home() {
             </p>
           </div>
 
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6"
-          >
-            {portals.map((portal) => {
-              const Icon = portal.icon;
-              return (
-                <motion.div key={portal.id} variants={itemVariants} className="h-full">
-                  <Link 
-                    href={portal.href} 
-                    className={`group relative block h-full w-full outline-none rounded-3xl p-8 bg-white/[0.02] border border-white/[0.05] transition-all duration-500 ease-out hover:bg-white/[0.04] ${portal.borderHover} hover:shadow-2xl overflow-hidden`}
-                  >
-                    {/* Hover Gradient Effect inside the card */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${portal.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none`} />
-                    
-                    <div className="relative z-10 flex flex-col h-full justify-between">
-                      <div className="space-y-5">
-                        <div className="inline-flex items-center justify-center p-3 rounded-xl bg-white/[0.03] border border-white/[0.05] group-hover:scale-110 group-hover:bg-white/[0.06] transition-all duration-500 ease-out">
-                          <Icon className={`w-6 h-6 ${portal.iconColor}`} strokeWidth={1.5} />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <h3 className="text-2xl font-medium text-zinc-200 group-hover:text-white transition-colors duration-300">
-                            {portal.title}
-                          </h3>
-                          <p className="text-zinc-500 text-sm leading-relaxed font-light group-hover:text-zinc-400 transition-colors duration-300">
-                            {portal.description}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="mt-8 flex items-center text-sm font-medium text-zinc-500 group-hover:text-white transition-colors duration-300">
-                        Access Portal 
-                        <ArrowRight className="ml-2 w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ease-out" />
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </motion.div>
+          <HoverEffect items={portals.map(p => ({ title: p.title, description: p.description, link: p.href }))} />
         </motion.div>
       </div>
     </div>
