@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { APIProvider, Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps';
 import { useMapStore } from '@/stores/map-store';
 import { MapOverlayControls } from './MapOverlayControls';
@@ -137,79 +137,96 @@ function LiveMarkers() {
   );
 }
 
+/**
+ * Custom crowd density heatmap overlay.
+ * Replaces the deprecated Google Maps HeatmapLayer (deprecated May 2025).
+ * Renders colored radial gradients as SVG overlays positioned on top of each zone.
+ */
 function HeatmapOverlay() {
-  const map = useMap();
   const { heatmapEnabled, liveCrowdState } = useMapStore();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const heatmapLayerRef = useRef<any>(null);
+  const map = useMap();
+  const [overlayPositions, setOverlayPositions] = useState<{ key: string; x: number; y: number; color: string; radius: number }[]>([]);
 
   useEffect(() => {
-    if (!map) return;
-
-    if (!heatmapLayerRef.current && window.google?.maps?.visualization) {
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const HeatmapLayerClass = window.google.maps.visualization.HeatmapLayer as any;
-        heatmapLayerRef.current = new HeatmapLayerClass({
-          radius: 40,
-          opacity: 0.8,
-          gradient: [
-            'rgba(0, 255, 255, 0)',
-            'rgba(0, 255, 255, 1)',
-            'rgba(0, 191, 255, 1)',
-            'rgba(0, 127, 255, 1)',
-            'rgba(0, 63, 255, 1)',
-            'rgba(0, 0, 255, 1)',
-            'rgba(0, 0, 223, 1)',
-            'rgba(0, 0, 191, 1)',
-            'rgba(0, 0, 159, 1)',
-            'rgba(0, 0, 127, 1)',
-            'rgba(63, 0, 91, 1)',
-            'rgba(127, 0, 63, 1)',
-            'rgba(191, 0, 31, 1)',
-            'rgba(255, 0, 0, 1)'
-          ]
-        });
-      } catch (err) {
-        console.warn("HeatmapLayer could not be initialized:", err);
-      }
+    if (!map || !heatmapEnabled) {
+      setOverlayPositions([]);
+      return;
     }
 
-    if (heatmapEnabled && heatmapLayerRef.current) {
-      // Generate synthetic points based on EVENT_ZONES and current crowd state
-      const heatmapData: google.maps.LatLng[] = [];
-      
-      Object.entries(EVENT_ZONES).forEach(([zoneId, coords]) => {
+    const updatePositions = () => {
+      const projection = map.getProjection();
+      if (!projection) return;
+
+      const bounds = map.getBounds();
+      if (!bounds) return;
+
+      const mapDiv = map.getDiv();
+      const mapWidth = mapDiv.offsetWidth;
+      const mapHeight = mapDiv.offsetHeight;
+      const ne = bounds.getNorthEast();
+      const sw = bounds.getSouthWest();
+
+      const positions = Object.entries(EVENT_ZONES).map(([zoneId, coords]) => {
         const crowd = liveCrowdState[zoneId];
-        const numPoints = crowd?.density_level === 'CRITICAL' ? 100 : 
-                          crowd?.density_level === 'HIGH' ? 60 : 
-                          crowd?.density_level === 'MODERATE' ? 20 : 5;
-        
-        // Spread points around the zone center
-        for (let i = 0; i < numPoints; i++) {
-          const latOffset = (Math.random() - 0.5) * 0.002;
-          const lngOffset = (Math.random() - 0.5) * 0.002;
-          heatmapData.push(
-            new google.maps.LatLng(coords.lat + latOffset, coords.lng + lngOffset)
-          );
-        }
-      });
-      
-      heatmapLayerRef.current.setData(heatmapData);
-      heatmapLayerRef.current.setMap(map);
-    } else if (heatmapLayerRef.current) {
-      heatmapLayerRef.current.setMap(null);
-    }
+        const density = crowd?.density_level || 'LOW';
 
-    return () => {
-      if (heatmapLayerRef.current) {
-        heatmapLayerRef.current.setMap(null);
-      }
+        const lngSpan = ne.lng() - sw.lng();
+        const latSpan = ne.lat() - sw.lat();
+        const x = ((coords.lng - sw.lng()) / lngSpan) * mapWidth;
+        const y = ((ne.lat() - coords.lat) / latSpan) * mapHeight;
+
+        const color = density === 'CRITICAL' ? 'rgba(239,68,68,0.55)' :
+                      density === 'HIGH' ? 'rgba(249,115,22,0.45)' :
+                      density === 'MODERATE' ? 'rgba(234,179,8,0.35)' :
+                      'rgba(34,197,94,0.2)';
+
+        const radius = density === 'CRITICAL' ? 90 :
+                       density === 'HIGH' ? 70 :
+                       density === 'MODERATE' ? 50 : 35;
+
+        return { key: zoneId, x, y, color, radius };
+      });
+
+      setOverlayPositions(positions);
     };
+
+    updatePositions();
+    const listeners = [
+      map.addListener('bounds_changed', updatePositions),
+      map.addListener('zoom_changed', updatePositions),
+    ];
+
+    return () => listeners.forEach(l => window.google?.maps?.event?.removeListener(l));
   }, [map, heatmapEnabled, liveCrowdState]);
 
-  return null;
+  if (!heatmapEnabled || overlayPositions.length === 0) return null;
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 2 }}>
+      <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
+        <defs>
+          {overlayPositions.map(pos => (
+            <radialGradient key={`grad-${pos.key}`} id={`heatgrad-${pos.key}`} cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor={pos.color} />
+              <stop offset="100%" stopColor="rgba(0,0,0,0)" />
+            </radialGradient>
+          ))}
+        </defs>
+        {overlayPositions.map(pos => (
+          <ellipse
+            key={pos.key}
+            cx={pos.x}
+            cy={pos.y}
+            rx={pos.radius}
+            ry={pos.radius * 0.65}
+            fill={`url(#heatgrad-${pos.key})`}
+          />
+        ))}
+      </svg>
+    </div>
+  );
 }
+
 
 import { Crosshair, Plus, Minus } from 'lucide-react';
 

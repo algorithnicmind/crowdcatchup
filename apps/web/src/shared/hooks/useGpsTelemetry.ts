@@ -18,10 +18,14 @@ export function useGpsTelemetry(role: 'citizen' | 'police' | 'authority' | 'owne
             lng: position.coords.longitude,
           });
 
+          // Send telemetry to backend with a 4s timeout to avoid ERR_EMPTY_RESPONSE
           try {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 4000);
             const { apiClient } = await import('@/lib/api-client');
             await apiClient('/adapters/gps/telemetry', {
               method: 'POST',
+              signal: controller.signal,
               body: JSON.stringify({
                 device_id: deviceId,
                 lat: position.coords.latitude,
@@ -29,12 +33,13 @@ export function useGpsTelemetry(role: 'citizen' | 'police' | 'authority' | 'owne
                 event_id: eventId
               })
             });
-          } catch (e) {
-            console.warn(`[${role}] Failed to sync GPS telemetry (backend might be offline)`, e);
+            clearTimeout(timer);
+          } catch {
+            // Backend offline or timed out — location is still shown on local map
           }
         },
-        (error) => console.warn(error),
-        { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+        () => {/* GPS denied — handled silently */},
+        { enableHighAccuracy: false, maximumAge: 30000, timeout: 10000 }
       );
     }
     

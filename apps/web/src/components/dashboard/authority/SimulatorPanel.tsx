@@ -27,8 +27,8 @@ export function SimulatorPanel() {
           scenario_id: scenarioId
         }),
       });
-    } catch (err) {
-      console.error(err);
+    } catch {
+      // Backend offline — scenario runs locally in demo mode via synthetic WebSocket data
     } finally {
       setLoading(false);
     }
