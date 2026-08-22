@@ -7,52 +7,52 @@ import Link from "next/link";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#050505] text-slate-200">
+    <div className="min-h-screen bg-[#050505] text-slate-200 flex flex-col">
       <Navbar />
       
-      <div className="pt-32 pb-16 px-4 max-w-5xl mx-auto">
-        <div className="text-center mb-16 space-y-4">
-          <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] shadow-2xl backdrop-blur-xl mb-4">
-            <ShieldAlert className="w-12 h-12 text-cyan-400" strokeWidth={1.5} />
-          </div>
-          <h1 className="text-5xl md:text-7xl font-light tracking-tight text-white">
+      <div className="flex-1 flex flex-col justify-center px-4 max-w-5xl mx-auto w-full pt-20">
+        
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-light tracking-tight text-white mb-4">
             About <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">CrowdShield</span>
           </h1>
-          <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light leading-relaxed">
-            A state-of-the-art Multi-Source Early Warning System designed exclusively for the safety and security of citizens.
-          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
-          <div className="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-8 space-y-6 hover:bg-white/[0.03] transition-colors">
-            <div className="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
-              <Users className="w-6 h-6 text-cyan-400" />
-            </div>
-            <h2 className="text-2xl font-bold text-white">Citizen First</h2>
-            <p className="text-zinc-400 leading-relaxed text-lg">
-              During large-scale events and mass gatherings, the individual is often the most vulnerable. CrowdShield empowers citizens with real-time crowd density tracking, dynamic safe routing, and an instant emergency SOS network to prevent crowd crushes before they happen.
+        <div className="max-w-3xl mx-auto space-y-12 mt-12 text-zinc-300 text-lg leading-relaxed font-light">
+          
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-white mb-4">The Problem</h2>
+            <p>
+              During large-scale events and mass gatherings, the individual is often the most vulnerable. Traditional event management relies heavily on static maps, delayed radio communication, and reactive emergency services. 
+            </p>
+            <p>
+              When a crowd crush or sudden bottleneck occurs, these outdated systems fail to identify the escalating risk in real-time, leaving citizens trapped and authorities scrambling to respond without accurate situational awareness.
             </p>
           </div>
 
-          <div className="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-8 space-y-6 hover:bg-white/[0.03] transition-colors">
-            <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-              <Shield className="w-6 h-6 text-emerald-400" />
-            </div>
-            <h2 className="text-2xl font-bold text-white">AI-Powered Security</h2>
-            <p className="text-zinc-400 leading-relaxed text-lg">
-              By utilizing advanced XGBoost risk-scoring algorithms and YOLOv8 computer vision integrations, CrowdShield provides a direct line to authorities, guaranteeing that tactical response teams are deployed precisely where they are needed most.
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-white mb-4">The Solution</h2>
+            <p>
+              CrowdShield bridges this critical gap by acting as a state-of-the-art, multi-source early warning system. By actively monitoring venues using computer vision (YOLOv8) and predicting anomalies with machine learning (XGBoost), we detect potential risks before they turn into disasters.
+            </p>
+            <p>
+              The system unifies all stakeholders into a single, real-time 3D command center, ensuring that police, event organizers, and emergency dispatchers have an identical, instantaneous view of the ground reality.
             </p>
           </div>
+
+          <div className="space-y-4 border-t border-zinc-800/50 pt-8 mt-8">
+            <h2 className="text-2xl font-bold text-cyan-400 mb-4">Built for Citizens</h2>
+            <p>
+              At the heart of CrowdShield is the safety of the individual. We empower attendees with dynamic safe routing, live crowd density updates on their mobile devices, and an instant emergency SOS network.
+            </p>
+            <p>
+              With CrowdShield, you aren't just a face in the crowd. You have a direct lifeline to safety and the intelligence you need to navigate massive gatherings securely.
+            </p>
+          </div>
+
         </div>
 
-        <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-10 text-center space-y-8 flex flex-col items-center">
-          <h3 className="text-3xl font-semibold text-white">Ready to join the network?</h3>
-          <Link href="/#portals" className="bg-white text-black font-semibold py-4 px-8 rounded-full hover:scale-105 transition-transform duration-300 flex items-center gap-2">
-            Access Citizen Portal <ArrowRight className="w-5 h-5" />
-          </Link>
-        </div>
-
-        <div className="mt-24 pt-8 border-t border-zinc-800/50 text-center space-y-2">
+        <div className="text-center space-y-2 mt-auto pb-12">
           <p className="text-zinc-500 text-sm font-medium">
             &copy; {new Date().getFullYear()} CrowdShield Inc. All rights reserved.
           </p>
