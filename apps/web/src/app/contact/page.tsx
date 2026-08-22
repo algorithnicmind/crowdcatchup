@@ -25,7 +25,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="text-white font-medium">Email Us</h3>
-                <p className="text-zinc-500">support@crowdshield.ai</p>
+                <p className="text-zinc-500">basudevmuna111@gmail.com</p>
               </div>
             </div>
             
@@ -35,7 +35,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="text-white font-medium">Call Us</h3>
-                <p className="text-zinc-500">+1 (555) 123-4567</p>
+                <p className="text-zinc-500">+91-8093360300</p>
               </div>
             </div>
             
@@ -45,7 +45,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="text-white font-medium">Headquarters</h3>
-                <p className="text-zinc-500">123 Security Blvd, Innovation City</p>
+                <p className="text-zinc-500">Cuttack, Odisha, India</p>
               </div>
             </div>
           </div>
