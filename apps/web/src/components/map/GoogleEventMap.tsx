@@ -9,6 +9,17 @@ import { MapDrawingManager } from './MapDrawingManager';
 // Coordinates for the event (e.g., Kalinga Stadium)
 const EVENT_CENTER = { lat: 20.2886, lng: 85.8178 };
 
+// MOCK DEMO FIX: Suppress Google Maps Heatmap deprecation error so it doesn't crash the Next.js dev overlay
+if (typeof window !== 'undefined') {
+  const originalError = console.error;
+  console.error = (...args) => {
+    if (typeof args[0] === 'string' && args[0].includes('Heatmap Layer functionality in the Maps JavaScript API is no longer supported')) {
+      return; // Silence the deprecation warning
+    }
+    originalError.apply(console, args);
+  };
+}
+
 
 function TrafficLayer() {
   const map = useMap();
