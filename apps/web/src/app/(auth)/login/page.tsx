@@ -106,13 +106,27 @@ function LoginPageInner() {
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
-          {/* Role Display */}
-          <div className="flex items-center justify-center p-3 rounded-lg bg-zinc-900 border border-zinc-800">
-            <span className="text-emerald-500 font-semibold text-sm tracking-widest uppercase">
-              {role === 'AUTHORITY' ? 'Command Center Authority' :
-               role === 'POLICE' ? 'Field Police Officer' :
-               role === 'EVENT_OWNER' ? 'Event Owner' : 'Citizen Portal'}
-            </span>
+          {/* Role Selection */}
+          <div className="flex flex-col space-y-2">
+            <Label className="text-zinc-400 uppercase text-xs tracking-widest font-bold text-center mb-2">Select Login Role</Label>
+            <div className="grid grid-cols-2 gap-2">
+              {(['AUTHORITY', 'POLICE', 'EVENT_OWNER', 'CITIZEN'] as UserRole[]).map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setRole(r)}
+                  className={`py-2 px-3 rounded-lg text-xs font-semibold tracking-wider transition-colors border ${
+                    role === r 
+                      ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' 
+                      : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300'
+                  }`}
+                >
+                  {r === 'AUTHORITY' ? 'AUTHORITY' :
+                   r === 'POLICE' ? 'POLICE' :
+                   r === 'EVENT_OWNER' ? 'EVENT OWNER' : 'CITIZEN'}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-2">

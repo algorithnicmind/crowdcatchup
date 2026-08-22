@@ -4,11 +4,14 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Shield, ShieldAlert, Users, CalendarCheck, ArrowRight } from "lucide-react";
 import { HeroSection } from "@/components/ui/3d-hero-section-boxes";
+import { FeaturesSection } from "@/components/ui/features-section";
 
 export default function Home() {
   return (
     <div className="flex flex-col bg-[#050505]">
       <HeroSection />
+
+      <FeaturesSection />
 
       <ContactSection />
     </div>

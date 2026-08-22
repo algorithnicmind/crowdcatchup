@@ -111,7 +111,7 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <Link href="/login?role=CITIZEN" className="text-gray-300 hover:text-white text-sm font-medium transition duration-300 hidden sm:block">
+          <Link href="/login" className="text-gray-300 hover:text-white text-sm font-medium transition duration-300 hidden sm:block">
               Sign In
           </Link>
           <Link href="/register?role=CITIZEN" className="border border-white text-white px-5 py-2 rounded-full text-sm hover:bg-white hover:text-black transition duration-300">
