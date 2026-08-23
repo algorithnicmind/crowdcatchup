@@ -71,6 +71,9 @@ keys/
 # ========================
 postgres-data/
 redis-data/
+*.sqlite
+*.sqlite3
+*.db
 
 # ========================
 # AI / ML / YOLOv8

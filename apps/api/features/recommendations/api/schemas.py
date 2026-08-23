@@ -1,9 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import Optional
 from ..domain.entities.intervention import InterventionStatus, InterventionType
 
 class InterventionDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     event_id: str
     target_zone: str
@@ -12,9 +14,6 @@ class InterventionDTO(BaseModel):
     status: InterventionStatus
     created_at: datetime
     action_taken_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
 
 class InterventionResponse(BaseModel):
     success: bool
