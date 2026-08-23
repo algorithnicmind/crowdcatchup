@@ -71,9 +71,26 @@ async def list_events_endpoint(
 async def update_venue_boundary_endpoint(event_id: str, data: dict, db: AsyncSession = Depends(get_db)):
     """Update event boundary polygon."""
     from features.events.application.use_cases.spatial_use_cases import UpdateVenueBoundaryUseCase
+    from fastapi import HTTPException
     repo = SQLAlchemyEventRepository(db)
     use_case = UpdateVenueBoundaryUseCase(event_repository=repo)
-    return await use_case.execute(event_id, data)
+    saved = await use_case.execute(event_id, data)
+    if not saved:
+        raise HTTPException(status_code=404, detail="Event not found")
+    return EventDTO(
+        id=saved.id,
+        name=saved.name,
+        description=saved.description,
+        venue_polygon=[
+            {"lat": pt.lat, "lng": pt.lng} for pt in saved.venue_polygon
+        ],
+        start_date=saved.date_range.start_date,
+        end_date=saved.date_range.end_date,
+        status=saved.status.value,
+        owner_id=saved.owner_id,
+        expected_attendance=saved.expected_attendance,
+        max_capacity=saved.max_capacity,
+    )
 
 
 @router.post(

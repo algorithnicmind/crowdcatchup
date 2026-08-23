@@ -26,12 +26,13 @@ async def test_get_pending_interventions_empty(client: AsyncClient, auth_headers
 
 @pytest.mark.asyncio
 async def test_create_intervention_via_db(client: AsyncClient, auth_headers):
-    from core.database import async_session_factory
+    from sqlalchemy.ext.asyncio import AsyncSession
+    from tests.conftest import test_engine
     from features.recommendations.infrastructure.models.intervention_models import InterventionModel
     from features.recommendations.domain.entities.intervention import InterventionStatus, InterventionType
     import uuid as _uuid
 
-    async with async_session_factory() as db:
+    async with AsyncSession(test_engine, expire_on_commit=False) as db:
         intervention = InterventionModel(
             id=str(_uuid.uuid4()),
             event_id="EVT-INT-CRUD",
@@ -53,13 +54,14 @@ async def test_create_intervention_via_db(client: AsyncClient, auth_headers):
 
 @pytest.mark.asyncio
 async def test_approve_intervention(client: AsyncClient, auth_headers):
-    from core.database import async_session_factory
+    from sqlalchemy.ext.asyncio import AsyncSession
+    from tests.conftest import test_engine
     from features.recommendations.infrastructure.models.intervention_models import InterventionModel
     from features.recommendations.domain.entities.intervention import InterventionStatus, InterventionType
     import uuid as _uuid
 
     int_id = str(_uuid.uuid4())
-    async with async_session_factory() as db:
+    async with AsyncSession(test_engine, expire_on_commit=False) as db:
         db.add(InterventionModel(
             id=int_id,
             event_id="EVT-INT-APPROVE",
@@ -77,13 +79,14 @@ async def test_approve_intervention(client: AsyncClient, auth_headers):
 
 @pytest.mark.asyncio
 async def test_reject_intervention(client: AsyncClient, auth_headers):
-    from core.database import async_session_factory
+    from sqlalchemy.ext.asyncio import AsyncSession
+    from tests.conftest import test_engine
     from features.recommendations.infrastructure.models.intervention_models import InterventionModel
     from features.recommendations.domain.entities.intervention import InterventionStatus, InterventionType
     import uuid as _uuid
 
     int_id = str(_uuid.uuid4())
-    async with async_session_factory() as db:
+    async with AsyncSession(test_engine, expire_on_commit=False) as db:
         db.add(InterventionModel(
             id=int_id,
             event_id="EVT-INT-REJECT",
@@ -119,13 +122,14 @@ async def test_reject_nonexistent_intervention(client: AsyncClient, auth_headers
 
 @pytest.mark.asyncio
 async def test_approved_intervention_not_pending(client: AsyncClient, auth_headers):
-    from core.database import async_session_factory
+    from sqlalchemy.ext.asyncio import AsyncSession
+    from tests.conftest import test_engine
     from features.recommendations.infrastructure.models.intervention_models import InterventionModel
     from features.recommendations.domain.entities.intervention import InterventionStatus, InterventionType
     import uuid as _uuid
 
     int_id = str(_uuid.uuid4())
-    async with async_session_factory() as db:
+    async with AsyncSession(test_engine, expire_on_commit=False) as db:
         db.add(InterventionModel(
             id=int_id,
             event_id="EVT-INT-VISIBILITY",

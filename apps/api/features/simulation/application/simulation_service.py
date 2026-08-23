@@ -90,6 +90,7 @@ class SimulationService:
         import asyncio
         from core.redis import get_redis
         from features.fusion.api.schemas import StandardObservation
+        from features.fusion.application.fusion_service import FusionService
         import random
         from datetime import datetime, timezone
         
@@ -97,23 +98,28 @@ class SimulationService:
         
         # Determine base metrics based on scenario
         metrics = {
+            "ZONE-A": {"people_count": 500, "avg_speed": 1.2, "entry_rate": 20, "exit_rate": 20},
+            "ZONE-B": {"people_count": 800, "avg_speed": 1.1, "entry_rate": 30, "exit_rate": 30},
             "Zone A (Gate 1)": {"people_count": 500, "avg_speed": 1.2, "entry_rate": 20, "exit_rate": 20},
             "Zone B (Gate 2)": {"people_count": 800, "avg_speed": 1.1, "entry_rate": 30, "exit_rate": 30}
         }
         
         if scenario_id == "sudden_surge":
-            metrics["Zone A (Gate 1)"]["entry_rate"] = 150
-            metrics["Zone A (Gate 1)"]["people_count"] = 1200
-            metrics["Zone A (Gate 1)"]["avg_speed"] = 0.8
+            for k in ["ZONE-A", "Zone A (Gate 1)"]:
+                metrics[k]["entry_rate"] = 150
+                metrics[k]["people_count"] = 1200
+                metrics[k]["avg_speed"] = 0.8
         elif scenario_id == "gate_blockage":
-            metrics["Zone B (Gate 2)"]["exit_rate"] = 2
-            metrics["Zone B (Gate 2)"]["people_count"] = 1500
-            metrics["Zone B (Gate 2)"]["avg_speed"] = 0.5
+            for k in ["ZONE-B", "Zone B (Gate 2)"]:
+                metrics[k]["exit_rate"] = 2
+                metrics[k]["people_count"] = 1500
+                metrics[k]["avg_speed"] = 0.5
         elif scenario_id == "crowd_surge":
-            metrics["Zone B (Gate 2)"]["people_count"] = 2500
-            metrics["Zone B (Gate 2)"]["entry_rate"] = 200
-            metrics["Zone B (Gate 2)"]["exit_rate"] = 50
-            metrics["Zone B (Gate 2)"]["avg_speed"] = 0.1
+            for k in ["ZONE-B", "Zone B (Gate 2)"]:
+                metrics[k]["people_count"] = 2500
+                metrics[k]["entry_rate"] = 200
+                metrics[k]["exit_rate"] = 50
+                metrics[k]["avg_speed"] = 0.1
             
         redis = await get_redis()
         
@@ -129,7 +135,7 @@ class SimulationService:
                         noise = random.uniform(-0.1, 0.1) * val
                         current_val = max(0, val + noise)
                         
-                        observations.append(StandardObservation(
+                        obs = StandardObservation(
                             event_id=event_id,
                             source_id=f"SIM-CCTV-{zone}",
                             source_type="SYNTHETIC",
@@ -140,7 +146,9 @@ class SimulationService:
                             confidence=0.95,
                             latency_ms=100,
                             health="ONLINE"
-                        ))
+                        )
+                        observations.append(obs)
+                        FusionService.process_observation(obs)
                 
                 # Publish to Redis so Fusion Engine picks it up
                 for obs in observations:
