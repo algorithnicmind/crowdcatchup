@@ -283,13 +283,27 @@ export default function OwnerEventsPage() {
 
                 <div className="flex gap-2 mt-auto pt-2">
                   <Button 
-                    onClick={() => router.push('/owner')}
+                    onClick={() => {
+                      import('@/stores/map-store').then(({ useMapStore }) => {
+                        useMapStore.getState().setActiveEventId(evt.id);
+                        router.push('/owner');
+                      });
+                    }}
                     className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white text-xs h-8"
                   >
                     <Map className="w-3.5 h-3.5 mr-2" />
                     Venue Map
                   </Button>
-                  <Button variant="outline" className="flex-1 border-zinc-700 text-zinc-300 hover:bg-zinc-800 text-xs h-8 bg-transparent">
+                  <Button 
+                    onClick={() => {
+                      import('@/stores/map-store').then(({ useMapStore }) => {
+                        useMapStore.getState().setActiveEventId(evt.id);
+                        router.push('/owner');
+                      });
+                    }}
+                    variant="outline" 
+                    className="flex-1 border-zinc-700 text-zinc-300 hover:bg-zinc-800 text-xs h-8 bg-transparent"
+                  >
                     <Settings2 className="w-3.5 h-3.5 mr-2" />
                     Configure
                   </Button>
