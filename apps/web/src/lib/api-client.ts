@@ -5,7 +5,7 @@
  */
 
 export function getApiBaseUrl(): string {
-  let url = process.env.NEXT_PUBLIC_API_URL || 'https://crowdcatchup.onrender.com/api/v1';
+  let url = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:8000/api/v1';
 
   // In browser, automatically upgrade http:// to https:// if the frontend is loaded over HTTPS
   if (typeof window !== 'undefined' && window.location.protocol === 'https:' && url.startsWith('http://')) {

@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Request
+from core.limiter import limiter
 from .schemas import StandardObservation
 from ..application.data_normalization import DataNormalizer
 from ..application.source_health_monitor import SourceHealthMonitor
@@ -77,7 +78,8 @@ def process_observation_background(obs: StandardObservation):
     logger.info(f"Broadcasted CROWD_STATE_UPDATE for event {obs.event_id}")
 
 @router.post("/ingest")
-async def ingest_observation(obs: StandardObservation, background_tasks: BackgroundTasks):
+@limiter.limit("100/second")
+async def ingest_observation(request: Request, obs: StandardObservation, background_tasks: BackgroundTasks):
     """
     Unified ingestion endpoint for all data sources (CCTV, Gates, GPS, Synthetic).
     Accepts StandardObservation format.
