@@ -113,6 +113,31 @@ async def create_zone_endpoint(event_id: str, data: dict, db: AsyncSession = Dep
     use_case = CreateZoneUseCase(zone_repository=zone_repo, event_repository=event_repo)
     return await use_case.execute(event_id, data)
 
+@router.get(
+    "/{event_id}/zones",
+    response_model=List[ZoneDTO],
+    dependencies=[Depends(require_role("EVENT_OWNER", "AUTHORITY", "POLICE", "CITIZEN"))],
+)
+async def list_zones_endpoint(event_id: str, db: AsyncSession = Depends(get_db)):
+    """List zones for an event."""
+    from sqlalchemy import select
+    from features.events.infrastructure.models.event_models import ZoneModel
+    result = await db.execute(select(ZoneModel).where(ZoneModel.event_id == event_id))
+    zones = result.scalars().all()
+    return [
+        ZoneDTO(
+            id=z.id,
+            event_id=z.event_id,
+            name=z.name,
+            zone_type=z.zone_type.value,
+            polygon=[{"lat": pt.lat, "lng": pt.lng} for pt in z.polygon],
+            capacity=z.capacity,
+            risk_score=z.risk_score,
+            is_active=z.is_active
+        )
+        for z in zones
+    ]
+
 
 @router.post(
     "/{event_id}/gates",
@@ -128,6 +153,31 @@ async def create_gate_endpoint(event_id: str, data: dict, db: AsyncSession = Dep
     use_case = CreateGateUseCase(gate_repository=gate_repo, event_repository=event_repo)
     return await use_case.execute(event_id, data)
 
+@router.get(
+    "/{event_id}/gates",
+    response_model=List[GateDTO],
+    dependencies=[Depends(require_role("EVENT_OWNER", "AUTHORITY", "POLICE", "CITIZEN"))],
+)
+async def list_gates_endpoint(event_id: str, db: AsyncSession = Depends(get_db)):
+    """List gates for an event."""
+    from sqlalchemy import select
+    from features.events.infrastructure.models.event_models import GateModel
+    result = await db.execute(select(GateModel).where(GateModel.event_id == event_id))
+    gates = result.scalars().all()
+    return [
+        GateDTO(
+            id=g.id,
+            event_id=g.event_id,
+            name=g.name,
+            gate_type=g.gate_type.value,
+            location={"lat": g.location.lat, "lng": g.location.lng},
+            capacity_per_minute=g.capacity_per_minute,
+            status=g.status.value,
+            is_active=g.is_active
+        )
+        for g in gates
+    ]
+
 
 @router.post(
     "/{event_id}/routes",
@@ -142,6 +192,29 @@ async def create_route_endpoint(event_id: str, data: dict, db: AsyncSession = De
     event_repo = SQLAlchemyEventRepository(db)
     use_case = CreateRouteUseCase(route_repository=route_repo, event_repository=event_repo)
     return await use_case.execute(event_id, data)
+
+@router.get(
+    "/{event_id}/routes",
+    response_model=list,
+    dependencies=[Depends(require_role("EVENT_OWNER", "AUTHORITY", "POLICE", "CITIZEN"))],
+)
+async def list_routes_endpoint(event_id: str, db: AsyncSession = Depends(get_db)):
+    """List routes for an event."""
+    from sqlalchemy import select
+    from features.events.infrastructure.models.event_models import FlowRouteModel
+    result = await db.execute(select(FlowRouteModel).where(FlowRouteModel.event_id == event_id))
+    routes = result.scalars().all()
+    return [
+        {
+            "id": r.id,
+            "event_id": r.event_id,
+            "name": r.name,
+            "route_type": r.route_type.value,
+            "path": [{"lat": pt.lat, "lng": pt.lng} for pt in r.path],
+            "is_active": r.is_active
+        }
+        for r in routes
+    ]
 
 
 @router.post(

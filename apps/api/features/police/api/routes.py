@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db
 from ..application.task_manager import TaskManager
 
-router = APIRouter(prefix="/v1/police", tags=["Police"])
+router = APIRouter(prefix="/api/v1/police", tags=["Police"])
 logger = logging.getLogger(__name__)
 
 class TaskRequest(BaseModel):

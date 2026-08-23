@@ -18,6 +18,21 @@ from shared.api.error_handlers import register_error_handlers
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from core.limiter import limiter
+from core.exceptions import CrowdShieldBaseException
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+async def crowdshield_exception_handler(request: Request, exc: CrowdShieldBaseException) -> JSONResponse:
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "error": {
+                "code": exc.error_code,
+                "message": exc.message,
+                "details": exc.details,
+            }
+        },
+    )
 
 # Import Routers
 from features.auth.api.routes import router as auth_router
@@ -98,6 +113,8 @@ async def add_security_headers(request, call_next):
 # Register domain exception handlers
 register_error_handlers(app)
 
+# Register custom enterprise exception handler
+app.add_exception_handler(CrowdShieldBaseException, crowdshield_exception_handler)
 from features.police.api.routes import router as police_router
 from features.database_viewer.api.routes import router as database_viewer_router
 
@@ -176,7 +193,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
-        port=8002,
+        port=8000,
         ssl_keyfile=ssl_keyfile if ssl_context else None,
         ssl_certfile=ssl_certfile if ssl_context else None,
         log_level="info",

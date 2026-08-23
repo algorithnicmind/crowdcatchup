@@ -1,23 +1,49 @@
+import json
 import logging
-from typing import Dict, List
+from typing import Dict, List, Optional
 from datetime import datetime, timedelta
 import statistics
 from ..api.schemas import StandardObservation, CrowdStateDTO
 
+# [INDUSTRIAL STANDARD] Structured JSON Logger
+class JsonFormatter(logging.Formatter):
+    def format(self, record: logging.LogRecord) -> str:
+        log_obj = {
+            "timestamp": self.formatTime(record, self.datefmt),
+            "level": record.levelname,
+            "module": record.module,
+            "message": record.getMessage(),
+        }
+        if hasattr(record, "trace_id"):
+            log_obj["trace_id"] = record.trace_id
+        if hasattr(record, "event_id"):
+            log_obj["event_id"] = record.event_id
+        return json.dumps(log_obj)
+
 logger = logging.getLogger(__name__)
+if not logger.handlers:
+    handler = logging.StreamHandler()
+    handler.setFormatter(JsonFormatter())
+    logger.addHandler(handler)
+logger.propagate = False
+logger.setLevel(logging.INFO)
 
 # Temporary in-memory state for hackathon (normally Redis)
 zone_states: Dict[str, CrowdStateDTO] = {}
 # Buffer to store recent observations for fusion
 observation_buffer: Dict[str, List[StandardObservation]] = {}
 
-SOURCE_RELIABILITY = {
-    "CCTV": 0.9,
-    "SMART_GATE": 0.95,
-    "GPS": 0.7,
-    "DRONE": 0.8,
-    "SYNTHETIC": 1.0  # For simulation purposes
-}
+# [INDUSTRIAL STANDARD] Configuration Injection Pattern
+class FusionConfig:
+    SOURCE_RELIABILITY: Dict[str, float] = {
+        "CCTV": 0.9,
+        "SMART_GATE": 0.95,
+        "GPS": 0.7,
+        "DRONE": 0.8,
+        "SYNTHETIC": 1.0  # For simulation purposes
+    }
+    DISAGREEMENT_THRESHOLD: float = 0.30
+    OBSERVATION_TTL_MINUTES: int = 2
 
 class FusionService:
     """
@@ -29,18 +55,33 @@ class FusionService:
     If we just overwrite the database with the latest ping, the UI will flicker violently.
     
     How it works:
-    This engine implements a Confidence-Weighted Sensor Fusion Algorithm (TRD §2.2).
-    It buffers incoming streams, detects sensor disagreements (e.g., if CCTV breaks and reports 0),
-    and mathematically merges multi-modal inputs (CCTV + RFID Gates + GPS) into a single, 
-    stabilized `CrowdStateDTO` representing the undeniable "ground truth".
+    This engine implements a Confidence-Weighted Sensor Fusion Algorithm.
+    It buffers incoming streams, detects sensor disagreements, and mathematically merges multi-modal inputs.
     """
-    @staticmethod
-    def get_reliability(source_type: str) -> float:
-        return SOURCE_RELIABILITY.get(source_type, 0.5)
 
     @staticmethod
-    def detect_disagreement(observations: List[StandardObservation], metric: str):
-        """Detect when sources significantly disagree on a metric."""
+    def get_reliability(source_type: str) -> float:
+        """
+        Retrieves the reliability weight for a given source type.
+        
+        Args:
+            source_type (str): The type of the source (e.g., 'CCTV', 'GPS').
+            
+        Returns:
+            float: Reliability score between 0.0 and 1.0.
+        """
+        return FusionConfig.SOURCE_RELIABILITY.get(source_type, 0.5)
+
+    @staticmethod
+    def detect_disagreement(observations: List[StandardObservation], metric: str) -> None:
+        """
+        Detects if different sensors reporting the same metric have deviated beyond the acceptable threshold.
+        Emits a structural warning log if anomaly detected.
+        
+        Args:
+            observations (List[StandardObservation]): Recent observations for a zone.
+            metric (str): The specific metric being compared (e.g., 'people_count').
+        """
         metric_obs = [o for o in observations if o.metric == metric]
         if len(metric_obs) < 2:
             return
@@ -52,15 +93,32 @@ class FusionService:
             
         for obs in metric_obs:
             deviation = abs(obs.value - median) / median
-            if deviation > 0.3:  # 30% deviation threshold
+            if deviation > FusionConfig.DISAGREEMENT_THRESHOLD:
                 logger.warning(
-                    f"[SENSOR_DISAGREEMENT] {obs.source_id} anomaly in {obs.zone_id} for {metric}: "
-                    f"Reported {obs.value} vs Median {median}"
+                    f"[SENSOR_DISAGREEMENT] Anomaly detected",
+                    extra={
+                        "source_id": obs.source_id,
+                        "zone_id": obs.zone_id,
+                        "metric": metric,
+                        "reported_value": obs.value,
+                        "median_value": median,
+                        "deviation_pct": round(deviation * 100, 2)
+                    }
                 )
 
     @staticmethod
     def fuse_metric(observations: List[StandardObservation], metric: str, default: float) -> float:
-        """Confidence-weighted estimation for a specific metric."""
+        """
+        Performs confidence-weighted fusion on a set of observations.
+        
+        Args:
+            observations (List[StandardObservation]): The list of recent observations.
+            metric (str): The metric to fuse.
+            default (float): Fallback value if no observations are found.
+            
+        Returns:
+            float: The fused, weighted average of the metric.
+        """
         metric_obs = [o for o in observations if o.metric == metric]
         if not metric_obs:
             return default
@@ -73,12 +131,18 @@ class FusionService:
             weighted_sum += obs.value * weight
             total_weight += weight
             
-        return weighted_sum / total_weight if total_weight > 0 else default
+        return weighted_sum / total_weight if total_weight > 0.0 else default
 
     @staticmethod
     def process_observation(obs: StandardObservation) -> CrowdStateDTO:
         """
         Fuses a single observation into the global zone state using confidence-weighted fusion.
+        
+        Args:
+            obs (StandardObservation): The incoming observation payload.
+            
+        Returns:
+            CrowdStateDTO: The newly computed unified crowd state for the zone.
         """
         zone_id = obs.zone_id
         now = datetime.utcnow()
@@ -89,10 +153,8 @@ class FusionService:
             
         observation_buffer[zone_id].append(obs)
         
-        # Clean up old observations (keep last 2 minutes)
-        # Handle naive vs aware datetime depending on how it's sent
-        obs_time = obs.timestamp.replace(tzinfo=None) if obs.timestamp else now
-        cutoff_time = now - timedelta(minutes=2)
+        # Clean up old observations
+        cutoff_time = now - timedelta(minutes=FusionConfig.OBSERVATION_TTL_MINUTES)
         observation_buffer[zone_id] = [
             o for o in observation_buffer[zone_id] 
             if (o.timestamp.replace(tzinfo=None) if o.timestamp else now) > cutoff_time
@@ -145,7 +207,6 @@ class FusionService:
             state.density_level = "CRITICAL"
             
         state.timestamp = now
-        # Overall confidence is max of recent observations for now
         state.confidence = max((o.confidence for o in recent_obs), default=0.0)
         
         # 6. Apply Analytics Engine

@@ -23,57 +23,51 @@ The core principle:
 
 ## 2. Component Architecture Diagram
 
-```text
-                    CROWDShield PWA
-                          │
-        ┌─────────────────┼─────────────────┐
-        │                 │                 │
-    AUTHORITY           POLICE         EVENT OWNER
-        │                                   │
-        │                                EVENT SETUP
-        │                                   │
-        │                            ┌──────┴──────┐
-        │                            ↓             ↓
-        │                         MAP BUILDER   CONFIGURATION
-        │                            │             │
-        │                            └──────┬──────┘
-        │                                   ↓
-        │                           EVENT DIGITAL TWIN
-        │                                   │
-        └───────────────────────────────────┤
-                                            ↓
-                                  DATA SOURCE REGISTRY
-                                            │
-          ┌──────────┬──────────┬──────────┼──────────┬──────────┐
-          ↓          ↓          ↓          ↓          ↓          ↓
-        CCTV     SMART GATE    GPS       DRONE       BLE     TELECOM
-          │          │          │          │          │          │
-          └──────────┴──────────┴──────────┴──────────┴──────────┘
-                                            │
-                                    DATA FUSION HUB
-                                            │
-                           ┌────────────────┼────────────────┐
-                           ↓                ↓                ↓
-                      NORMALIZE         VALIDATE        SOURCE HEALTH
-                           └────────────────┼────────────────┘
-                                            ↓
-                                      SENSOR FUSION
-                                            ↓
-                                       CROWD STATE
-                                            ↓
-                                    AI RISK ENGINE
-                                            ↓
-                                  PREDICTION ENGINE
-                                            ↓
-                                    DECISION ENGINE
-                                            ↓
-                                   RECOMMENDATIONS
-                                            ↓
-                               AUTHORITY / POLICE ACTION
-                                            ↓
-                                      CROWD RESPONSE
-                                            ↓
-                                      FEEDBACK LOOP
+```mermaid
+graph TD
+    %% Core Users
+    subgraph PWA ["CrowdShield PWA (Presentation Layer)"]
+        Authority([Authority / Police Command])
+        Police([Police Officer on Ground])
+        EventOwner([Event Owner])
+        Citizen([Citizen App])
+    end
+
+    %% Event Setup
+    EventOwner -->|Configures Digital Twin| EventSetup[Event Setup & Configuration]
+    EventSetup --> MapBuilder[Venue Map Builder]
+    MapBuilder --> DigitalTwin[Event Digital Twin]
+
+    %% Sources
+    subgraph Ingestion ["Data Ingestion & Sensors"]
+        CCTV[CCTV Camera Network]
+        SmartGate[RFID Smart Gates]
+        GPS[Citizen GPS Telemetry]
+        Drone[Drone Aerial Feeds]
+        Synthetic[Simulation Engine]
+    end
+
+    Ingestion -->|Feeds Data| FusionHub[Data Fusion Hub]
+
+    %% Processing Pipeline
+    subgraph Processing ["AI & Processing Engine"]
+        FusionHub -->|Normalizes & Validates| SensorFusion[Sensor Fusion Algorithm]
+        SensorFusion -->|Calculates Ground Truth| CrowdState[Unified Crowd State]
+        CrowdState --> RiskEngine[AI Risk Engine XGBoost]
+        RiskEngine --> PredictionEngine[Prediction Engine]
+        PredictionEngine --> DecisionEngine[Decision Support Engine]
+    end
+
+    %% Outputs
+    DecisionEngine -->|Generates Interventions| Recommendations[AI Recommendations]
+    Recommendations --> Authority
+    Authority -->|Approves Action| Dispatch[Police Dispatch System]
+    Dispatch --> Police
+    CrowdState -->|Updates Heatmap| Authority
+
+    %% Feedback
+    Police -->|Resolves Incident| DigitalTwin
+    Citizen -->|Follows Safe Routes| GPS
 ```
 
 ---
@@ -331,61 +325,6 @@ apps/web/src/features/citizen-navigation/
 └── api/
     └── navigation-client.ts
 ```
-
----
-
-## 61. FINAL SYSTEM PRINCIPLE
-
-The entire CrowdShield platform should follow this principle:
-
-> **Configure the event first. Sense the crowd from multiple sources. Fuse the observations. Understand the crowd state. Predict risk. Recommend preventive action. Let authorized humans act. Measure the result.**
-
-The system should move crowd management from:
-
-**Reactive → Predictive → Preventive.**
-
----
-
-## 62. FINAL ARCHITECTURE
-
-```text
-                    CROWDShield PWA
-                          │
-        ┌─────────────────┼─────────────────┐
-        │                 │                 │
-    AUTHORITY           POLICE         EVENT OWNER
-        │                                   │
-        │                                EVENT SETUP
-        │                                   │
-        │                            ┌──────┴──────┐
-        │                            ↓             ↓
-        │                         MAP BUILDER   CONFIGURATION
-        │                            │             │
-        │                            └──────┬──────┘
-        │                                   ↓
-        │                           EVENT DIGITAL TWIN
-        │                                   │
-        └───────────────────────────────────┤
-                                            ↓
-                                  DATA SOURCE REGISTRY
-                                            │
-          ┌──────────┬──────────┬──────────┼──────────┬──────────┐
-          ↓          ↓          ↓          ↓          ↓          ↓
-        CCTV     SMART GATE    GPS       DRONE       BLE     TELECOM
-          │          │          │          │          │          │
-          └──────────┴──────────┴──────────┴──────────┴──────────┘
-                                            │
-                                    DATA FUSION HUB
-                                            │
-                           ┌────────────────┼────────────────┐
-                           ↓                ↓                ↓
-                      NORMALIZE         VALIDATE        SOURCE HEALTH
-                           └────────────────┼────────────────┘
-                                            ↓
-                                      SENSOR FUSION
-                                            ↓
-                                       CROWD STATE
-                                            ↓
                                     AI RISK ENGINE
                                             ↓
                                   PREDICTION ENGINE

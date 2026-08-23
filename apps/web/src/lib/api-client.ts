@@ -4,6 +4,20 @@
  * Prevents Mixed Content blocking in modern browsers and PWA service workers.
  */
 
+export class ApiError extends Error {
+  public code: string;
+  public status: number;
+  public details: Record<string, any>;
+
+  constructor(message: string, code: string = 'UNKNOWN_ERROR', status: number = 500, details: Record<string, any> = {}) {
+    super(message);
+    this.name = 'ApiError';
+    this.code = code;
+    this.status = status;
+    this.details = details;
+  }
+}
+
 export function getApiBaseUrl(): string {
   let url = process.env.NEXT_PUBLIC_API_URL || 'https://crowdcatchup.onrender.com/api/v1';
 
@@ -108,6 +122,18 @@ export async function apiClient<T>(
     const response = await fetch(url, config);
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      
+      // Parse industrial standard JSON Error Envelope if available
+      if (errorData.error && errorData.error.message) {
+        throw new ApiError(
+          errorData.error.message,
+          errorData.error.code,
+          response.status,
+          errorData.error.details || {}
+        );
+      }
+
+      // Fallback for legacy generic FastAPI validation errors
       let errorMessage = `API Request Failed with status ${response.status}`;
       if (errorData.detail) {
         if (Array.isArray(errorData.detail)) {
@@ -118,7 +144,7 @@ export async function apiClient<T>(
       } else if (errorData.message) {
         errorMessage = errorData.message;
       }
-      throw new Error(errorMessage);
+      throw new ApiError(errorMessage, 'LEGACY_ERROR', response.status);
     }
     return response.json();
   } catch (error) {
