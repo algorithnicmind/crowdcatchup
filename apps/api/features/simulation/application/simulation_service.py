@@ -97,23 +97,23 @@ class SimulationService:
         
         # Determine base metrics based on scenario
         metrics = {
-            "ZONE-A": {"people_count": 500, "avg_speed": 1.2, "entry_rate": 20, "exit_rate": 20},
-            "ZONE-B": {"people_count": 800, "avg_speed": 1.1, "entry_rate": 30, "exit_rate": 30}
+            "Zone A (Gate 1)": {"people_count": 500, "avg_speed": 1.2, "entry_rate": 20, "exit_rate": 20},
+            "Zone B (Gate 2)": {"people_count": 800, "avg_speed": 1.1, "entry_rate": 30, "exit_rate": 30}
         }
         
         if scenario_id == "sudden_surge":
-            metrics["ZONE-A"]["entry_rate"] = 150
-            metrics["ZONE-A"]["people_count"] = 1200
-            metrics["ZONE-A"]["avg_speed"] = 0.8
+            metrics["Zone A (Gate 1)"]["entry_rate"] = 150
+            metrics["Zone A (Gate 1)"]["people_count"] = 1200
+            metrics["Zone A (Gate 1)"]["avg_speed"] = 0.8
         elif scenario_id == "gate_blockage":
-            metrics["ZONE-B"]["exit_rate"] = 2
-            metrics["ZONE-B"]["people_count"] = 1500
-            metrics["ZONE-B"]["avg_speed"] = 0.5
+            metrics["Zone B (Gate 2)"]["exit_rate"] = 2
+            metrics["Zone B (Gate 2)"]["people_count"] = 1500
+            metrics["Zone B (Gate 2)"]["avg_speed"] = 0.5
         elif scenario_id == "crowd_surge":
-            metrics["ZONE-B"]["people_count"] = 2500
-            metrics["ZONE-B"]["entry_rate"] = 200
-            metrics["ZONE-B"]["exit_rate"] = 50
-            metrics["ZONE-B"]["avg_speed"] = 0.1
+            metrics["Zone B (Gate 2)"]["people_count"] = 2500
+            metrics["Zone B (Gate 2)"]["entry_rate"] = 200
+            metrics["Zone B (Gate 2)"]["exit_rate"] = 50
+            metrics["Zone B (Gate 2)"]["avg_speed"] = 0.1
             
         redis = await get_redis()
         

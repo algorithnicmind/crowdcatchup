@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { MagicCard } from '@/components/ui/magic-card';
 import { apiClient } from '@/lib/api-client';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
-import { useMap } from '@vis.gl/react-google-maps';
 
 // Helper for demo distance
 function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: number) {
@@ -26,7 +25,6 @@ function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: num
 }
 
 export function CitizenDirectionsSheet() {
-  const map = useMap();
   const { 
     searchResultPin, 
     destinationName, 
@@ -123,14 +121,6 @@ export function CitizenDirectionsSheet() {
           destination: searchResultPin
         })
       }).catch(() => null);
-    }
-    
-    // Smooth Google Maps-like 3D navigation camera
-    if (map && citizenLocation) {
-      map.panTo(citizenLocation);
-      map.setZoom(19);
-      map.setHeading(0);
-      map.setTilt(60); // Tilt for 3D navigation feel
     }
     
     setStep('NAVIGATING');

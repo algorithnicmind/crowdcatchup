@@ -99,3 +99,13 @@ class SourceModel(Base):
     location_description = Column(String, nullable=True)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class EventAssignmentModel(Base):
+    """Maps a user (Police/Staff) to a specific event."""
+    __tablename__ = 'event_assignments'
+    
+    id = Column(String, primary_key=True, index=True)
+    event_id = Column(String, ForeignKey('events.id'), nullable=False, index=True)
+    user_id = Column(String, nullable=False, index=True)
+    role = Column(String, nullable=False) # e.g. "POLICE"
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { GoogleEventMap } from '@/components/map/GoogleEventMap';
+import { DigitalTwinMap } from '@/components/map/DigitalTwinMap';
 import { TaskCard } from '@/components/dashboard/police/TaskCard';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
 import { useMapStore, SecurityTask } from '@/stores/map-store';
@@ -19,21 +19,39 @@ export default function PoliceDashboard() {
   const addTask = useMapStore((state) => state.addTask);
 
   useEffect(() => {
-    const unsubscribeTasks = subscribe('SECURITY_TASK', (wsEvent: any) => {
-      if (wsEvent.payload) {
+    // Handle NEW_TASK (auto-created by TaskManager)
+    const unsubscribeNew = subscribe('NEW_TASK', (payload: any) => {
+      if (payload && payload.id) {
         addTask({
-          task_id: wsEvent.payload.intervention_id || `task-${Date.now()}`,
-          zone_id: wsEvent.payload.target_zone || wsEvent.payload.zone_id || 'Unknown Zone',
-          distance: 100, // Mock distance
+          task_id: payload.id,
+          zone_id: payload.zone_id || 'Unknown Zone',
+          distance: Math.floor(Math.random() * 200) + 50,
+          risk_level: payload.risk_level || 'HIGH',
+          instructions: payload.instructions || 'No instructions provided',
+          required_officers: payload.required_officers || 2
+        });
+      }
+    });
+
+    // Handle SECURITY_TASK (manually approved from InterventionService)
+    const unsubscribeSecurity = subscribe('SECURITY_TASK', (payload: any) => {
+      // payload might have payload.payload depending on double-nesting, let's check both
+      const data = payload.payload || payload;
+      if (data && data.intervention_id) {
+        addTask({
+          task_id: data.intervention_id,
+          zone_id: data.target_zone || data.zone_id || 'Unknown Zone',
+          distance: Math.floor(Math.random() * 200) + 50,
           risk_level: 'HIGH',
-          instructions: wsEvent.payload.message || 'No instructions provided',
+          instructions: data.message || 'No instructions provided',
           required_officers: 2
         });
       }
     });
 
     return () => {
-      unsubscribeTasks();
+      unsubscribeNew();
+      unsubscribeSecurity();
     };
   }, [subscribe, addTask]);
 
@@ -41,7 +59,7 @@ export default function PoliceDashboard() {
     <div className="h-[calc(100vh-64px)] w-full relative overflow-hidden bg-black flex flex-col">
       {/* 1. Base Map Layer */}
       <div className="flex-1 relative">
-        <GoogleEventMap role="police" />
+        <DigitalTwinMap role="police" />
         
         {/* 2. Police Specific Overlays */}
         <TaskCard />

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { GoogleEventMap } from '@/components/map/GoogleEventMap';
+import { DigitalTwinMap } from '@/components/map/DigitalTwinMap';
 import { SafeRoutePanel } from '@/components/dashboard/citizen/SafeRoutePanel';
 import { CitizenBottomNav } from '@/components/dashboard/citizen/CitizenBottomNav';
 import { ShieldAlert } from 'lucide-react';
@@ -71,7 +71,7 @@ export default function CitizenDashboard() {
   return (
     <div className="h-[calc(100vh-64px)] w-full relative overflow-hidden bg-black">
       {/* Base Map — full screen */}
-      <GoogleEventMap role="citizen" />
+      <DigitalTwinMap role="citizen" />
 
       {/* Safe Route Planning Panel — bottom right */}
       <SafeRoutePanel />

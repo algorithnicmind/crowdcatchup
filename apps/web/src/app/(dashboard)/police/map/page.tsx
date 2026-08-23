@@ -1,5 +1,5 @@
 import React from 'react';
-import { GoogleEventMap } from '@/components/map/GoogleEventMap';
+import { DigitalTwinMap } from '@/components/map/DigitalTwinMap';
 
 export default function PoliceMapPage() {
   return (
@@ -16,7 +16,7 @@ export default function PoliceMapPage() {
       </div>
       
       {/* Map Component */}
-      <GoogleEventMap role="police" />
+      <DigitalTwinMap role="police" />
     </div>
   );
 }

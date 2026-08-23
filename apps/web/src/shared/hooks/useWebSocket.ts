@@ -84,7 +84,7 @@ export function useWebSocket(eventId: string) {
         const eventType = data.type;
         
         if (eventType && callbacks.current[eventType]) {
-          callbacks.current[eventType].forEach((cb) => cb(data));
+          callbacks.current[eventType].forEach((cb) => cb(data.data || data));
         }
       } catch (err) {
         console.error('[WS] Failed to parse message', err);

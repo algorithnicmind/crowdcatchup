@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { GoogleEventMap } from '@/components/map/GoogleEventMap';
+import { DigitalTwinMap } from '@/components/map/DigitalTwinMap';
 import { AlertsPanel } from '@/components/dashboard/authority/AlertsPanel';
 import { CctvGrid } from '@/components/dashboard/authority/CctvGrid';
 import { SourceHealthPanel } from '@/components/dashboard/authority/SourceHealthPanel';
@@ -56,7 +56,7 @@ export default function AuthorityDashboard() {
   return (
     <div className="h-[calc(100vh-64px)] w-full relative overflow-hidden bg-black">
       {/* 1. Base Map Layer */}
-      <GoogleEventMap role="authority" />
+      <DigitalTwinMap role="authority" />
       
       {/* 2. Authority Specific Overlays */}
       <SimulatorPanel />

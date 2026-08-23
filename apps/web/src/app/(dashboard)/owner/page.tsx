@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { GoogleEventMap } from '@/components/map/GoogleEventMap';
+import { DigitalTwinMap } from '@/components/map/DigitalTwinMap';
 import { OwnerPropertiesPanel } from '@/components/dashboard/owner/OwnerPropertiesPanel';
 import { SimulationDock } from '@/components/dashboard/owner/SimulationDock';
 import { useGpsTelemetry } from '@/shared/hooks/useGpsTelemetry';
@@ -12,7 +12,7 @@ export default function OwnerDashboard() {
   return (
     <div className="h-[calc(100vh-64px)] w-full relative overflow-hidden bg-black">
       {/* 1. Base Map Layer */}
-      <GoogleEventMap role="owner" />
+      <DigitalTwinMap role="owner" />
       
       {/* 2. Properties Panel (Right) */}
       <OwnerPropertiesPanel />

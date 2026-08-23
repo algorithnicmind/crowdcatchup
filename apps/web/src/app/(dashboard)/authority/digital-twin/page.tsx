@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { GoogleEventMap } from '@/components/map/GoogleEventMap';
+import { DigitalTwinMap } from '@/components/map/DigitalTwinMap';
 import { WhatIfModal } from '@/components/dashboard/authority/digital-twin/WhatIfModal';
 import { ScenarioController } from '@/components/dashboard/authority/digital-twin/ScenarioController';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
@@ -51,7 +51,7 @@ export default function DigitalTwinDashboard() {
 
       {/* Main Map Area */}
       <div className="flex-1 relative">
-        <GoogleEventMap role="authority" />
+        <DigitalTwinMap role="authority" />
         
         {/* Top-Right Badges */}
         <div className="absolute top-4 right-4 z-[1000] pointer-events-none flex flex-col gap-2">

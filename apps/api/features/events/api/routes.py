@@ -168,3 +168,62 @@ async def list_sources_endpoint(event_id: str, db: AsyncSession = Depends(get_db
         }
         for s in sources
     ]
+
+@router.post(
+    "/{event_id}/assign-staff",
+    response_model=dict,
+    dependencies=[Depends(require_role("AUTHORITY"))],
+)
+async def assign_staff_endpoint(event_id: str, data: dict, db: AsyncSession = Depends(get_db)):
+    """Assign a police or staff member to an event."""
+    from features.events.infrastructure.models.event_models import EventAssignmentModel
+    import uuid
+    from sqlalchemy import select
+    
+    user_id = data.get("user_id")
+    role = data.get("role", "POLICE")
+    
+    if not user_id:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=400, detail="user_id is required")
+        
+    # Check if already assigned
+    existing = await db.execute(select(EventAssignmentModel).where(
+        EventAssignmentModel.event_id == event_id,
+        EventAssignmentModel.user_id == user_id
+    ))
+    if existing.scalar_one_or_none():
+        return {"status": "success", "message": "Already assigned"}
+        
+    assignment = EventAssignmentModel(
+        id=str(uuid.uuid4()),
+        event_id=event_id,
+        user_id=user_id,
+        role=role
+    )
+    db.add(assignment)
+    await db.flush()
+    
+    return {"status": "success", "assignment_id": assignment.id}
+
+@router.get(
+    "/{event_id}/staff",
+    response_model=list,
+    dependencies=[Depends(require_role("AUTHORITY", "EVENT_OWNER"))],
+)
+async def list_staff_endpoint(event_id: str, db: AsyncSession = Depends(get_db)):
+    """List staff assigned to an event."""
+    from sqlalchemy import select
+    from features.events.infrastructure.models.event_models import EventAssignmentModel
+    
+    result = await db.execute(select(EventAssignmentModel).where(EventAssignmentModel.event_id == event_id))
+    assignments = result.scalars().all()
+    
+    return [
+        {
+            "id": a.id,
+            "user_id": a.user_id,
+            "role": a.role
+        }
+        for a in assignments
+    ]

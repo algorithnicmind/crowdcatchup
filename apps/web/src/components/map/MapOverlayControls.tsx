@@ -1,15 +1,9 @@
 import React from 'react';
-import { SearchBar } from './SearchBar';
-import { LayerMenu } from './LayerMenu';
-import { RoutingPanel } from './RoutingPanel';
-import { CompassButton } from './CompassButton';
 import { ShieldAlert, Users, Navigation2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { MapControl, ControlPosition } from '@vis.gl/react-google-maps';
 import { MagicCard } from '@/components/ui/magic-card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useMapStore } from '@/stores/map-store';
-import { CitizenDirectionsSheet } from '../dashboard/citizen/CitizenDirectionsSheet';
 
 interface MapOverlayControlsProps {
   role?: 'authority' | 'police' | 'citizen' | 'owner';
@@ -17,7 +11,6 @@ interface MapOverlayControlsProps {
 
 export function MapOverlayControls({ role = 'authority' }: MapOverlayControlsProps) {
   const showEventStatus = role === 'authority' || role === 'owner';
-  const showRoutingPanel = role === 'authority' || role === 'owner';
 
   const { liveCrowdState, liveRisk } = useMapStore();
   
@@ -39,50 +32,34 @@ export function MapOverlayControls({ role = 'authority' }: MapOverlayControlsPro
 
   return (
     <>
-      {/* Search Bar - Top Left Overlay (Everyone gets search) */}
-      <SearchBar />
-
-      {/* Routing Panel - Hidden by default, toggled via button */}
-      {showRoutingPanel && <RoutingPanel />}
-
       {/* Action Buttons - Top Right Overlay */}
-      <MapControl position={ControlPosition.RIGHT_TOP}>
-        <div className="flex flex-col gap-3 mt-20 md:mt-6 mr-4 md:mr-6 pointer-events-auto">
-          <LayerMenu />
-          
-          <CompassButton />
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                size="icon" 
-                className="h-12 w-12 rounded-full bg-zinc-900/90 backdrop-blur-md border border-zinc-800 shadow-lg hover:bg-zinc-800 text-blue-400"
-                onClick={() => {
-                  const useMapStoreAPI = useMapStore.getState();
-                  useMapStoreAPI.addRecommendation({
-                    recommendation_id: `rec-${Date.now()}`,
-                    zone_id: 'Zone A (Gate 1)',
-                    risk_score: 92,
-                    actions: ['Dispatch rapid response team', 'Divert incoming traffic to Gate 2', 'Send emergency broadcast'],
-                    explanation: {
-                      primary_reason: 'Sudden critical density spike and flow conflict detected at Gate 1.',
-                      supporting_factors: ['Multiple CCTV anomalies', 'Social media panic indicators'],
-                      source_agreement: 0.95,
-                      prediction_confidence: 0.91
-                    },
-                    confidence: 0.93
+      <div className="absolute top-6 right-6 z-50 pointer-events-auto flex flex-col gap-3">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button 
+              size="icon" 
+              className="h-12 w-12 rounded-full bg-zinc-900/90 backdrop-blur-md border border-zinc-800 shadow-lg hover:bg-zinc-800 text-blue-400"
+              onClick={async () => {
+                try {
+                  const res = await fetch('http://localhost:8000/api/v1/simulation/scenario', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ event_id: 'EVT-001', scenario_id: 'crowd_surge' })
                   });
-                }}
-              >
-                <ShieldAlert className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left" className="bg-zinc-900 border-zinc-800 text-zinc-300">
-              <p>Simulate AI Incident</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
-      </MapControl>
+                  if (!res.ok) console.error('Failed to trigger simulation');
+                } catch (e) {
+                  console.error('Simulation error:', e);
+                }
+              }}
+            >
+              <ShieldAlert className="h-5 w-5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="left" className="bg-zinc-900 border-zinc-800 text-zinc-300">
+            <p>Simulate AI Incident</p>
+          </TooltipContent>
+        </Tooltip>
+      </div>
 
       {/* Risk Summary Widget */}
       {showEventStatus && (
