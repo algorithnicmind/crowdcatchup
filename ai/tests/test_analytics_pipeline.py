@@ -46,10 +46,12 @@ def test_analytics_dwell_time_computed_after_timeout():
     obj = TrackedObject(track_id=1, bbox=(0, 0, 10, 10))
     pipeline.process([obj])
     time.sleep(0.1)
+    pipeline.process([obj])
+    time.sleep(0.2)
     pipeline.process([])
 
     assert len(pipeline.completed_dwell_times) == 1
-    assert pipeline.completed_dwell_times[0] >= 0.05
+    assert pipeline.completed_dwell_times[0] >= 0.1
 
 
 def test_analytics_max_capacity_zero():

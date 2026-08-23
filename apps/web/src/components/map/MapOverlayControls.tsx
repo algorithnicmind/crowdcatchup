@@ -9,6 +9,7 @@ import { MapControl, ControlPosition } from '@vis.gl/react-google-maps';
 import { MagicCard } from '@/components/ui/magic-card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useMapStore } from '@/stores/map-store';
+import { CitizenDirectionsSheet } from '../dashboard/citizen/CitizenDirectionsSheet';
 
 interface MapOverlayControlsProps {
   role?: 'authority' | 'police' | 'citizen' | 'owner';

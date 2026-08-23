@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import React from 'react';
 
 jest.mock('@/stores/map-store', () => ({
-  useMapStore: () => ({
+  useMapStore: (selector: any) => selector({
     activeRecommendations: [],
   }),
 }));

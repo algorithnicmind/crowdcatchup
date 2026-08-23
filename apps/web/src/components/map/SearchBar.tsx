@@ -62,7 +62,7 @@ export function SearchBar() {
           }
         }
       );
-    }, 300);
+    }, 100);
   };
 
   const handleSelect = (prediction: google.maps.places.AutocompletePrediction) => {
@@ -72,14 +72,18 @@ export function SearchBar() {
 
     if (!placesService.current) return;
     placesService.current.getDetails(
-      { placeId: prediction.place_id, fields: ['geometry'] },
+      { placeId: prediction.place_id, fields: ['geometry', 'name'] },
       (place, status) => {
         if (status === window.google.maps.places.PlacesServiceStatus.OK && place?.geometry?.location) {
           const lat = place.geometry.location.lat();
           const lng = place.geometry.location.lng();
           map?.panTo({ lat, lng });
           map?.setZoom(17);
-          useMapStore.getState().setSearchResultPin({ lat, lng });
+          
+          const store = useMapStore.getState();
+          store.setSearchResultPin({ lat, lng });
+          store.setDestinationName(place.name || prediction.structured_formatting.main_text);
+          store.setIsDirectionsSheetOpen(true);
         }
       }
     );

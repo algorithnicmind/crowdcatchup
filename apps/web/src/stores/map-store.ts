@@ -86,6 +86,10 @@ interface MapState {
   toggleSidebar: () => void;
   searchResultPin: { lat: number, lng: number } | null;
   setSearchResultPin: (pin: { lat: number, lng: number } | null) => void;
+  destinationName: string | null;
+  setDestinationName: (name: string | null) => void;
+  isDirectionsSheetOpen: boolean;
+  setIsDirectionsSheetOpen: (isOpen: boolean) => void;
   citizenLocation: { lat: number; lng: number } | null;
   setCitizenLocation: (loc: { lat: number; lng: number } | null) => void;
 }
@@ -176,6 +180,10 @@ export const useMapStore = create<MapState>((set) => ({
   toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
   searchResultPin: null,
   setSearchResultPin: (pin) => set({ searchResultPin: pin }),
+  destinationName: null,
+  setDestinationName: (name) => set({ destinationName: name }),
+  isDirectionsSheetOpen: false,
+  setIsDirectionsSheetOpen: (isOpen) => set({ isDirectionsSheetOpen: isOpen }),
   citizenLocation: null,
   setCitizenLocation: (loc) => set({ citizenLocation: loc })
 }));

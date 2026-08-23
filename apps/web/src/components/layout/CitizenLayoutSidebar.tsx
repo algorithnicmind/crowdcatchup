@@ -25,7 +25,6 @@ export function CitizenLayoutSidebar() {
   const navItems = [
     { name: 'Live Map', href: '/citizen', icon: MapIcon },
     { name: 'Alerts', href: '/citizen/alerts', icon: BellRing },
-    { name: 'Journey Planner', href: '/citizen/planner', icon: Navigation },
     { name: 'Profile', href: '/citizen/profile', icon: User },
   ];
 
@@ -57,6 +56,18 @@ export function CitizenLayoutSidebar() {
             CROWD<span className="text-emerald-500">SHIELD</span>
           </span>
         </div>
+        {/* Explicit Close Button for Mobile PWA */}
+        <button 
+          onClick={() => {
+            // Dispatch a click to the hidden shadcn close button if on mobile, or just rely on state
+            const closeBtn = document.querySelector('[data-state="open"] > button') as HTMLButtonElement;
+            if (closeBtn) closeBtn.click();
+          }}
+          className="md:hidden w-8 h-8 flex items-center justify-center rounded-full bg-zinc-900 border border-zinc-700 text-zinc-400 hover:text-white"
+        >
+          <span className="sr-only">Close</span>
+          &times;
+        </button>
       </div>
 
       {/* GPS status badge */}
