@@ -22,10 +22,16 @@ router = APIRouter(prefix="/api/v1/events", tags=["events"])
     "",
     response_model=EventDTO,
     status_code=201,
-    dependencies=[Depends(require_role("EVENT_OWNER", "AUTHORITY"))],
 )
-async def create_event_endpoint(data: dict, db: AsyncSession = Depends(get_db)):
+async def create_event_endpoint(
+    data: dict, 
+    db: AsyncSession = Depends(get_db),
+    user: dict = Depends(require_role("EVENT_OWNER", "AUTHORITY"))
+):
     """Create a new event (Event Owner or Authority only)."""
+    # Fix: Inject owner_id from JWT payload to prevent KeyError in UseCase
+    data["owner_id"] = user["sub"]
+    
     repo = SQLAlchemyEventRepository(db)
     use_case = CreateEventUseCase(event_repository=repo)
     return await use_case.execute(data)
