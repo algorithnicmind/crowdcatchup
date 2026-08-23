@@ -25,15 +25,18 @@ export const viewport: Viewport = {
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from 'sonner';
+import { SmoothScrolling } from "@/components/providers/SmoothScrolling";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
       <html lang="en" className="h-full antialiased dark">
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <TooltipProvider>
-          {children}
-          <Toaster theme="dark" position="top-right" />
-        </TooltipProvider>
+        <SmoothScrolling>
+          <TooltipProvider>
+            {children}
+            <Toaster theme="dark" position="top-right" />
+          </TooltipProvider>
+        </SmoothScrolling>
       </body>
     </html>
   );
