@@ -2,7 +2,7 @@
 Events Feature — API Routes
 """
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
@@ -38,11 +38,14 @@ async def create_event_endpoint(data: dict, db: AsyncSession = Depends(get_db)):
         Depends(require_role("EVENT_OWNER", "AUTHORITY", "POLICE", "CITIZEN"))
     ],
 )
-async def list_events_endpoint(db: AsyncSession = Depends(get_db)):
-    """List all events (All roles)."""
+async def list_events_endpoint(
+    db: AsyncSession = Depends(get_db),
+    limit: int = Query(default=50, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+):
+    """List events with pagination (All roles)."""
     repo = SQLAlchemyEventRepository(db)
-    events = await repo.list_all()
-    # Manual mapping for list (for MVP speed; proper DTO mapping should be used)
+    events = await repo.list_all(limit=limit, offset=offset)
     return [
         EventDTO(
             id=e.id,
@@ -137,8 +140,7 @@ async def register_source_endpoint(event_id: str, data: dict, db: AsyncSession =
         is_active=data.get("is_active", True)
     )
     db.add(source)
-    await db.commit()
-    await db.refresh(source)
+    await db.flush()
     
     return {"status": "success", "source_id": source.id}
 

@@ -1,3 +1,9 @@
+/**
+ * @deprecated This file is unused. The primary WebSocket implementation is
+ * useWebSocket hook in shared/hooks/useWebSocket.ts.
+ * Kept for reference only. Remove when confirmed no external consumers.
+ */
+
 import { getWsBaseUrl } from './api-client';
 
 type MessageHandler = (data: unknown) => void;
@@ -18,8 +24,6 @@ class WebSocketClient {
     if (this.ws?.readyState === WebSocket.OPEN || this.isConnecting) return;
     
     this.isConnecting = true;
-    
-    // Auth token can be passed in query string for WS
     const connectUrl = token ? `${this.url}?token=${token}` : this.url;
     
     this.ws = new WebSocket(connectUrl);
@@ -27,7 +31,6 @@ class WebSocketClient {
     this.ws.onopen = () => {
       this.isConnecting = false;
       this.reconnectAttempts = 0;
-      console.log("[WebSocket] Connected");
     };
 
     this.ws.onmessage = (event) => {
@@ -47,12 +50,11 @@ class WebSocketClient {
 
     this.ws.onclose = () => {
       this.isConnecting = false;
-      console.log("[WebSocket] Disconnected");
       this.handleReconnect(token);
     };
 
-    this.ws.onerror = (error) => {
-      console.error("[WebSocket] Error:", error);
+    this.ws.onerror = () => {
+      this.isConnecting = false;
     };
   }
 
@@ -60,7 +62,6 @@ class WebSocketClient {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       const timeout = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 10000);
-      console.log(`[WebSocket] Reconnecting in ${timeout}ms...`);
       setTimeout(() => this.connect(token), timeout);
     }
   }
@@ -71,7 +72,6 @@ class WebSocketClient {
     }
     this.handlers.get(eventName)!.add(handler);
 
-    // Return unsubscribe function
     return () => {
       const eventHandlers = this.handlers.get(eventName);
       if (eventHandlers) {

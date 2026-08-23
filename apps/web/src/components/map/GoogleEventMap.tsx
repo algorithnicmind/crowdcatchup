@@ -1,20 +1,18 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { APIProvider, Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps';
 import { useMapStore } from '@/stores/map-store';
 import { MapOverlayControls } from './MapOverlayControls';
 import { MapDrawingManager } from './MapDrawingManager';
 
-// Coordinates for the event (e.g., Kalinga Stadium)
 const EVENT_CENTER = { lat: 20.2886, lng: 85.8178 };
 
-// MOCK DEMO FIX: Suppress Google Maps Heatmap deprecation error so it doesn't crash the Next.js dev overlay
 if (typeof window !== 'undefined') {
   const originalError = console.error;
   console.error = (...args) => {
     if (typeof args[0] === 'string' && args[0].includes('Heatmap Layer functionality in the Maps JavaScript API is no longer supported')) {
-      return; // Silence the deprecation warning
+      return;
     }
     originalError.apply(console, args);
   };
@@ -23,7 +21,7 @@ if (typeof window !== 'undefined') {
 
 function TrafficLayer() {
   const map = useMap();
-  const { trafficEnabled } = useMapStore();
+  const trafficEnabled = useMapStore(s => s.trafficEnabled);
   
   useEffect(() => {
     if (!map) return;
@@ -46,7 +44,7 @@ function TrafficLayer() {
 
 function RoutePolyline() {
   const map = useMap();
-  const { routeCoordinates } = useMapStore();
+  const routeCoordinates = useMapStore(s => s.routeCoordinates);
   const polylineRef = useRef<google.maps.Polyline | null>(null);
 
   useEffect(() => {
@@ -54,7 +52,7 @@ function RoutePolyline() {
 
     if (!polylineRef.current) {
       polylineRef.current = new google.maps.Polyline({
-        strokeColor: '#3b82f6', // blue-500
+        strokeColor: '#3b82f6',
         strokeOpacity: 0.8,
         strokeWeight: 6,
       });
@@ -79,116 +77,118 @@ function RoutePolyline() {
 
 import { EVENT_ZONES } from '@/lib/constants/zones';
 import { Users, Router } from 'lucide-react';
+import React.memo from 'react';
 
-function LiveMarkers() {
-  const { liveCrowdState, liveRisk } = useMapStore();
+const ZoneMarker = React.memo(function ZoneMarker({ zoneId, coords }: { zoneId: string; coords: { lat: number; lng: number } }) {
+  const risk = useMapStore(s => s.liveRisk[zoneId]);
+  const crowd = useMapStore(s => s.liveCrowdState[zoneId]);
+
+  const level = risk?.risk_level || crowd?.density_level || 'LOW';
+  
+  const { bgColor, borderColor, textColor, pulseColor, pulse } = useMemo(() => {
+    if (level === 'HIGH' || level === 'CONGESTED') {
+      return { bgColor: 'bg-amber-500/20', borderColor: 'border-amber-500/50', textColor: 'text-amber-400', pulseColor: 'bg-amber-500', pulse: true };
+    } else if (level === 'CRITICAL') {
+      return { bgColor: 'bg-red-500/20', borderColor: 'border-red-500/50', textColor: 'text-red-500', pulseColor: 'bg-red-500', pulse: true };
+    } else if (level === 'MODERATE') {
+      return { bgColor: 'bg-blue-500/20', borderColor: 'border-blue-500/50', textColor: 'text-blue-400', pulseColor: 'bg-blue-500', pulse: false };
+    }
+    return { bgColor: 'bg-emerald-500/20', borderColor: 'border-emerald-500/50', textColor: 'text-emerald-400', pulseColor: 'bg-emerald-500', pulse: false };
+  }, [level]);
+
+  const isGate = zoneId.toLowerCase().includes('gate');
+  const Icon = isGate ? Router : Users;
 
   return (
+    <AdvancedMarker position={coords} title={zoneId}>
+      <div className={`relative w-10 h-10 rounded-xl flex items-center justify-center backdrop-blur-md shadow-lg border transition-all duration-300 hover:scale-110 ${bgColor} ${borderColor}`}>
+        {pulse && (
+          <span className="absolute flex h-full w-full left-0 top-0">
+            <span className={`animate-ping absolute inline-flex h-full w-full rounded-xl opacity-75 ${pulseColor}`}></span>
+          </span>
+        )}
+        <div className={`relative z-10 flex items-center justify-center ${textColor}`}>
+          <Icon className="w-5 h-5" />
+        </div>
+      </div>
+    </AdvancedMarker>
+  );
+});
+
+function LiveMarkers() {
+  return (
     <>
-      {Object.entries(EVENT_ZONES).map(([zoneId, coords]) => {
-        const risk = liveRisk[zoneId];
-        const crowd = liveCrowdState[zoneId];
-        
-        const level = risk?.risk_level || crowd?.density_level || 'LOW';
-        
-        let bgColor = 'bg-emerald-500/20';
-        let borderColor = 'border-emerald-500/50';
-        let textColor = 'text-emerald-400';
-        let pulseColor = 'bg-emerald-500';
-        let pulse = false;
-        
-        if (level === 'HIGH' || level === 'CONGESTED') {
-          bgColor = 'bg-amber-500/20';
-          borderColor = 'border-amber-500/50';
-          textColor = 'text-amber-400';
-          pulseColor = 'bg-amber-500';
-          pulse = true;
-        } else if (level === 'CRITICAL') {
-          bgColor = 'bg-red-500/20';
-          borderColor = 'border-red-500/50';
-          textColor = 'text-red-500';
-          pulseColor = 'bg-red-500';
-          pulse = true;
-        } else if (level === 'MODERATE') {
-          bgColor = 'bg-blue-500/20';
-          borderColor = 'border-blue-500/50';
-          textColor = 'text-blue-400';
-        }
-
-        const isGate = zoneId.toLowerCase().includes('gate');
-        const Icon = isGate ? Router : Users;
-
-        return (
-          <AdvancedMarker key={zoneId} position={coords} title={zoneId}>
-            <div className={`relative w-10 h-10 rounded-xl flex items-center justify-center backdrop-blur-md shadow-lg border transition-all duration-300 hover:scale-110 ${bgColor} ${borderColor}`}>
-              {pulse && (
-                <span className="absolute flex h-full w-full left-0 top-0">
-                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-xl opacity-75 ${pulseColor}`}></span>
-                </span>
-              )}
-              <div className={`relative z-10 flex items-center justify-center ${textColor}`}>
-                <Icon className="w-5 h-5" />
-              </div>
-            </div>
-          </AdvancedMarker>
-        );
-      })}
+      {Object.entries(EVENT_ZONES).map(([zoneId, coords]) => (
+        <ZoneMarker key={zoneId} zoneId={zoneId} coords={coords} />
+      ))}
     </>
   );
 }
 
-/**
- * Custom crowd density heatmap overlay.
- * Replaces the deprecated Google Maps HeatmapLayer (deprecated May 2025).
- * Renders colored radial gradients as SVG overlays positioned on top of each zone.
- */
+function useDebouncedValue<T>(value: T, delayMs: number): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delayMs);
+    return () => clearTimeout(timer);
+  }, [value, delayMs]);
+  return debounced;
+}
+
 function HeatmapOverlay() {
-  const { heatmapEnabled, liveCrowdState } = useMapStore();
+  const heatmapEnabled = useMapStore(s => s.heatmapEnabled);
+  const liveCrowdState = useMapStore(s => s.liveCrowdState);
   const map = useMap();
   const [overlayPositions, setOverlayPositions] = useState<{ key: string; x: number; y: number; color: string; radius: number }[]>([]);
+
+  const debouncedCrowdState = useDebouncedValue(liveCrowdState, 150);
+
+  const updatePositions = useCallback(() => {
+    if (!map || !heatmapEnabled) {
+      setOverlayPositions([]);
+      return;
+    }
+
+    const projection = map.getProjection();
+    if (!projection) return;
+
+    const bounds = map.getBounds();
+    if (!bounds) return;
+
+    const mapDiv = map.getDiv();
+    const mapWidth = mapDiv.offsetWidth;
+    const mapHeight = mapDiv.offsetHeight;
+    const ne = bounds.getNorthEast();
+    const sw = bounds.getSouthWest();
+
+    const positions = Object.entries(EVENT_ZONES).map(([zoneId, coords]) => {
+      const crowd = debouncedCrowdState[zoneId];
+      const density = crowd?.density_level || 'LOW';
+
+      const lngSpan = ne.lng() - sw.lng();
+      const latSpan = ne.lat() - sw.lat();
+      const x = ((coords.lng - sw.lng()) / lngSpan) * mapWidth;
+      const y = ((ne.lat() - coords.lat) / latSpan) * mapHeight;
+
+      const color = density === 'CRITICAL' ? 'rgba(239,68,68,0.55)' :
+                    density === 'HIGH' ? 'rgba(249,115,22,0.45)' :
+                    density === 'MODERATE' ? 'rgba(234,179,8,0.35)' :
+                    'rgba(34,197,94,0.2)';
+
+      const radius = density === 'CRITICAL' ? 90 :
+                     density === 'HIGH' ? 70 :
+                     density === 'MODERATE' ? 50 : 35;
+
+      return { key: zoneId, x, y, color, radius };
+    });
+
+    setOverlayPositions(positions);
+  }, [map, heatmapEnabled, debouncedCrowdState]);
 
   useEffect(() => {
     if (!map || !heatmapEnabled) {
       setOverlayPositions([]);
       return;
     }
-
-    const updatePositions = () => {
-      const projection = map.getProjection();
-      if (!projection) return;
-
-      const bounds = map.getBounds();
-      if (!bounds) return;
-
-      const mapDiv = map.getDiv();
-      const mapWidth = mapDiv.offsetWidth;
-      const mapHeight = mapDiv.offsetHeight;
-      const ne = bounds.getNorthEast();
-      const sw = bounds.getSouthWest();
-
-      const positions = Object.entries(EVENT_ZONES).map(([zoneId, coords]) => {
-        const crowd = liveCrowdState[zoneId];
-        const density = crowd?.density_level || 'LOW';
-
-        const lngSpan = ne.lng() - sw.lng();
-        const latSpan = ne.lat() - sw.lat();
-        const x = ((coords.lng - sw.lng()) / lngSpan) * mapWidth;
-        const y = ((ne.lat() - coords.lat) / latSpan) * mapHeight;
-
-        const color = density === 'CRITICAL' ? 'rgba(239,68,68,0.55)' :
-                      density === 'HIGH' ? 'rgba(249,115,22,0.45)' :
-                      density === 'MODERATE' ? 'rgba(234,179,8,0.35)' :
-                      'rgba(34,197,94,0.2)';
-
-        const radius = density === 'CRITICAL' ? 90 :
-                       density === 'HIGH' ? 70 :
-                       density === 'MODERATE' ? 50 : 35;
-
-        return { key: zoneId, x, y, color, radius };
-      });
-
-      setOverlayPositions(positions);
-    };
 
     updatePositions();
     const listeners = [
@@ -197,7 +197,7 @@ function HeatmapOverlay() {
     ];
 
     return () => listeners.forEach(l => window.google?.maps?.event?.removeListener(l));
-  }, [map, heatmapEnabled, liveCrowdState]);
+  }, [map, heatmapEnabled, updatePositions]);
 
   if (!heatmapEnabled || overlayPositions.length === 0) return null;
 
@@ -232,7 +232,7 @@ import { Crosshair, Plus, Minus } from 'lucide-react';
 
 function CustomMapControls() {
   const map = useMap();
-  const { citizenLocation } = useMapStore();
+  const citizenLocation = useMapStore(s => s.citizenLocation);
 
   return (
     <div className="absolute bottom-24 right-4 z-10 flex flex-col gap-2">
@@ -271,7 +271,7 @@ function CustomMapControls() {
 }
 
 function UserLocationPin() {
-  const { citizenLocation } = useMapStore();
+  const citizenLocation = useMapStore(s => s.citizenLocation);
   
   if (!citizenLocation) return null;
   
@@ -291,7 +291,8 @@ interface GoogleEventMapProps {
 
 export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-  const { mapTypeId, searchResultPin } = useMapStore();
+  const mapTypeId = useMapStore(s => s.mapTypeId);
+  const searchResultPin = useMapStore(s => s.searchResultPin);
 
   if (!apiKey) {
     return (
@@ -334,13 +335,8 @@ export function GoogleEventMap({ role = 'authority' }: GoogleEventMapProps) {
           )}
         </Map>
         
-        {/* Custom Zoom & Location Controls */}
         <CustomMapControls />
-
-        {/* Floating UI Overlays - Placed AFTER Map so they sit on top in DOM */}
         <MapOverlayControls role={role} />
-        
-        {/* Drawing Tools for Owner */}
         {role === 'owner' && <MapDrawingManager />}
       </APIProvider>
     </div>

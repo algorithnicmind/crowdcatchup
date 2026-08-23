@@ -7,10 +7,10 @@ from .fusion_service import FusionService
 from ..api.schemas import StandardObservation
 from core.redis import get_redis
 from shared.infrastructure.websocket_manager import get_ws_manager
+from core.database import async_session_factory
 
 logger = logging.getLogger(__name__)
 
-# Counter to save snapshots every N observations instead of every one
 _observation_counter = 0
 SNAPSHOT_INTERVAL = 5
 
@@ -19,6 +19,7 @@ async def process_observation_pipeline(obs: StandardObservation):
     """
     Processes the observation through fusion, risk, rules, WS broadcast,
     and persists crowd state snapshots + auto-creates incidents/tasks.
+    Uses a single DB session for the entire pipeline to reduce connection pool pressure.
     """
     logger.info(f"Redis Sub: Processing observation from {obs.source_id} for zone {obs.zone_id}")
 
@@ -59,106 +60,98 @@ async def process_observation_pipeline(obs: StandardObservation):
                 message={"type": "RECOMMENDATION_ALERT", "data": rec}
             )
 
-            if rec["type"] in ["DEPLOY_POLICE", "RESTRICT_ACCESS"]:
-                try:
-                    from ...police.application.task_manager import TaskManager
-                    from core.database import async_session_factory
-
-                    needed = 5 if rec["type"] == "DEPLOY_POLICE" else 3
-
-                    async with async_session_factory() as db:
-                        await TaskManager.create_task(
-                            db=db,
-                            event_id=crowd_state.event_id,
-                            zone_id=rec["target"],
-                            instructions=rec["message"],
-                            risk_level=crowd_state.risk_level,
-                            required_officers=needed
-                        )
-                except Exception as e:
-                    logger.error(f"Failed to create police task from recommendation: {e}")
-
     # 4. Broadcast Crowd State
     await ws_manager.broadcast_to_event(
         event_id=crowd_state.event_id,
         message={"type": "CROWD_STATE_UPDATE", "data": crowd_state.model_dump(mode='json')}
     )
 
-    # 5. Persist crowd state snapshot to DB (every N observations)
-    if _observation_counter % SNAPSHOT_INTERVAL == 0:
-        try:
-            from core.database import async_session_factory
-            from ..infrastructure.models.crowd_state_model import CrowdStateSnapshotModel
+    # 5-6. DB writes: single session for snapshot + incident
+    try:
+        async with async_session_factory() as db:
+            # 5. Persist crowd state snapshot (every N observations)
+            if _observation_counter % SNAPSHOT_INTERVAL == 0:
+                from ..infrastructure.models.crowd_state_model import CrowdStateSnapshotModel
 
-            snapshot = CrowdStateSnapshotModel(
-                id=str(uuid.uuid4()),
-                event_id=crowd_state.event_id,
-                zone_id=crowd_state.zone_id,
-                estimated_people=crowd_state.estimated_people,
-                density=crowd_state.density,
-                density_level=crowd_state.density_level,
-                average_speed=crowd_state.average_speed,
-                flow_direction=crowd_state.flow_direction,
-                entry_rate=crowd_state.entry_rate,
-                exit_rate=crowd_state.exit_rate,
-                bottleneck_score=crowd_state.bottleneck_score,
-                flow_conflict=crowd_state.flow_conflict,
-                risk_score=crowd_state.risk_score,
-                risk_level=crowd_state.risk_level,
-                confidence=crowd_state.confidence,
-                timestamp=crowd_state.timestamp,
-            )
-
-            async with async_session_factory() as db:
+                snapshot = CrowdStateSnapshotModel(
+                    id=str(uuid.uuid4()),
+                    event_id=crowd_state.event_id,
+                    zone_id=crowd_state.zone_id,
+                    estimated_people=crowd_state.estimated_people,
+                    density=crowd_state.density,
+                    density_level=crowd_state.density_level,
+                    average_speed=crowd_state.average_speed,
+                    flow_direction=crowd_state.flow_direction,
+                    entry_rate=crowd_state.entry_rate,
+                    exit_rate=crowd_state.exit_rate,
+                    bottleneck_score=crowd_state.bottleneck_score,
+                    flow_conflict=crowd_state.flow_conflict,
+                    risk_score=crowd_state.risk_score,
+                    risk_level=crowd_state.risk_level,
+                    confidence=crowd_state.confidence,
+                    timestamp=crowd_state.timestamp,
+                )
                 db.add(snapshot)
-                await db.commit()
-        except Exception as e:
-            logger.error(f"Failed to save crowd state snapshot: {e}")
 
-    # 6. Auto-create incident when risk is HIGH or CRITICAL
-    if crowd_state.risk_level in ("HIGH", "CRITICAL"):
-        try:
-            from core.database import async_session_factory
-            from features.incidents.infrastructure.models.incident_model import IncidentModel
+            # 6. Auto-create incident when risk is HIGH or CRITICAL
+            if crowd_state.risk_level in ("HIGH", "CRITICAL"):
+                from features.incidents.infrastructure.models.incident_model import IncidentModel
 
-            incident_id = f"inc-{str(uuid.uuid4())[:8]}"
-            incident = IncidentModel(
-                id=incident_id,
-                event_id=crowd_state.event_id,
-                type="CROWD_RISK",
-                status="NEW",
-                description=f"Auto-detected {crowd_state.risk_level} risk in {crowd_state.zone_id}. "
-                            f"Density: {crowd_state.density:.1f}, People: {crowd_state.estimated_people}, "
-                            f"Risk Score: {crowd_state.risk_score:.1f}",
-                lat=25.4308,
-                lng=81.8503,
-                timestamp=crowd_state.timestamp,
-            )
-
-            async with async_session_factory() as db:
+                incident_id = f"inc-{str(uuid.uuid4())[:8]}"
+                incident = IncidentModel(
+                    id=incident_id,
+                    event_id=crowd_state.event_id,
+                    type="CROWD_RISK",
+                    status="NEW",
+                    description=f"Auto-detected {crowd_state.risk_level} risk in {crowd_state.zone_id}. "
+                                f"Density: {crowd_state.density:.1f}, People: {crowd_state.estimated_people}, "
+                                f"Risk Score: {crowd_state.risk_score:.1f}",
+                    lat=25.4308,
+                    lng=81.8503,
+                    timestamp=crowd_state.timestamp,
+                )
                 db.add(incident)
-                await db.commit()
 
-            logger.info(f"Auto-created incident {incident_id} for {crowd_state.risk_level} risk in {crowd_state.zone_id}")
+                logger.info(f"Auto-created incident {incident_id} for {crowd_state.risk_level} risk in {crowd_state.zone_id}")
 
-            await ws_manager.broadcast_to_event(
-                event_id=crowd_state.event_id,
-                message={
-                    "type": "INCIDENT_REPORTED",
-                    "data": {
-                        "incident_id": incident_id,
-                        "event_id": crowd_state.event_id,
-                        "type": "CROWD_RISK",
-                        "status": "NEW",
-                        "description": incident.description,
-                        "lat": incident.lat,
-                        "lng": incident.lng,
-                        "timestamp": incident.timestamp.isoformat(),
+                await ws_manager.broadcast_to_event(
+                    event_id=crowd_state.event_id,
+                    message={
+                        "type": "INCIDENT_REPORTED",
+                        "data": {
+                            "incident_id": incident_id,
+                            "event_id": crowd_state.event_id,
+                            "type": "CROWD_RISK",
+                            "status": "NEW",
+                            "description": incident.description,
+                            "lat": incident.lat,
+                            "lng": incident.lng,
+                            "timestamp": incident.timestamp.isoformat(),
+                        }
                     }
-                }
-            )
-        except Exception as e:
-            logger.error(f"Failed to auto-create incident: {e}")
+                )
+
+            # Also create police tasks in the same session
+            if recommendations:
+                for rec in recommendations:
+                    if rec.get("type") in ["DEPLOY_POLICE", "RESTRICT_ACCESS"]:
+                        try:
+                            from ...police.application.task_manager import TaskManager
+                            needed = 5 if rec["type"] == "DEPLOY_POLICE" else 3
+                            await TaskManager.create_task(
+                                db=db,
+                                event_id=crowd_state.event_id,
+                                zone_id=rec["target"],
+                                instructions=rec["message"],
+                                risk_level=crowd_state.risk_level,
+                                required_officers=needed
+                            )
+                        except Exception as e:
+                            logger.error(f"Failed to create police task from recommendation: {e}")
+
+            await db.commit()
+    except Exception as e:
+        logger.error(f"Failed to persist pipeline data: {e}")
 
 
 async def start_redis_subscriber():

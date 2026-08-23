@@ -3,7 +3,7 @@ Events Feature — SQLAlchemy Models
 Maps Event, Zone, Gate, Route entities to database tables.
 """
 
-from sqlalchemy import Column, String, Integer, DateTime, Boolean, ForeignKey, JSON
+from sqlalchemy import Column, String, Integer, DateTime, Boolean, ForeignKey, JSON, Index
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from core.database import Base
@@ -11,11 +11,15 @@ from core.database import Base
 
 class EventModel(Base):
     __tablename__ = "events"
+    __table_args__ = (
+        Index('idx_events_status', 'status'),
+        Index('idx_events_owner', 'owner_id'),
+    )
 
     id = Column(String, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(String, default="")
-    venue_polygon = Column(JSON, default=list)  # List of {lat, lng}
+    venue_polygon = Column(JSON, default=list)
     start_date = Column(DateTime(timezone=True), nullable=True)
     end_date = Column(DateTime(timezone=True), nullable=True)
     status = Column(String, nullable=False, default="DRAFT")
@@ -44,12 +48,15 @@ class ZoneModel(Base):
 
 class GateModel(Base):
     __tablename__ = "gates"
+    __table_args__ = (
+        Index('idx_gates_zone', 'zone_id'),
+    )
 
     id = Column(String, primary_key=True, index=True)
     event_id = Column(String, ForeignKey("events.id"), nullable=False, index=True)
     zone_id = Column(String, nullable=False)
     name = Column(String, nullable=False)
-    location = Column(JSON, nullable=True)  # {lat, lng}
+    location = Column(JSON, nullable=True)
     type = Column(String, nullable=False, default="ENTRY")
     status = Column(String, nullable=False, default="CLOSED")
     capacity_per_minute = Column(Integer, default=0)
@@ -73,8 +80,8 @@ class TemporaryInfrastructureModel(Base):
     id = Column(String, primary_key=True, index=True)
     event_id = Column(String, ForeignKey("events.id"), nullable=False, index=True)
     name = Column(String, nullable=False)
-    type = Column(String, nullable=False)  # e.g., "MEDICAL", "POLICE", "BARRICADE"
-    location = Column(JSON, nullable=True)  # {lat, lng}
+    type = Column(String, nullable=False)
+    location = Column(JSON, nullable=True)
     start_time = Column(DateTime(timezone=True), nullable=True)
     end_time = Column(DateTime(timezone=True), nullable=True)
     status = Column(String, nullable=False, default="ACTIVE")

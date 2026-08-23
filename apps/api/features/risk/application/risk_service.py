@@ -1,26 +1,13 @@
 import os
 import xgboost as xgb
 import logging
-import pandas as pd
+import numpy as np
 from ...fusion.api.schemas import CrowdStateDTO
 
 logger = logging.getLogger(__name__)
 
 MODEL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "infrastructure", "ml")
 MODEL_PATH = os.path.join(MODEL_DIR, "bottleneck_model.json")
-
-FEATURES = [
-    'density',
-    'entry_rate',
-    'exit_rate',
-    'average_speed',
-    'estimated_people',
-    'net_flow',
-    'flow_conflict',
-    'confidence',
-    'hour_of_day',
-    'zone_capacity_pct',
-]
 
 
 class RiskService:
@@ -42,29 +29,30 @@ class RiskService:
     def predict_risk(self, state: CrowdStateDTO) -> float:
         """
         Predicts the bottleneck risk score (0-100).
+        Uses numpy array instead of Pandas DataFrame for faster inference.
         """
         if self.model is None:
             risk = (state.density / 6.0) * 100
             return min(100.0, max(0.0, risk))
 
         net_flow = state.entry_rate - state.exit_rate
-        from datetime import datetime
-        hour_of_day = datetime.utcnow().hour
+        from datetime import datetime, timezone
+        hour_of_day = datetime.now(timezone.utc).hour
 
-        df = pd.DataFrame([{
-            "density": state.density,
-            "entry_rate": state.entry_rate,
-            "exit_rate": state.exit_rate,
-            "average_speed": state.average_speed,
-            "estimated_people": state.estimated_people,
-            "net_flow": net_flow,
-            "flow_conflict": int(state.flow_conflict),
-            "confidence": state.confidence,
-            "hour_of_day": hour_of_day,
-            "zone_capacity_pct": min(state.estimated_people / 500.0, 1.0),
-        }])
+        arr = np.array([[
+            state.density,
+            state.entry_rate,
+            state.exit_rate,
+            state.average_speed,
+            state.estimated_people,
+            net_flow,
+            int(state.flow_conflict),
+            state.confidence,
+            hour_of_day,
+            min(state.estimated_people / 500.0, 1.0),
+        ]], dtype=np.float32)
 
-        pred = self.model.predict(df)[0]
+        pred = self.model.predict(arr)[0]
         return float(min(100.0, max(0.0, pred)))
 
 

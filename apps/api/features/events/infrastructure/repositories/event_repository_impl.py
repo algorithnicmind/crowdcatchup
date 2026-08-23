@@ -3,7 +3,7 @@ Events Feature — Event Repository Implementation
 """
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from features.events.domain.entities.event import Event
 from features.events.domain.enums.event_status import EventStatus
 from features.events.domain.value_objects.geo_point import GeoPoint
@@ -55,15 +55,20 @@ class SQLAlchemyEventRepository(BaseRepository[Event]):
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None
 
-    async def list_all(self) -> list[Event]:
-        result = await self._session.execute(select(EventModel))
+    async def list_all(self, limit: int = 50, offset: int = 0) -> list[Event]:
+        result = await self._session.execute(
+            select(EventModel).order_by(EventModel.created_at.desc()).limit(limit).offset(offset)
+        )
         return [self._to_entity(m) for m in result.scalars().all()]
+
+    async def count_all(self) -> int:
+        result = await self._session.execute(select(func.count(EventModel.id)))
+        return result.scalar_one()
 
     async def save(self, entity: Event) -> Event:
         model = self._to_model(entity)
         merged = await self._session.merge(model)
         await self._session.flush()
-        await self._session.commit()
         return self._to_entity(merged)
 
     async def delete(self, entity_id: str) -> bool:

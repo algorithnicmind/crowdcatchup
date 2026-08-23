@@ -53,8 +53,10 @@ class SQLAlchemyZoneRepository(BaseRepository[Zone]):
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None
 
-    async def list_all(self) -> list[Zone]:
-        result = await self._session.execute(select(ZoneModel))
+    async def list_all(self, limit: int = 50, offset: int = 0) -> list[Zone]:
+        result = await self._session.execute(
+            select(ZoneModel).limit(limit).offset(offset)
+        )
         return [self._to_entity(m) for m in result.scalars().all()]
 
     async def list_by_event(self, event_id: str) -> list[Zone]:
@@ -67,7 +69,6 @@ class SQLAlchemyZoneRepository(BaseRepository[Zone]):
         model = self._to_model(entity)
         merged = await self._session.merge(model)
         await self._session.flush()
-        await self._session.commit()
         return self._to_entity(merged)
 
     async def delete(self, entity_id: str) -> bool:
@@ -78,7 +79,6 @@ class SQLAlchemyZoneRepository(BaseRepository[Zone]):
         if model:
             await self._session.delete(model)
             await self._session.flush()
-            await self._session.commit()
             return True
         return False
 
@@ -124,8 +124,10 @@ class SQLAlchemyGateRepository(BaseRepository[Gate]):
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None
 
-    async def list_all(self) -> list[Gate]:
-        result = await self._session.execute(select(GateModel))
+    async def list_all(self, limit: int = 50, offset: int = 0) -> list[Gate]:
+        result = await self._session.execute(
+            select(GateModel).limit(limit).offset(offset)
+        )
         return [self._to_entity(m) for m in result.scalars().all()]
 
     async def list_by_event(self, event_id: str) -> list[Gate]:
@@ -138,7 +140,6 @@ class SQLAlchemyGateRepository(BaseRepository[Gate]):
         model = self._to_model(entity)
         merged = await self._session.merge(model)
         await self._session.flush()
-        await self._session.commit()
         return self._to_entity(merged)
 
     async def delete(self, entity_id: str) -> bool:
@@ -149,7 +150,6 @@ class SQLAlchemyGateRepository(BaseRepository[Gate]):
         if model:
             await self._session.delete(model)
             await self._session.flush()
-            await self._session.commit()
             return True
         return False
 
@@ -189,8 +189,10 @@ class SQLAlchemyRouteRepository(BaseRepository[Route]):
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None
 
-    async def list_all(self) -> list[Route]:
-        result = await self._session.execute(select(RouteModel))
+    async def list_all(self, limit: int = 50, offset: int = 0) -> list[Route]:
+        result = await self._session.execute(
+            select(RouteModel).limit(limit).offset(offset)
+        )
         return [self._to_entity(m) for m in result.scalars().all()]
 
     async def list_by_event(self, event_id: str) -> list[Route]:
@@ -203,7 +205,6 @@ class SQLAlchemyRouteRepository(BaseRepository[Route]):
         model = self._to_model(entity)
         merged = await self._session.merge(model)
         await self._session.flush()
-        await self._session.commit()
         return self._to_entity(merged)
 
     async def delete(self, entity_id: str) -> bool:
@@ -214,6 +215,5 @@ class SQLAlchemyRouteRepository(BaseRepository[Route]):
         if model:
             await self._session.delete(model)
             await self._session.flush()
-            await self._session.commit()
             return True
         return False

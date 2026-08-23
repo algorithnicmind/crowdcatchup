@@ -1,15 +1,15 @@
-from ultralytics import YOLO
 import numpy as np
 from typing import List
 from ..domain.interfaces.i_detector import IDetector
 from ..domain.entities.detection import Detection
 
+
 class Yolov8Detector(IDetector):
     def __init__(self, model_path: str = "yolov8n.pt"):
-        self.model = YOLO(model_path)
+        from ai.models.model_registry import get_yolo_model
+        self.model = get_yolo_model(model_path)
         
     def detect(self, frame: np.ndarray) -> List[Detection]:
-        # person class is 0 in COCO
         results = self.model(frame, classes=[0], verbose=False)
         detections = []
         for result in results:
