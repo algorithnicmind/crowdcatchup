@@ -62,6 +62,8 @@ export function StaffManagementModal({ onClose }: { onClose: () => void }) {
         // Backend hasn't deployed this route yet, mock success for presentation
         toast.success(`${formData.role} created successfully! (Mocked)`);
         setFormData({ full_name: '', email: '', phone_number: '', password: '', role: 'POLICE' });
+      } else if (err.message && (err.message.includes('409') || err.message.includes('already'))) {
+        toast.error('A user with this email or phone number already exists.');
       } else {
         toast.error(err.message || 'Error creating user');
       }

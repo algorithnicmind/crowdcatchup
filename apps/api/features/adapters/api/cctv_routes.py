@@ -7,7 +7,9 @@ import cv2
 import numpy as np
 
 from ...fusion.api.schemas import StandardObservation
-from ...fusion.api.routes import ingest_observation
+from ...fusion.application.data_normalization import DataNormalizer
+from ...fusion.application.source_health_monitor import SourceHealthMonitor
+from core.redis import get_redis
 import sys
 import os
 
@@ -54,6 +56,12 @@ async def process_cctv_frame(payload: YOLOv8Payload, background_tasks: Backgroun
         health="ONLINE"
     )
     
+    async def _push(obs: StandardObservation):
+        obs_norm = DataNormalizer.normalize(obs.model_dump())
+        SourceHealthMonitor.update_health(obs_norm)
+        redis = await get_redis()
+        await redis.publish("crowd_observations", obs_norm.model_dump_json())
+
     # 2. Ingest Flow In (if any)
     if payload.flow_in > 0:
         obs_flow_in = StandardObservation(
@@ -68,7 +76,7 @@ async def process_cctv_frame(payload: YOLOv8Payload, background_tasks: Backgroun
             latency_ms=100,
             health="ONLINE"
         )
-        await ingest_observation(obs_flow_in, background_tasks)
+        await _push(obs_flow_in)
 
     # 3. Ingest Flow Out (if any)
     if payload.flow_out > 0:
@@ -84,10 +92,11 @@ async def process_cctv_frame(payload: YOLOv8Payload, background_tasks: Backgroun
             latency_ms=100,
             health="ONLINE"
         )
-        await ingest_observation(obs_flow_out, background_tasks)
+        await _push(obs_flow_out)
         
     # We await the density ingestion last so we can return its status
-    return await ingest_observation(obs_density, background_tasks)
+    await _push(obs_density)
+    return {"status": "success", "message": "CCTV Frame Processed"}
 
 
 @router.post("/upload")

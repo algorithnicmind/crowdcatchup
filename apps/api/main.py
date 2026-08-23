@@ -91,7 +91,8 @@ async def add_security_headers(request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    if settings.ENFORCE_HTTPS:
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     return response
 
 # Register domain exception handlers
@@ -175,7 +176,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
-        port=8000,
+        port=8002,
         ssl_keyfile=ssl_keyfile if ssl_context else None,
         ssl_certfile=ssl_certfile if ssl_context else None,
         log_level="info",

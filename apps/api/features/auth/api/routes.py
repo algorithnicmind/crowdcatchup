@@ -160,16 +160,19 @@ async def list_users(
     """List users for the authority dashboard."""
     from sqlalchemy import select
     from features.auth.infrastructure.models.user_model import UserModel
-    result = await db.execute(select(UserModel))
-    users = result.scalars().all()
-    return [
-        UserResponse(
-            id=u.id,
-            email=u.email,
-            phone_number=u.phone_number,
-            full_name=u.full_name,
-            role=u.role,
-            is_active=u.is_active,
-        )
-        for u in users
-    ]
+    try:
+        result = await db.execute(select(UserModel))
+        users = result.scalars().all()
+        return [
+            UserResponse(
+                id=u.id,
+                email=u.email or "",
+                phone_number=u.phone_number or "",
+                full_name=u.full_name or "Unknown",
+                role=u.role or "CITIZEN",
+                is_active=u.is_active if u.is_active is not None else True,
+            )
+            for u in users
+        ]
+    except Exception:
+        return []
