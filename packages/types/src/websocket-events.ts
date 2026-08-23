@@ -16,7 +16,8 @@ export type WSEventType =
   | 'SOURCE_HEALTH'
   | 'NAVIGATION_UPDATE'
   | 'REROUTE_ALERT'
-  | 'GROUP_MEMBER_ALERT';
+  | 'GROUP_MEMBER_ALERT'
+  | 'NEW_TASK';
 
 export interface WSMessage<T = unknown> {
   type: WSEventType;

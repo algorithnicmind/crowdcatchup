@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Navbar } from "@/components/ui/3d-hero-section-boxes";
+
 import { Mail, Phone, MapPin, Send, Loader2, CheckCircle2 } from "lucide-react";
 import { sendContactEmail } from "@/app/actions/contact";
 
@@ -31,7 +31,6 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-slate-200">
-      <Navbar />
       
       <div className="pt-32 pb-16 px-4 max-w-6xl mx-auto flex flex-col md:flex-row gap-12">
         <div className="w-full md:w-1/2 space-y-8">

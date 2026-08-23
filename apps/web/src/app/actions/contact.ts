@@ -9,7 +9,7 @@ export async function sendContactEmail(formData: FormData) {
     return { error: "All fields are required" };
   }
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://localhost:8000";
 
   try {
     const res = await fetch(`${apiUrl}/api/v1/contact`, {

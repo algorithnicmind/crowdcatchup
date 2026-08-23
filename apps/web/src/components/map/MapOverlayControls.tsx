@@ -41,7 +41,7 @@ export function MapOverlayControls({ role = 'authority' }: MapOverlayControlsPro
               className="h-12 w-12 rounded-full bg-zinc-900/90 backdrop-blur-md border border-zinc-800 shadow-lg hover:bg-zinc-800 text-blue-400"
               onClick={async () => {
                 try {
-                  const res = await fetch('http://localhost:8000/api/v1/simulation/scenario', {
+                  const res = await fetch('https://localhost:8000/api/v1/simulation/scenario', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ event_id: 'EVT-001', scenario_id: 'crowd_surge' })

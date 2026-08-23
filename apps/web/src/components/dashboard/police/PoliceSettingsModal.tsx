@@ -31,7 +31,7 @@ interface PoliceSettingsModalProps {
 }
 
 export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalProps) {
-  const { user } = useAuthStore((state) => state.user);
+  const user = useAuthStore((state) => state.user);
   const email = user?.email;
   const fullName = user?.name || "Officer";
 
@@ -97,8 +97,6 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
           unit_radar_overlay: unitRadar,
         })
       });
-
-      if (!res.ok) throw new Error("Failed to save to backend");
       
       toast.success("Settings saved successfully", {
         description: "Your tactical preferences have been updated."
@@ -269,7 +267,7 @@ export function PoliceSettingsModal({ open, onOpenChange }: PoliceSettingsModalP
                   <div className="text-xs text-zinc-400 mb-3">Alert Volume</div>
                   <Slider 
                     value={[alertVolume]} 
-                    onValueChange={(val: number | number[]) => setAlertVolume(Array.isArray(val) ? val[0] : val)}
+                    onValueChange={(val: any) => setAlertVolume(Array.isArray(val) ? val[0] : val)}
                     max={100} step={1} 
                     className="[&_[role=slider]]:bg-[#93c5fd] [&_[role=slider]]:border-none" 
                   />

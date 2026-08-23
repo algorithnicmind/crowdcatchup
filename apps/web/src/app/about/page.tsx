@@ -1,14 +1,13 @@
 "use client";
 
 import React from "react";
-import { Navbar } from "@/components/ui/3d-hero-section-boxes";
+
 import { ShieldAlert, Shield, Users, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-[#050505] text-slate-200 flex flex-col">
-      <Navbar />
       
       <div className="flex-1 flex flex-col justify-center px-4 max-w-5xl mx-auto w-full pt-20">
         

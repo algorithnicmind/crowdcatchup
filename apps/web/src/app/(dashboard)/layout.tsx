@@ -9,7 +9,6 @@ import dynamic from 'next/dynamic';
 import { Header } from '@/components/layout/Header';
 import { LocationGate } from '@/components/dashboard/citizen/LocationGate';
 
-const Sidebar = dynamic(() => import('@/components/layout/Sidebar').then(m => m.Sidebar), { ssr: false });
 const PoliceSidebar = dynamic(() => import('@/components/layout/PoliceSidebar').then(m => m.PoliceSidebar), { ssr: false });
 const AuthorityLayoutSidebar = dynamic(() => import('@/components/layout/AuthorityLayoutSidebar').then(m => m.AuthorityLayoutSidebar), { ssr: false });
 const OwnerLayoutSidebar = dynamic(() => import('@/components/layout/OwnerLayoutSidebar').then(m => m.OwnerLayoutSidebar), { ssr: false });
@@ -55,7 +54,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {isAuthority && <AuthorityLayoutSidebar />}
         {isOwner && <OwnerLayoutSidebar />}
         {isCitizen && <CitizenLayoutSidebar />}
-        {(!isPolice && !isAuthority && !isOwner && !isCitizen) && <Sidebar />}
       </div>
 
       <div className="flex flex-1 flex-col overflow-hidden">

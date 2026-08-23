@@ -11,10 +11,10 @@ from ...fusion.api.routes import ingest_observation
 import sys
 import os
 
-# Add ai module to path
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../../ai/models"))
+# Add root to path so ai package is resolvable
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../../")))
 try:
-    from yolo_detector import Yolov8Detector
+    from ai.models.yolo_detector import Yolov8Detector
     yolo_model = Yolov8Detector()
 except Exception as e:
     logger = logging.getLogger(__name__)

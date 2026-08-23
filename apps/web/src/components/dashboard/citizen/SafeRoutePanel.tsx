@@ -33,46 +33,24 @@ export function SafeRoutePanel() {
   const [navInstruction, setNavInstruction] = useState('Head North towards Gate G5');
   const [distanceRemaining, setDistanceRemaining] = useState(450);
   const [destination, setDestination] = useState('Maha Kumbh Mela');
-  const [destPredictions, setDestPredictions] = useState<google.maps.places.AutocompletePrediction[]>([]);
+  const [destPredictions, setDestPredictions] = useState<any[]>([]);
   const [destCoords, setDestCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [showDestDropdown, setShowDestDropdown] = useState(false);
   const destDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const autocompleteRef = useRef<google.maps.places.AutocompleteService | null>(null);
-  const placesRef = useRef<google.maps.places.PlacesService | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.google?.maps?.places) {
-      autocompleteRef.current = new window.google.maps.places.AutocompleteService();
-      const div = document.createElement('div');
-      placesRef.current = new window.google.maps.places.PlacesService(div);
-    }
+    // Google Maps places removed for offline SVG map.
   }, []);
 
   const handleDestInput = (value: string) => {
     setDestination(value);
     setDestCoords(null);
-    if (destDebounce.current) clearTimeout(destDebounce.current);
-    if (!value.trim() || !autocompleteRef.current) { setDestPredictions([]); setShowDestDropdown(false); return; }
-    destDebounce.current = setTimeout(() => {
-      autocompleteRef.current!.getPlacePredictions({ input: value }, (results, status) => {
-        if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-          setDestPredictions(results);
-          setShowDestDropdown(true);
-        }
-      });
-    }, 300);
+    setShowDestDropdown(false);
   };
 
-  const handleDestSelect = (pred: google.maps.places.AutocompletePrediction) => {
-    setDestination(pred.description);
+  const handleDestSelect = (pred: any) => {
+    setDestination(pred.description || pred.structured_formatting?.main_text || 'Unknown');
     setShowDestDropdown(false);
-    setDestPredictions([]);
-    if (!placesRef.current) return;
-    placesRef.current.getDetails({ placeId: pred.place_id, fields: ['geometry'] }, (place, status) => {
-      if (status === window.google.maps.places.PlacesServiceStatus.OK && place?.geometry?.location) {
-        setDestCoords({ lat: place.geometry!.location!.lat(), lng: place.geometry!.location!.lng() });
-      }
-    });
   };
 
   const { subscribe } = useWebSocket('EVT-001');

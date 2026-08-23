@@ -3,7 +3,7 @@
 import React from 'react';
 import { Bell, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +13,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Sidebar } from './Sidebar';
 import { PoliceSidebar } from './PoliceSidebar';
 import { AuthorityLayoutSidebar } from './AuthorityLayoutSidebar';
 import { OwnerLayoutSidebar } from './OwnerLayoutSidebar';
@@ -51,7 +50,6 @@ export function Header() {
             {isAuthority && <AuthorityLayoutSidebar />}
             {isOwner && <OwnerLayoutSidebar />}
             {isCitizen && <CitizenLayoutSidebar />}
-            {(!isPolice && !isAuthority && !isOwner && !isCitizen) && <Sidebar />}
           </SheetContent>
         </Sheet>
         {/* Desktop Sidebar Toggle */}
@@ -145,15 +143,8 @@ export function Header() {
 
         {/* Profile Dropdown */}
         <DropdownMenu>
-          <DropdownMenuTrigger className="relative h-9 w-9 rounded-full border border-zinc-800 p-0 overflow-hidden flex items-center justify-center bg-transparent hover:bg-zinc-800/50 transition-colors outline-none cursor-pointer">
-            <Avatar className="h-9 w-9">
-              {user?.avatar && (
-                <AvatarImage src={user.avatar} alt="Profile" className="object-cover" />
-              )}
-              <AvatarFallback className="bg-zinc-800 text-zinc-400">
-                {user?.name?.charAt(0) || "U"}
-              </AvatarFallback>
-            </Avatar>
+          <DropdownMenuTrigger className="relative h-9 w-9 rounded-full border border-zinc-800 p-0 overflow-hidden flex items-center justify-center bg-zinc-800 hover:bg-zinc-700 transition-colors outline-none cursor-pointer">
+            <User className="h-5 w-5 text-zinc-400" />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 bg-zinc-950 border-zinc-800 text-zinc-300" align="end">
             <div className="px-2 py-1.5 font-normal">
