@@ -63,7 +63,13 @@ async def init_db():
     async with engine.begin() as conn:
         from features.fusion.infrastructure.models.crowd_state_model import CrowdStateSnapshotModel
         from features.contact.infrastructure.models.contact_model import ContactSubmissionModel
-        from features.events.infrastructure.models.event_models import EventAssignmentModel
+        from features.events.infrastructure.models.event_models import EventAssignmentModel, EventModel, ZoneModel, GateModel, RouteModel, TemporaryInfrastructureModel, SourceModel
+        from features.police.infrastructure.models.task_model import SecurityTaskModel
+        from features.incidents.infrastructure.models.incident_model import IncidentModel
+        from features.recommendations.infrastructure.models.intervention_models import InterventionModel
+        from features.auth.infrastructure.models.user_model import UserModel
+        from features.auth.infrastructure.models.officer_profile_model import OfficerProfileModel
+        from features.announcements.infrastructure.models.announcement_model import AnnouncementModel
         await conn.run_sync(Base.metadata.create_all)
 
 

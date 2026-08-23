@@ -32,14 +32,16 @@ This document breaks down the high-level delegation plan into a **highly detaile
 - [x] **Step 7.3:** Build the **Police/Security App** (Mobile-first PWA). Focus on large buttons, GPS tracking, and SOS alerts.
 - [x] **Step 7.4:** Build the **Citizen App** (Mobile-first PWA). Focus on simple, clean navigation, safe route display, and multilingual support (`i18next`).
 
-### Day 6 & 7: Real-Time Wiring & Polish
+### Day 6 & 7: Real-Time Wiring, Verification & Polish
 - [x] **Step 3.9:** Wire up the UI to the WebSockets. Ensure map markers change color (Green -> Amber -> Red) instantly when a WS event fires.
 - [x] **Step 6.6 (Explainability UI):** Enhance the RecommendationCard component. When AI recommends an action, display the primary_reason, supporting_factors, and confidence score so the human Authority trusts the decision.
 - [x] **Step 7.7 (Citizen Journey Navigation - Frontend):** Build JourneyPlanner, GroupSizeSelector, and NavigationPanel. Consume backend navigation API to display "Safe Route" (green line) and guide users turn-by-turn.
-- [ ] **Day 7:** Final UI Polish, responsive testing on mobile devices, and recording the pitch demo.
-- [x] **Step 7.8 (PWA Polish):** Finalize Citizen app PWA. Register Service Worker, configure IndexedDB to cache venue map offline, ensure web push notifications work.
-- [x] **Step 9.3 (Frontend Tests):** Write basic Jest/Playwright tests for dashboards and navigation screens.
-- [ ] **Step 9.8 (Pitch deck & Demo):** Create the 10-slide presentation deck. Record the official 3-minute demo video showing the full hackathon scenario story.
+- [x] **Step 7.8 (PWA Polish & Performance):** Finalize Citizen app PWA. Register Service Worker, configure IndexedDB to cache venue map offline, ensure web push notifications work smoothly. Optimize React re-renders for large crowd state updates.
+- [ ] **Day 7 (Manual UI Verification):** Manually test all 4 role workflows (Event Owner setup, Authority intervention approval, Police task acceptance, Citizen safe routing) to ensure 100% smooth end-to-end functionality.
+- [ ] **Step 9.3 (Frontend Testing):** Write exhaustive Jest/Playwright tests for dashboard rendering, responsive navigation on mobile dimensions, and WebSocket state updates.
+- [ ] **Step 9.1 (Frontend Security):** Verify all restricted routes properly redirect unauthenticated users. Ensure JWT tokens are stored securely and removed upon logout.
+- [ ] **Step 9.5 (Deployment & HTTPS):** Configure and execute CI/CD. Deploy Next.js to Vercel. Deploy FastAPI via Docker/AWS. Connect to production Neon DB with connection pooling. Enforce global HTTPS redirects.
+- [ ] **Step 9.8 & 9.9 (Pitch deck, Demo & Docs):** Create the 10-slide presentation deck. Record the official 3-minute demo video showing the full hackathon scenario story. Finalize the architecture diagram and documentation pack.
 ---
 
 ## ⚙️ Member 2: Backend & Data Architect (The Plumber)
@@ -75,9 +77,11 @@ This document breaks down the high-level delegation plan into a **highly detaile
 - [x] **Step 1.1 (PostGIS):** Enable PostGIS on Neon DB for spatial queries (finding users inside a Zone polygon).
 - [ ] **Step 9.4 (Performance):** Load test the WebSocket connections. Simulate high WebSocket traffic to ensure FastAPI and Redis don't crash under demo conditions.
 
-### Day 7: Deployment
-- [ ] **Step 9.2 (Backend Tests):** Fix failing Pytest suite. Ensure 100% passing tests for core Fusion and Risk pipelines.
-- [ ] **Step 9.5 (Deployment):** Set up CI/CD. Deploy Next.js to Vercel, FastAPI via Docker/AWS, provision production Neon DB. Ensure HTTPS is enabled.
+### Day 7: Testing, Security, Performance & Deployment
+- [ ] **Day 7 (Manual Data Pipeline Verification):** Manually trigger the Simulation Engine and verify that synthetic data strictly triggers the Fusion Engine, updates the Neon Database, and broadcasts the correct WebSocket payloads without data race conditions.
+- [ ] **Step 9.1 (Backend Security Adding):** Implement strict Rate Limiting on public `/ingest` routes. Add Security Headers, enforce CORS lockdown (restrict to Vercel domain), and validate all Pydantic inputs. Guarantee secrets are handled exclusively via `.env`.
+- [ ] **Step 9.2 (Backend Testing):** Fix any remaining Pytest suite issues. Achieve 100% test coverage for the core Fusion, Risk prediction pipelines, and WebSocket authentication flow.
+- [ ] **Step 9.4 (Performance & Stability):** Conduct aggressive load testing on the WebSocket manager. Simulate 500+ concurrent connections to ensure FastAPI and Redis pub/sub do not drop packets under demo conditions. Verify graceful degradation if AI adapters disconnect.
 
 ---
 

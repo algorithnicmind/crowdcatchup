@@ -33,9 +33,7 @@ export function OwnerLayoutSidebar() {
 
   const navItems = [
     { name: "Events", href: "/owner/events", icon: Calendar },
-    { name: "Venue Map", href: "/owner", icon: MapIcon },
-    { name: "Simulations", href: "/owner", icon: Activity },
-    { name: "Settings", href: "/settings", icon: Settings2 }
+    { name: "Venue Map", href: "/owner", icon: MapIcon }
   ];
 
   const getIsActive = (href: string) => {

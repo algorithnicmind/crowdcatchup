@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { MagicCard } from '@/components/ui/magic-card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useMapStore } from '@/stores/map-store';
+import { apiClient } from '@/lib/api-client';
 
 interface MapOverlayControlsProps {
   role?: 'authority' | 'police' | 'citizen' | 'owner';
@@ -41,12 +42,10 @@ export function MapOverlayControls({ role = 'authority' }: MapOverlayControlsPro
               className="h-12 w-12 rounded-full bg-zinc-900/90 backdrop-blur-md border border-zinc-800 shadow-lg hover:bg-zinc-800 text-blue-400"
               onClick={async () => {
                 try {
-                  const res = await fetch('https://localhost:8000/api/v1/simulation/scenario', {
+                  await apiClient('simulation/scenario', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ event_id: 'EVT-001', scenario_id: 'crowd_surge' })
                   });
-                  if (!res.ok) console.error('Failed to trigger simulation');
                 } catch (e) {
                   console.error('Simulation error:', e);
                 }

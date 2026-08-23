@@ -7,9 +7,33 @@ import { MagicCard } from '@/components/ui/magic-card';
 import { Navigation, CheckCircle2, ShieldAlert, Users, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+import { apiClient } from '@/lib/api-client';
+import { toast } from 'sonner';
+
 export function TaskCard() {
   const activeTasks = useMapStore((state) => state.activeTasks);
   const removeTask = useMapStore((state) => state.removeTask);
+
+  const handleNavigate = async (taskId: string) => {
+    try {
+      await apiClient(`police/tasks/${taskId}/accept`, { method: 'POST' });
+      toast.success('Task Accepted', { description: 'Navigation route plotted.' });
+    } catch (e) {
+      toast.error('Failed to accept task');
+    }
+  };
+
+  const handleArrived = async (taskId: string) => {
+    try {
+      await apiClient(`police/tasks/${taskId}/resolve`, { method: 'POST' });
+      removeTask(taskId);
+      toast.success('Task Resolved', { description: 'Situation reported as handled.' });
+    } catch (e) {
+      toast.error('Failed to resolve task');
+      // Fallback local remove
+      removeTask(taskId);
+    }
+  };
 
   if (activeTasks.length === 0) {
     return null;
@@ -70,6 +94,7 @@ export function TaskCard() {
               <div className="flex flex-col gap-2">
                 <Button 
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 font-semibold h-12"
+                  onClick={() => handleNavigate(currentTask.task_id)}
                 >
                   <Navigation className="w-5 h-5 mr-2" />
                   NAVIGATE TO ZONE
@@ -77,7 +102,7 @@ export function TaskCard() {
                 <Button 
                   variant="outline" 
                   className="w-full bg-transparent border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300 font-semibold h-12"
-                  onClick={() => removeTask(currentTask.task_id)}
+                  onClick={() => handleArrived(currentTask.task_id)}
                 >
                   <CheckCircle2 className="w-5 h-5 mr-2" />
                   MARK ARRIVED
