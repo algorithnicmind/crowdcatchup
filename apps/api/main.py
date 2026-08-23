@@ -15,6 +15,9 @@ from features.fusion.application.redis_subscriber import start_redis_subscriber
 import asyncio
 from shared.infrastructure.websocket_manager import get_ws_manager
 from shared.api.error_handlers import register_error_handlers
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from core.limiter import limiter
 
 # Import Routers
 from features.auth.api.routes import router as auth_router
@@ -65,6 +68,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 
 if settings.ENFORCE_HTTPS:
@@ -73,8 +79,8 @@ if settings.ENFORCE_HTTPS:
 # Setup CORS for the Next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins (safest for Hackathon)
-    allow_credentials=False, # Must be False for wildcard origins to work
+    allow_origins=settings.CORS_ORIGINS,  # Locked down to Vercel/Localhost
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
