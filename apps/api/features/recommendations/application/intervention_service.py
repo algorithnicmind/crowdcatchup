@@ -1,5 +1,6 @@
 import logging
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from datetime import datetime
 from typing import List
 import uuid
@@ -13,7 +14,7 @@ from shared.infrastructure.websocket_manager import get_ws_manager
 logger = logging.getLogger(__name__)
 
 class InterventionService:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
     async def evaluate_and_store_recommendations(self, state: CrowdStateDTO):
@@ -24,13 +25,14 @@ class InterventionService:
         recs = RecommendationEngine.generate_recommendations(state)
         
         for rec in recs:
-            # Check if an identical pending intervention exists
-            existing = self.db.query(InterventionModel).filter(
+            stmt = select(InterventionModel).where(
                 InterventionModel.event_id == state.event_id,
                 InterventionModel.target_zone == rec["target"],
                 InterventionModel.intervention_type == InterventionType(rec["type"]),
                 InterventionModel.status == InterventionStatus.PENDING
-            ).first()
+            )
+            result = await self.db.execute(stmt)
+            existing = result.scalar_one_or_none()
             
             if not existing:
                 new_intervention = InterventionModel(
@@ -46,7 +48,6 @@ class InterventionService:
                 )
                 self.db.add(new_intervention)
                 
-                # Broadcast recommendation alert
                 ws_manager = get_ws_manager()
                 await ws_manager.broadcast_to_event(new_intervention.event_id, {
                     "type": "RECOMMENDATION_ALERT",
@@ -62,27 +63,30 @@ class InterventionService:
                     }
                 })
                 
-        self.db.commit()
+        await self.db.commit()
 
-    def get_pending_interventions(self, event_id: str) -> List[InterventionModel]:
-        return self.db.query(InterventionModel).filter(
+    async def get_pending_interventions(self, event_id: str) -> List[InterventionModel]:
+        stmt = select(InterventionModel).where(
             InterventionModel.event_id == event_id,
             InterventionModel.status == InterventionStatus.PENDING
-        ).all()
+        )
+        result = await self.db.execute(stmt)
+        return list(result.scalars().all())
 
     async def approve_intervention(self, intervention_id: str) -> InterventionModel:
-        intervention = self.db.query(InterventionModel).filter(InterventionModel.id == intervention_id).first()
+        stmt = select(InterventionModel).where(InterventionModel.id == intervention_id)
+        result = await self.db.execute(stmt)
+        intervention = result.scalar_one_or_none()
         if not intervention:
             raise ValueError("Intervention not found")
             
         intervention.status = InterventionStatus.APPROVED
         intervention.action_taken_at = datetime.utcnow()
-        self.db.commit()
-        self.db.refresh(intervention)
+        await self.db.commit()
+        await self.db.refresh(intervention)
         
         ws_manager = get_ws_manager()
         
-        # Broadcast execution/task WebSocket events
         payload = {
             "intervention_id": intervention.id,
             "target_zone": intervention.target_zone,
@@ -90,7 +94,6 @@ class InterventionService:
             "intervention_type": intervention.intervention_type.value
         }
         
-        # Broadcast to all Authority clients that the intervention was approved
         await ws_manager.broadcast_to_role(intervention.event_id, "AUTHORITY", {
             "type": "INTERVENTION_APPROVED",
             "payload": payload
@@ -115,12 +118,14 @@ class InterventionService:
         return intervention
 
     async def reject_intervention(self, intervention_id: str) -> InterventionModel:
-        intervention = self.db.query(InterventionModel).filter(InterventionModel.id == intervention_id).first()
+        stmt = select(InterventionModel).where(InterventionModel.id == intervention_id)
+        result = await self.db.execute(stmt)
+        intervention = result.scalar_one_or_none()
         if not intervention:
             raise ValueError("Intervention not found")
             
         intervention.status = InterventionStatus.REJECTED
         intervention.action_taken_at = datetime.utcnow()
-        self.db.commit()
-        self.db.refresh(intervention)
+        await self.db.commit()
+        await self.db.refresh(intervention)
         return intervention

@@ -35,7 +35,7 @@ async def seed_demo_event():
                     {"lat": 25.4258, "lng": 81.8563},
                     {"lat": 25.4258, "lng": 81.8463},
                 ],
-                status="ACTIVE",
+                status="LIVE",
                 owner_id="OWNER-001",
                 expected_attendance=50000,
                 max_capacity=80000,

@@ -5,7 +5,7 @@ from ..application.incident_service import IncidentService
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db
 
-router = APIRouter(prefix="/v1/incidents", tags=["Incidents"])
+router = APIRouter(tags=["Incidents"])
 logger = logging.getLogger(__name__)
 
 @router.post("/report")

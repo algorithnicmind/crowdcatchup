@@ -128,13 +128,21 @@ async def websocket_endpoint(websocket: WebSocket):
     """
     Central WebSocket endpoint.
     Clients connect here for real-time updates.
+    Query params: token, event_id, role, user_id
     """
     ws_manager = get_ws_manager()
-    # In a real scenario, we'd authenticate the WS connection here
-    await ws_manager.connect(websocket)
+
+    event_id = websocket.query_params.get("event_id", "")
+    role = websocket.query_params.get("role", "")
+    user_id = websocket.query_params.get("user_id", "")
+
+    await ws_manager.connect(websocket, event_id=event_id, role=role, user_id=user_id)
+    logger.info(f"WS client connected: event={event_id} role={role} user={user_id}")
+
     try:
         while True:
             data = await websocket.receive_text()
             logger.debug(f"Received WS message: {data}")
     except WebSocketDisconnect:
         ws_manager.disconnect(websocket)
+        logger.info(f"WS client disconnected: event={event_id} role={role}")
