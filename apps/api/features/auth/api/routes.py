@@ -121,3 +121,55 @@ async def update_profile(
         role=user_dto.role,
         is_active=user_dto.is_active,
     )
+
+@router.post("/users", response_model=UserResponse, status_code=201)
+async def create_user_by_authority(
+    request: RegisterRequest, 
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Create a new user (Police, Event Owner).
+    In a real system, this would have a Depends(require_role('AUTHORITY')).
+    For the hackathon, we allow it directly since auth tokens are mocked.
+    """
+    repo = SQLAlchemyUserRepository(db)
+    use_case = RegisterUseCase(
+        user_repository=repo,
+        password_hasher=hash_password,
+    )
+    user_dto = await use_case.execute(
+        email=request.email,
+        phone_number=request.phone_number,
+        password=request.password,
+        full_name=request.full_name,
+        role=request.role,
+    )
+    return UserResponse(
+        id=user_dto.id,
+        email=user_dto.email,
+        phone_number=user_dto.phone_number,
+        full_name=user_dto.full_name,
+        role=user_dto.role,
+        is_active=user_dto.is_active,
+    )
+
+@router.get("/users", response_model=list[UserResponse])
+async def list_users(
+    db: AsyncSession = Depends(get_db)
+):
+    """List users for the authority dashboard."""
+    from sqlalchemy import select
+    from features.auth.infrastructure.models.user_model import UserModel
+    result = await db.execute(select(UserModel))
+    users = result.scalars().all()
+    return [
+        UserResponse(
+            id=u.id,
+            email=u.email,
+            phone_number=u.phone_number,
+            full_name=u.full_name,
+            role=u.role,
+            is_active=u.is_active,
+        )
+        for u in users
+    ]

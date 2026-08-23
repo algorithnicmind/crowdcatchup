@@ -56,6 +56,10 @@ export interface SourceHealth {
 }
 
 interface MapState {
+  // Global Event Context
+  activeEventId: string | null;
+  setActiveEventId: (id: string | null) => void;
+
   mapTypeId: string;
   trafficEnabled: boolean;
   heatmapEnabled: boolean;
@@ -94,8 +98,11 @@ interface MapState {
   setCitizenLocation: (loc: { lat: number; lng: number } | null) => void;
 }
 
-export const useMapStore = create<MapState>((set) => ({
-  mapTypeId: 'roadmap',
+export const useMapStore = create<MapState>()((set, get) => ({
+  activeEventId: null,
+  setActiveEventId: (id) => set({ activeEventId: id }),
+
+  mapTypeId: 'satellite',
   trafficEnabled: false,
   heatmapEnabled: false,
   routeCoordinates: null,
