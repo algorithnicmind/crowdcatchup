@@ -10,7 +10,7 @@ from pydantic import BaseModel, EmailStr, Field, model_validator
 class RegisterRequest(BaseModel):
     email: EmailStr | None = None
     phone_number: str | None = None
-    password: str = Field(..., min_length=8)
+    password: str = Field(..., min_length=1)
     full_name: str = Field(..., min_length=1)
     role: str = Field(default="CITIZEN", pattern="^(AUTHORITY|POLICE|CITIZEN|EVENT_OWNER)$")
 

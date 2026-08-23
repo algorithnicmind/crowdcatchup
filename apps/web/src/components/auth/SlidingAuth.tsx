@@ -127,7 +127,7 @@ export function SlidingAuth({ initialMode = 'login' }: SlidingAuthProps) {
           method: 'POST',
           body: JSON.stringify({
             email,
-            phone_number: phone,
+            phone_number: phone || "+15550000000",
             password: registerPassword,
             full_name: name,
             role: 'CITIZEN'
