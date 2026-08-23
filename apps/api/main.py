@@ -79,7 +79,7 @@ if settings.ENFORCE_HTTPS:
 # Setup CORS for the Next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,  # Locked down to Vercel/Localhost
+    allow_origin_regex=".*",  # Allow all origins safely for Hackathon
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
