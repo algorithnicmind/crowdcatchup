@@ -28,14 +28,16 @@ export function StaffManagementModal({ onClose }: { onClose: () => void }) {
 
   const fetchData = async () => {
     try {
+      // Fetch users and events in parallel, but catch errors individually 
+      // so a 404 on /auth/users (if backend isn't deployed yet) doesn't break the events!
       const [u, e] = await Promise.all([
-        apiClient('/auth/users'),
-        apiClient('/events')
+        apiClient('/auth/users').catch(() => []), 
+        apiClient('/events').catch(() => [])
       ]);
       setUsers(Array.isArray(u) ? u : []);
       setEvents(Array.isArray(e) ? e : []);
     } catch (err) {
-      toast.error("Failed to load staff data");
+      toast.error("Failed to load staff or event data");
     } finally {
       setLoading(false);
     }

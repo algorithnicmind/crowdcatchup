@@ -88,30 +88,8 @@ export function SlidingAuth({ initialMode = 'login' }: SlidingAuthProps) {
       }
       
       router.push(targetUrl);
-    } catch {
-      // Demo Mode Fallback
-      const DEMO_ACCOUNTS: Record<string, { name: string; role: UserRole }> = {
-        'admin@test.com':   { name: 'Admin Authority', role: 'AUTHORITY' },
-        'police@test.com':  { name: 'Police Officer',  role: 'POLICE' },
-        'owner@test.com':   { name: 'Event Owner',     role: 'EVENT_OWNER' },
-        'citizen@test.com': { name: 'Citizen One',     role: 'CITIZEN' },
-        'citizen2@test.com':{ name: 'Citizen Two',     role: 'CITIZEN' },
-        'citizen3@test.com':{ name: 'Citizen Three',   role: 'CITIZEN' },
-      };
-
-      const demo = DEMO_ACCOUNTS[identifier.toLowerCase()];
-      if (demo && loginPassword === 'Password123!') {
-        toast.info('Backend offline - signing in with demo account.');
-        setAuth(
-          { id: `demo-${identifier}`, name: demo.name, email: identifier, phone: '' },
-          demo.role,
-          'demo-token'
-        );
-        const defaultRoute = demo.role === 'EVENT_OWNER' ? '/owner' : `/${demo.role.toLowerCase()}`;
-        router.push(redirectUrl || defaultRoute);
-      } else {
-        toast.error('Invalid credentials. Backend may be offline - try a demo account.');
-      }
+    } catch (err: any) {
+      toast.error(err.message || 'Login failed. Please check your credentials or backend connection.');
     } finally {
       setIsLoading(false);
     }
