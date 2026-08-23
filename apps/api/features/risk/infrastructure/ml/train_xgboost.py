@@ -86,7 +86,7 @@ def generate_synthetic_data(num_samples: int = 100000):
             'zone_capacity_pct': zone_capacity_pct,
         }
 
-        # Risk formula (mirrors ai/scripts/generate_dataset.py)
+        # Risk formula (mirrors apps/cv_engine/scripts/generate_dataset.py)
         if density <= 1.0:
             base_risk = density * 8
         elif density <= 2.5:

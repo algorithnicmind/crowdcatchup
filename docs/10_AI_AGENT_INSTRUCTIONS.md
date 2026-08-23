@@ -17,7 +17,7 @@ This specification is designed for automated AI Coding Assistants and human coll
 ### 2.1 Rule 1: Monorepo Boundary Enforcement
 * **Frontend UI Code:** `/apps/web/` — Next.js App Router, Tailwind CSS, `shadcn/ui`, Zustand, SVG Map Engine.
 * **Backend API Code:** `/apps/api/` — FastAPI, Pydantic, SQLAlchemy, PostgreSQL/PostGIS, Redis.
-* **AI Pipelines:** `/ai/` — YOLOv8, BoT-SORT, XGBoost, OpenCV.
+* **AI Pipelines:** `/apps/cv_engine/` — YOLOv8, BoT-SORT, XGBoost, OpenCV.
 
 ### 2.2 Rule 2: Single PWA Principle & Custom Auth
 Do NOT create separate web apps for different roles. All users log into the same Next.js application. We use custom DB-backed authentication. Test accounts (admin, police, owner, citizens) are automatically seeded into the PostgreSQL database on startup (`seed.py`). RBAC is enforced by reading the user's `role` column in the DB, and the frontend falls back to Demo Mode if the API is offline.

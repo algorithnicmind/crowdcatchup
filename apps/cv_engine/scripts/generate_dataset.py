@@ -140,8 +140,8 @@ def generate_dataset(num_samples=100000):
 
     df = pd.DataFrame(data)
 
-    os.makedirs('ai/data', exist_ok=True)
-    out_path = 'ai/data/crowd_data_synthetic.csv'
+    os.makedirs('apps/cv_engine/data', exist_ok=True)
+    out_path = 'apps/cv_engine/data/crowd_data_synthetic.csv'
     df.to_csv(out_path, index=False)
     print(f"Generated {num_samples} rows of synthetic data at {out_path}")
     print(f"Columns: {list(df.columns)}")

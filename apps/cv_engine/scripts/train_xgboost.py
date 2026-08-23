@@ -21,7 +21,7 @@ FEATURES = [
 
 
 def train_model():
-    data_path = 'ai/data/crowd_data_synthetic.csv'
+    data_path = 'apps/cv_engine/data/crowd_data_synthetic.csv'
 
     if not os.path.exists(data_path):
         print(f"Error: {data_path} not found. Run generate_dataset.py first.")
@@ -62,13 +62,13 @@ def train_model():
     print(f"R-squared:               {r2:.4f}")
 
     # Save model to local AI folder
-    os.makedirs('ai/models', exist_ok=True)
-    local_path = 'ai/models/xgboost_risk_model.json'
+    os.makedirs('apps/cv_engine/models', exist_ok=True)
+    local_path = 'apps/cv_engine/models/xgboost_risk_model.json'
     model.save_model(local_path)
     print(f"Model saved to {local_path}")
 
     # Save feature metadata alongside model
-    meta_path = 'ai/models/model_metadata.json'
+    meta_path = 'apps/cv_engine/models/model_metadata.json'
     with open(meta_path, 'w') as f:
         json.dump({
             'features': FEATURES,

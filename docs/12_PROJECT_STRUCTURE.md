@@ -423,7 +423,7 @@ crowdcatchup/
 │       │
 │       └── requirements.txt
 │
-├── ai/                                         # AI/ML PIPELINE
+├── apps/cv_engine/                             # AI/ML PIPELINE
 │   ├── requirements.txt
 │   ├── domain/
 │   │   ├── interfaces/

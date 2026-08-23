@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     # --- CORS ---
     CORS_ORIGINS: list[str] = [
         "http://localhost:3000",
+        "https://localhost:3000",
         "https://crowdcatchup-web-nine.vercel.app"
     ]
     model_config = {

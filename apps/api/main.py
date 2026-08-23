@@ -153,3 +153,30 @@ async def websocket_endpoint(websocket: WebSocket):
     except WebSocketDisconnect:
         ws_manager.disconnect(websocket)
         logger.info(f"WS client disconnected: event={event_id} role={role}")
+
+
+if __name__ == "__main__":
+    import uvicorn
+    import ssl
+    import os
+
+    ssl_keyfile = settings.SSL_KEYFILE or os.path.join(os.path.dirname(__file__), "certs", "key.pem")
+    ssl_certfile = settings.SSL_CERTFILE or os.path.join(os.path.dirname(__file__), "certs", "cert.pem")
+
+    ssl_context = None
+    if settings.ENFORCE_HTTPS and os.path.exists(ssl_keyfile) and os.path.exists(ssl_certfile):
+        ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        ssl_context.load_cert_chain(certfile=ssl_certfile, keyfile=ssl_keyfile)
+        logger.info(f"HTTPS enabled — key: {ssl_keyfile}, cert: {ssl_certfile}")
+    elif settings.ENFORCE_HTTPS:
+        logger.warning("ENFORCE_HTTPS=True but SSL certificates not found. Falling back to HTTP.")
+        logger.warning(f"Expected: {ssl_keyfile} and {ssl_certfile}")
+
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=8000,
+        ssl_keyfile=ssl_keyfile if ssl_context else None,
+        ssl_certfile=ssl_certfile if ssl_context else None,
+        log_level="info",
+    )

@@ -3,8 +3,8 @@ import os
 from ultralytics import YOLO
 
 def record_demo():
-    input_video = 'ai/data/crowd.mp4'
-    output_video = 'ai/data/demo_output.mp4'
+    input_video = 'apps/cv_engine/data/crowd.mp4'
+    output_video = 'apps/cv_engine/data/demo_output.mp4'
     
     # Check if we have a real video
     if not os.path.exists(input_video):
@@ -20,7 +20,7 @@ def record_demo():
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
     
-    os.makedirs('ai/data', exist_ok=True)
+    os.makedirs('apps/cv_engine/data', exist_ok=True)
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(output_video, fourcc, fps, (width, height))
     

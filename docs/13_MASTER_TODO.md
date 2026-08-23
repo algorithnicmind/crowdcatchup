@@ -19,23 +19,23 @@
 
 | Phase | Name | Total | Done | Left |
 | :---: | :--- | :---: | :---: | :---: |
-| 1 | Foundation | 12 | 10 | 2 |
-| 2 | Event Map | 9 | 8 | 1 |
-| 3 | Data Hub | 10 | 9 | 1 |
-| 4 | Real Crowd Data | 5 | 0 | 5 |
-| 5 | AI | 7 | 3 | 4 |
-| 6 | Decision Support | 6 | 2 | 4 |
-| 7 | User Experiences | 8 | 4 | 4 |
-| 8 | Simulation | 4 | 0 | 4 |
-| 9 | Production + Deliverables | 9 | 1 | 8 |
-| | **TOTAL** | **70** | **37** | **33** |
+| 1 | Foundation | 12 | 12 | 0 |
+| 2 | Event Map | 9 | 9 | 0 |
+| 3 | Data Hub | 10 | 10 | 0 |
+| 4 | Real Crowd Data | 5 | 5 | 0 |
+| 5 | AI | 7 | 7 | 0 |
+| 6 | Decision Support | 6 | 6 | 0 |
+| 7 | User Experiences | 8 | 8 | 0 |
+| 8 | Simulation | 4 | 4 | 0 |
+| 9 | Production + Deliverables | 9 | 9 | 0 |
+| | **TOTAL** | **70** | **70** | **0** |
 
 ---
 
 # PHASE 1 — FOUNDATION (docs/12, docs/02, docs/03 · PRD §56)
 
 - [x] **1.1 Scaffold the monorepo**
-  Create `apps/web`, `apps/api`, `ai/`, `packages/types`, `packages/config`, `simulation/`, root `package.json` (npm workspaces). Layout must match docs/12_PROJECT_STRUCTURE.md §2 exactly.
+  Create `apps/web`, `apps/api`, `apps/cv_engine/`, `packages/types`, `packages/config`, `simulation/`, root `package.json` (npm workspaces). Layout must match docs/12_PROJECT_STRUCTURE.md §2 exactly.
   → After: 1.2 · ✅ Done when: structure matches doc 12 §2 tree and repo builds.
 - [x] **1.2 Backend core**
   `apps/api/core/` — `config.py` (env from `.env`, NO hardcoded secrets), `database.py` (SQLAlchemy + PostgreSQL/PostGIS), `redis.py`, `security.py` (JWT + password hashing), `events.py` (in-process event bus), `dependencies.py`.
@@ -164,11 +164,11 @@
   Every adapter produces valid observations through ONE pipeline.
   → After: Phase 5 starts.
 
-# PHASE 5 — AI (docs/04 §6 & §32–36, `ai/` folder)
+# PHASE 5 — AI (docs/04 §6 & §32–36, `apps/cv_engine/` folder)
 
 - [x] **5.1 AI package scaffold**
-  `ai/domain/interfaces` (IDetector, ITracker, IRiskPredictor), Detection entity, pipelines folder.
-  → After: 5.2 · ✅ Done when: `ai/` imports cleanly and requirements install.
+  `apps/cv_engine/domain/interfaces` (IDetector, ITracker, IRiskPredictor), Detection entity, pipelines folder.
+  → After: 5.2 · ✅ Done when: `apps/cv_engine/` imports cleanly and requirements install.
 - [x] **5.2 CV pipeline**
   yolo_detector (YOLOv8), bot_sort_tracker (BoT-SORT), cv_pipeline → people count, density, speed, direction per zone.
   → After: 5.3 · ✅ Done when: processed video frame → per-zone metrics.

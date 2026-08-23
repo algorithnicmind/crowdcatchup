@@ -43,7 +43,7 @@ Located in `/apps/web/e2e/`.
 | **Map Rendering** | Event boundary, zones, gates, routes render on SVG Digital Twin Map. |
 
 ### 2.3 Machine Learning Pipeline Testing
-Located in `/ai/tests/`.
+Located in `/apps/cv_engine/tests/`.
 
 | Test Area | What to Test |
 | :--- | :--- |
