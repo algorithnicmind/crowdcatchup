@@ -220,7 +220,7 @@ Recommended initial stack:
 * TypeScript
 * Tailwind CSS
 * PWA support
-* Mapbox/MapLibre/OpenStreetMap-compatible mapping architecture
+* Google Maps API (`@vis.gl/react-google-maps`) mapping architecture
 * Recharts/ECharts for analytics
 
 ## Backend

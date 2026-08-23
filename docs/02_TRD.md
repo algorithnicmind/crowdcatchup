@@ -277,16 +277,16 @@ def check_reroute_needed(current_route, live_crowd_state, group_profile):
 
 ---
 
-## 65. OPENSTREETMAP INTEGRATION
+## 65. GOOGLE MAPS INTEGRATION
 
 ### Road Network Data
-- Use OpenStreetMap (OSM) road network for route calculation
-- Import OSM data using `osmnx` Python library
-- Convert road network to graph for A* algorithm
-- Add CrowdShield operational routes (temporary, emergency) as additional graph edges
-
-### Geocoding
-- Use Nominatim (OSM) for address → coordinate conversion
+- Use Google Maps API for road network routing calculation
+- Integrate Google Maps Directions API where needed
+- Store key coordinates in PostgreSQL/PostGIS for custom paths
+- Calculate distances securely using PostGIS spatial functions
+- Ensure generated route stays strictly within safe event zones
+- Avoid intersecting with high-risk or congested polygons
+- Use Google Places Autocomplete API for address → coordinate conversion
 - Use reverse geocoding for coordinate → address display
 
 ### Map Tiles

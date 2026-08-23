@@ -14,13 +14,13 @@ CrowdShield emphasizes **Rich Aesthetics and Dynamic Design** using Next.js, Tai
 * 🟡 **Surge Warning (Amber):** `#f59e0b`. Developing queue congestion.
 * 🟠 **High Risk (Orange):** `#f97316`. Elevated risk, action needed.
 * 🔴 **Critical Hazard (Crimson):** `#ef4444`. Immediate danger/bottleneck.
-* 🗺️ **Premium Map Engine:** The Leaflet instance is the hero component for every view. It **MUST** be styled to deliver a "Google Maps-like" premium experience, utilizing high-quality map tiles (e.g., satellite or CartoDB Dark Matter), smooth fly-to animations, custom dynamic markers, and interactive glassmorphism detail panels.
+* 🗺️ **Premium Map Engine:** The Google Maps instance (`@vis.gl/react-google-maps`) is the hero component for every view. It **MUST** be styled to deliver a premium experience, utilizing custom dark map styling, smooth fly-to animations, custom dynamic markers, and interactive glassmorphism detail panels.
 
 ---
 
 ## 2. Role-Based Wireframes (Unified Global Sidebar Architecture)
 
-All user roles (Authority, Police, Citizen, Organizer) now share a unified **Global Sidebar** on the left, featuring a high-tech `DotPattern` background, with the interactive Leaflet Map occupying the main right-hand canvas. This eliminates floating panels and maximizes map visibility.
+All user roles (Authority, Police, Citizen, Organizer) now share a unified **Global Sidebar** on the left, featuring a high-tech `DotPattern` background, with the interactive Google Map occupying the main right-hand canvas. This eliminates floating panels and maximizes map visibility.
 
 ### 2.1 Authority Command Center (Desktop PWA)
 

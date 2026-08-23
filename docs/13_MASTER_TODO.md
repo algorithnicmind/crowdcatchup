@@ -56,7 +56,7 @@
   `manifest.json`, theme colors, icons, service worker, installability, meta tags, offline shell.
   → After: 1.8 · ✅ Done when: app is installable and offline shell loads.
 - [x] **1.8 Frontend foundation**
-  Install shadcn/ui, zustand, leaflet, i18next. `shared/lib/api-client.ts`, `ws-client.ts`, `useWebSocket`. Stores (auth/event/ui). Login + register pages. Role-based route guard `(dashboard)/authority|police|citizen|event-owner`.
+  Install shadcn/ui, zustand, @vis.gl/react-google-maps, i18next. `shared/lib/api-client.ts`, `ws-client.ts`, `useWebSocket`. Stores (auth/event/ui). Login + register pages. Role-based route guard `(dashboard)/authority|police|citizen|event-owner`.
   → After: 1.9 · ✅ Done when: login as each of the 4 roles lands on the correct dashboard route.
 - [x] **1.9 Frontend events UI**
   Event list + create event + status change screens for the Event Owner role.
@@ -76,7 +76,7 @@
 
 # PHASE 2 — EVENT MAP (docs/11 §7–11, docs/06, docs/04 §3)
 
-- [x] **2.1 Leaflet map feature**
+- [x] **2.1 Google Maps feature**
   `EventMap.tsx` + ZoneLayer, GateLayer, RouteLayer, HeatmapLayer, CrowdOverlay; `useMapEngine`, `useMapLayers`, `geo-utils.ts`.
   → After: 2.2 · ✅ Done when: map renders with base tiles.
 - [x] **2.2 Venue boundary**
@@ -236,7 +236,7 @@
   `features/navigation/` — Group/Journey/SafeRoute entities; use cases plan_group_journey, navigate, check_reroute; route_engine (A* (A-Star) + crowd weights); navigation_engine (turn-by-turn); osm_adapter; `POST /api/v1/navigation/plan`, `POST /exit-plan`, WS `/api/v1/navigation/live` (NAVIGATION_UPDATE, REROUTE_ALERT, GROUP_MEMBER_ALERT). Implement the core pathfinding logic in `features/navigation/route_engine.py`. This involves an A* (A-Star) search algorithm that calculates routes based on distance, but adds penalty weights for crowded zones (based on live density data). It must also account for the user's `GroupSize` (solo vs. large group) when recommending gates.
   → After: 7.7 · ✅ Done when: plan request returns SafeRoutes with gate recommendations (doc 08 §64 schemas).
 - [x] **7.7 Citizen Journey Navigation — frontend**
-  JourneyPlanner, GroupSizeSelector, RouteMap, NavigationPanel, CrowdOverlay, GateRecommendation, GroupTipCard, ExitPlanner; hooks useJourney/useNavigation/useLiveReroute/useGroupCoordination; group profiles SOLO→LARGE_GROUP + special needs priority (PRD §9B). Build the citizen navigation interfaces: `JourneyPlanner`, `GroupSizeSelector`, and `NavigationPanel`. This UI will consume the backend navigation API, display the recommended "Safe Route" (green line) on the Leaflet map, and guide the user turn-by-turn.
+  JourneyPlanner, GroupSizeSelector, RouteMap, NavigationPanel, CrowdOverlay, GateRecommendation, GroupTipCard, ExitPlanner; hooks useJourney/useNavigation/useLiveReroute/useGroupCoordination; group profiles SOLO→LARGE_GROUP + special needs priority (PRD §9B). Build the citizen navigation interfaces: `JourneyPlanner`, `GroupSizeSelector`, and `NavigationPanel`. This UI will consume the backend navigation API, display the recommended "Safe Route" (green line) on the Google Map, and guide the user turn-by-turn.
   → After: 7.8 · ✅ Done when: 3 journey phases (to / inside / going home from event) work in demo.
 - [x] **7.8 PWA polish**
   Push notifications, offline map cache (Service Worker + IndexedDB), mobile install. Finalize the Progressive Web App features for the Citizen app. This includes registering the Service Worker, configuring IndexedDB to cache the static venue map for offline use, and ensuring web push notifications are functional.
