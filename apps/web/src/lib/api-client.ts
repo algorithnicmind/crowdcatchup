@@ -54,35 +54,6 @@ export async function apiClient<T>(
     headers,
   };
 
-  if (token === 'demo-token') {
-    // --- HACKATHON DEMO MODE INTERCEPTOR ---
-    // If the frontend is running in Demo Mode, intercept API calls and return mock data 
-    // so the presentation doesn't crash on empty screens.
-    if (cleanEndpoint === '/auth/users') {
-      return [
-        { id: 'demo-user-1', full_name: 'John Officer', email: 'police@test.com', phone_number: '+1-555-0101', role: 'POLICE' },
-        { id: 'demo-user-2', full_name: 'Sarah Medic', email: 'medic@test.com', phone_number: '+1-555-0102', role: 'AUTHORITY' },
-        { id: 'demo-user-3', full_name: 'Event Owner', email: 'owner@test.com', phone_number: '+1-555-0103', role: 'EVENT_OWNER' }
-      ] as any;
-    }
-    if (cleanEndpoint === '/events') {
-      return [
-        { id: 'demo-evt-1', name: 'Tomorrowland Main Stage', location: 'Boom, Belgium', status: 'ACTIVE', start_time: new Date().toISOString(), owner_id: 'demo-user-3' },
-        { id: 'demo-evt-2', name: 'Global Tech Summit 2026', location: 'San Francisco', status: 'UPCOMING', start_time: new Date().toISOString(), owner_id: 'demo-user-3' }
-      ] as any;
-    }
-    if (cleanEndpoint === '/zones') {
-      return [
-        { id: 'demo-zone-1', name: 'VIP Area', capacity: 500, current_occupancy: 450, risk_level: 'MEDIUM', event_id: 'demo-evt-1' },
-        { id: 'demo-zone-2', name: 'General Admission', capacity: 10000, current_occupancy: 9500, risk_level: 'HIGH', event_id: 'demo-evt-1' }
-      ] as any;
-    }
-    if (options.method === 'POST') {
-      return { success: true, message: 'Mock action successful' } as any;
-    }
-    return [] as any;
-  }
-
   try {
     const response = await fetch(url, config);
     if (!response.ok) {
