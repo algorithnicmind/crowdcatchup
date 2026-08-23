@@ -3,15 +3,15 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Shield, ShieldAlert, Users, CalendarCheck, ArrowRight } from "lucide-react";
+import { HeroSection } from "@/components/ui/3d-hero-section-boxes";
+import { FeaturesSection } from "@/components/ui/features-section";
 
 export default function Home() {
   return (
     <div className="flex flex-col bg-[#050505]">
-      <div className="pt-32 pb-16 text-center text-white">
-        <h1 className="text-5xl font-bold">Welcome to CrowdShield</h1>
-        <p className="text-xl text-zinc-400 mt-4">AI-Powered Crowd Intelligence for Event Safety</p>
-        <Link href="/login" className="mt-8 inline-block bg-emerald-500 text-black px-6 py-3 rounded-full font-bold">Get Started</Link>
-      </div>
+      <HeroSection />
+
+      <FeaturesSection />
 
       <ContactSection />
     </div>
