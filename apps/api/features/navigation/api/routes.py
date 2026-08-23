@@ -9,7 +9,7 @@ from ..application.navigation_service import NavigationService
 from ..domain.entities.journey import RouteRequest as DomainRouteRequest
 from ..domain.entities.journey import SafeRoute as DomainSafeRoute
 
-router = APIRouter(prefix="/navigation", tags=["Navigation"])
+router = APIRouter(tags=["Navigation"])
 
 @router.post("/plan", response_model=DomainSafeRoute)
 def plan_route(request: DomainRouteRequest, db: Session = Depends(get_db)):

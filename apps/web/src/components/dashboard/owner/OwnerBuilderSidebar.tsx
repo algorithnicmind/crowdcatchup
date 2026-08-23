@@ -11,7 +11,8 @@ import {
   Route,
   Video,
   Settings,
-  LayoutGrid
+  LayoutGrid,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -60,6 +61,12 @@ export function OwnerBuilderSidebar() {
                     <p className="text-purple-400/70 text-[10px] font-mono tracking-widest uppercase">EDIT MODE ACTIVE</p>
                   </div>
                 </div>
+                <button 
+                  onClick={() => setIsExpanded(false)}
+                  className="md:hidden text-gray-400 hover:text-white transition-colors p-1"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
               {/* Tool List */}

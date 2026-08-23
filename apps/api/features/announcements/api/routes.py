@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db
 from ..application.alert_service import AlertService
 
-router = APIRouter(prefix="/v1/announcements", tags=["Announcements"])
+router = APIRouter(prefix="/announcements", tags=["Announcements"])
 logger = logging.getLogger(__name__)
 
 class AnnouncementPayload(BaseModel):

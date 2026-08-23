@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useMapStore } from '@/stores/map-store';
 import { Button } from '@/components/ui/button';
-import { MapPin, AlertCircle, Loader2 } from 'lucide-react';
+import { MapPin, AlertCircle, Loader2, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function LocationGate({ children }: { children: React.ReactNode }) {
@@ -78,6 +78,13 @@ export function LocationGate({ children }: { children: React.ReactNode }) {
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500"></div>
         
+        <button 
+          onClick={() => setIsSkipped(true)}
+          className="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
         <div className="mx-auto w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 relative">
           {isLoading && (
             <span className="absolute inset-0 rounded-full border-2 border-emerald-500/30 border-t-emerald-500 animate-spin" />

@@ -9,11 +9,14 @@ import {
   Users, 
   Activity,
   Layers,
-  LayoutGrid
+  LayoutGrid,
+  X,
+  Database
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useMapStore } from '@/stores/map-store';
 import { MagicCard } from '@/components/ui/magic-card';
+import { DatabaseViewerModal } from './DatabaseViewerModal';
 
 export function AuthoritySidebar() {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -23,6 +26,7 @@ export function AuthoritySidebar() {
   const [cctvEnabled, setCctvEnabled] = useState(true);
   const [policeUnitsEnabled, setPoliceUnitsEnabled] = useState(true);
   const [smartGatesEnabled, setSmartGatesEnabled] = useState(true);
+  const [isDbViewerOpen, setIsDbViewerOpen] = useState(false);
 
   return (
     <>
@@ -60,6 +64,12 @@ export function AuthoritySidebar() {
                     <p className="text-emerald-400/70 text-[10px] font-mono tracking-widest uppercase">SYS-ACTIVE // SECURE</p>
                   </div>
                 </div>
+                <button 
+                  onClick={() => setIsExpanded(false)}
+                  className="md:hidden text-gray-400 hover:text-white transition-colors p-1"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
               {/* Tabs */}
@@ -121,40 +131,32 @@ export function AuthoritySidebar() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {/* Mock Metrics for demo */}
-                    <div className="bg-black/50 border border-white/5 rounded-lg p-3">
-                      <div className="text-xs text-zinc-400 mb-1">Global Density</div>
-                      <div className="text-2xl font-bold text-white flex items-baseline gap-1">
-                        4.2 <span className="text-xs font-normal text-zinc-500">p/m²</span>
-                      </div>
-                      <div className="w-full h-1 bg-zinc-800 rounded-full mt-2 overflow-hidden">
-                        <div className="h-full bg-orange-500 w-[70%]" />
-                      </div>
-                    </div>
-                    
-                    <div className="bg-black/50 border border-white/5 rounded-lg p-3">
-                      <div className="text-xs text-zinc-400 mb-1">Active Personnel</div>
-                      <div className="text-2xl font-bold text-white flex items-baseline gap-1">
-                        142 <span className="text-xs font-normal text-zinc-500">/ 150</span>
-                      </div>
-                      <div className="w-full h-1 bg-zinc-800 rounded-full mt-2 overflow-hidden">
-                        <div className="h-full bg-emerald-500 w-[94%]" />
-                      </div>
-                    </div>
-
-                    <div className="bg-black/50 border border-white/5 rounded-lg p-3">
-                      <div className="text-xs text-zinc-400 mb-1">Incident Reports</div>
-                      <div className="text-2xl font-bold text-white flex items-baseline gap-1">
-                        3 <span className="text-xs font-normal text-red-400">active</span>
-                      </div>
+                    <div className="text-zinc-500 text-sm text-center py-8">
+                      Live metrics are now populated from the database.
                     </div>
                   </div>
                 )}
+              </div>
+              
+              {/* Database Viewer Button */}
+              <div className="p-4 border-t border-white/10 bg-black/40">
+                <button
+                  onClick={() => setIsDbViewerOpen(true)}
+                  className="w-full py-2.5 px-4 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-bold tracking-wider rounded-lg border border-emerald-500/20 transition-colors flex items-center justify-center gap-2"
+                >
+                  <Database className="w-4 h-4" />
+                  OPEN DATABASE VIEWER
+                </button>
               </div>
             </MagicCard>
           </motion.div>
         )}
       </AnimatePresence>
+
+      <DatabaseViewerModal 
+        isOpen={isDbViewerOpen} 
+        onClose={() => setIsDbViewerOpen(false)} 
+      />
     </>
   );
 }

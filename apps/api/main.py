@@ -45,9 +45,8 @@ async def lifespan(app: FastAPI):
     await init_db()  # Creates PostgreSQL tables if they don't exist
 
     logger.info("Seeding database...")
-    from core.seed import seed_users, seed_demo_event
+    from core.seed import seed_users
     await seed_users()
-    await seed_demo_event()
 
     # Start background Redis subscriber for fusion engine
     subscriber_task = asyncio.create_task(start_redis_subscriber())
@@ -93,6 +92,7 @@ async def add_security_headers(request, call_next):
 register_error_handlers(app)
 
 from features.police.api.routes import router as police_router
+from features.database_viewer.api.routes import router as database_viewer_router
 
 # Include API Routers
 app.include_router(auth_router)
@@ -111,6 +111,7 @@ app.include_router(smart_gate_router, prefix="/api/v1")
 app.include_router(announcements_router, prefix="/api/v1")
 app.include_router(police_router)
 app.include_router(contact_router, prefix="/api/v1", tags=["Contact"])
+app.include_router(database_viewer_router)
 
 
 @app.get("/")
