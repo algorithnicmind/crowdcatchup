@@ -69,6 +69,7 @@ class SQLAlchemyEventRepository(BaseRepository[Event]):
         model = self._to_model(entity)
         merged = await self._session.merge(model)
         await self._session.flush()
+        await self._session.refresh(merged)
         return self._to_entity(merged)
 
     async def delete(self, entity_id: str) -> bool:
