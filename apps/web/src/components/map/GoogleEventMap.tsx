@@ -77,7 +77,6 @@ function RoutePolyline() {
 
 import { EVENT_ZONES } from '@/lib/constants/zones';
 import { Users, Router } from 'lucide-react';
-import React.memo from 'react';
 
 const ZoneMarker = React.memo(function ZoneMarker({ zoneId, coords }: { zoneId: string; coords: { lat: number; lng: number } }) {
   const risk = useMapStore(s => s.liveRisk[zoneId]);
