@@ -34,8 +34,10 @@ class Settings(BaseSettings):
     JWT_EXPIRY_MINUTES: int = 60
 
     # --- CORS ---
-    CORS_ORIGINS: list[str] = ["*"]
-
+    CORS_ORIGINS: list[str] = [
+        "http://localhost:3000",
+        "https://crowdcatchup-web-nine.vercel.app"
+    ]
     model_config = {
         "env_file": (ENV_FILE_PATH, ".env"),
         "env_file_encoding": "utf-8",
