@@ -158,52 +158,52 @@ export function SlidingAuth({ initialMode = 'login' }: SlidingAuthProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#E5E5E5] p-4 font-sans text-zinc-900 overflow-hidden relative">
-      <div className="relative w-full max-w-[850px] h-[550px] bg-white rounded-[2rem] shadow-2xl overflow-hidden flex shadow-indigo-500/10">
+    <div className="min-h-screen flex items-center justify-center bg-[#0a0a1a] p-4 font-sans text-white overflow-hidden relative">
+      <div className="relative w-full max-w-[850px] h-[550px] bg-[#111827] rounded-[2rem] shadow-2xl overflow-hidden flex shadow-indigo-500/10">
         
         {/* ================= SIGN UP FORM CONTAINER (Left) ================= */}
         <div className={cn(
-          "absolute top-0 left-0 w-1/2 h-full transition-all duration-700 ease-in-out px-10 flex flex-col justify-center bg-white",
+          "absolute top-0 left-0 w-1/2 h-full transition-all duration-700 ease-in-out px-10 flex flex-col justify-center bg-[#111827]",
           isSignUp ? "translate-x-full opacity-100 z-50" : "opacity-0 z-1 pointer-events-none"
         )}>
           {step === 'FORM' ? (
             <form onSubmit={handleRegisterSubmit} className="flex flex-col items-center space-y-4 w-full max-w-xs mx-auto">
-              <h1 className="text-4xl font-bold mb-4 text-zinc-800">Sign up</h1>
+              <h1 className="text-4xl font-bold mb-4 text-white">Sign up</h1>
               
               <div className="relative w-full">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                <Input required type="text" placeholder="Username" value={name} onChange={(e) => setName(e.target.value)} className="bg-zinc-100 border-none h-11 pl-10 rounded-lg text-sm" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input required type="text" placeholder="Username" value={name} onChange={(e) => setName(e.target.value)} className="bg-white/10 border border-white/10 h-11 pl-10 rounded-lg text-sm text-white placeholder:text-gray-400" />
               </div>
               <div className="relative w-full">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                <Input required type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-zinc-100 border-none h-11 pl-10 rounded-lg text-sm" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input required type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-white/10 border border-white/10 h-11 pl-10 rounded-lg text-sm text-white placeholder:text-gray-400" />
               </div>
               <div className="relative w-full">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                <Input required type="password" placeholder="Password" value={registerPassword} onChange={(e) => setRegisterPassword(e.target.value)} className="bg-zinc-100 border-none h-11 pl-10 rounded-lg text-sm" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input required type="password" placeholder="Password" value={registerPassword} onChange={(e) => setRegisterPassword(e.target.value)} className="bg-white/10 border border-white/10 h-11 pl-10 rounded-lg text-sm text-white placeholder:text-gray-400" />
               </div>
 
               <Button type="submit" disabled={isLoading} className="w-36 bg-[#5A63E0] hover:bg-indigo-600 text-white rounded-full h-11 font-bold tracking-wider mt-2 text-xs">
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "SIGN UP"}
               </Button>
 
-              <div className="mt-4 text-center text-zinc-500 text-xs flex flex-col items-center space-y-3">
+              <div className="mt-4 text-center text-gray-400 text-xs flex flex-col items-center space-y-3">
                   <p>Or sign up with social platforms</p>
                   <div className="flex gap-3">
-                      <button type="button" className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-red-500 hover:bg-zinc-50 font-bold">G</button>
-                      <button type="button" className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-blue-500 hover:bg-zinc-50 font-bold">f</button>
-                      <button type="button" className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-sky-500 hover:bg-zinc-50 font-bold">t</button>
-                      <button type="button" className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-blue-700 hover:bg-zinc-50 font-bold">in</button>
+                      <button type="button" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-red-500 hover:bg-white/10 font-bold">G</button>
+                      <button type="button" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-blue-500 hover:bg-white/10 font-bold">f</button>
+                      <button type="button" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-sky-500 hover:bg-white/10 font-bold">t</button>
+                      <button type="button" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-blue-700 hover:bg-white/10 font-bold">in</button>
                   </div>
               </div>
             </form>
           ) : (
             <form onSubmit={handleVerifyOtp} className="flex flex-col items-center space-y-4 w-full max-w-xs mx-auto">
-              <h1 className="text-4xl font-bold mb-4 text-zinc-800">Verify OTP</h1>
-              <p className="text-zinc-500 text-center text-sm mb-4">Enter the code sent to your email.</p>
+              <h1 className="text-4xl font-bold mb-4 text-white">Verify OTP</h1>
+              <p className="text-gray-400 text-center text-sm mb-4">Enter the code sent to your email.</p>
               <div className="relative w-full">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                <Input required type="text" placeholder="123456" value={userOtp} onChange={(e) => setUserOtp(e.target.value)} className="bg-zinc-100 border-none h-11 pl-10 rounded-lg text-center tracking-[0.5em]" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input required type="text" placeholder="123456" value={userOtp} onChange={(e) => setUserOtp(e.target.value)} className="bg-white/10 border border-white/10 h-11 pl-10 rounded-lg text-center tracking-[0.5em] text-white placeholder:text-gray-400" />
               </div>
               <Button type="submit" disabled={isLoading} className="w-36 bg-[#5A63E0] hover:bg-indigo-600 text-white rounded-full h-11 font-bold tracking-wider mt-4 text-xs">
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "VERIFY"}
@@ -214,32 +214,32 @@ export function SlidingAuth({ initialMode = 'login' }: SlidingAuthProps) {
 
         {/* ================= SIGN IN FORM CONTAINER (Right) ================= */}
         <div className={cn(
-          "absolute top-0 left-0 w-1/2 h-full transition-all duration-700 ease-in-out px-10 flex flex-col justify-center bg-white",
+          "absolute top-0 left-0 w-1/2 h-full transition-all duration-700 ease-in-out px-10 flex flex-col justify-center bg-[#111827]",
           isSignUp ? "translate-x-full opacity-0 z-1 pointer-events-none" : "translate-x-0 opacity-100 z-50"
         )}>
           <form onSubmit={handleLogin} className="flex flex-col items-center space-y-4 w-full max-w-xs mx-auto">
-            <h1 className="text-4xl font-bold mb-6 text-zinc-800">Sign in</h1>
+            <h1 className="text-4xl font-bold mb-6 text-white">Sign in</h1>
             
             <div className="relative w-full">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-              <Input required type="text" placeholder="Email" value={identifier} onChange={(e) => setIdentifier(e.target.value)} className="bg-zinc-100 border-none h-11 pl-10 rounded-lg text-sm" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input required type="text" placeholder="Email" value={identifier} onChange={(e) => setIdentifier(e.target.value)} className="bg-white/10 border border-white/10 h-11 pl-10 rounded-lg text-sm text-white placeholder:text-gray-400" />
             </div>
             <div className="relative w-full">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-              <Input required type="password" placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="bg-zinc-100 border-none h-11 pl-10 rounded-lg text-sm" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input required type="password" placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="bg-white/10 border border-white/10 h-11 pl-10 rounded-lg text-sm text-white placeholder:text-gray-400" />
             </div>
 
             <Button type="submit" disabled={isLoading} className="w-36 bg-[#5A63E0] hover:bg-indigo-600 text-white rounded-full h-11 font-bold tracking-wider mt-4 text-xs">
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "LOGIN"}
             </Button>
             
-            <div className="mt-8 text-center text-zinc-500 text-xs flex flex-col items-center space-y-3">
+            <div className="mt-8 text-center text-gray-400 text-xs flex flex-col items-center space-y-3">
                 <p>Or sign in with social platforms</p>
                 <div className="flex gap-3">
-                    <button type="button" className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-red-500 hover:bg-zinc-50 font-bold">G</button>
-                    <button type="button" className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-blue-500 hover:bg-zinc-50 font-bold">f</button>
-                    <button type="button" className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-sky-500 hover:bg-zinc-50 font-bold">t</button>
-                    <button type="button" className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-blue-700 hover:bg-zinc-50 font-bold">in</button>
+                    <button type="button" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-red-500 hover:bg-white/10 font-bold">G</button>
+                    <button type="button" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-blue-500 hover:bg-white/10 font-bold">f</button>
+                    <button type="button" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-sky-500 hover:bg-white/10 font-bold">t</button>
+                    <button type="button" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-blue-700 hover:bg-white/10 font-bold">in</button>
                 </div>
             </div>
           </form>

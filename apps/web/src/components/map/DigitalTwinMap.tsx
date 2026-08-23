@@ -10,11 +10,12 @@ interface DigitalTwinMapProps {
 }
 
 const ZONES = [
-  { id: 'Zone A (Gate 1)', top: '20%', left: '20%', isGate: true },
-  { id: 'Zone B (Gate 2)', top: '50%', left: '20%', isGate: true },
-  { id: 'Zone C (Gate 3)', top: '80%', left: '50%', isGate: true },
-  { id: 'Zone D (Main Stage)', top: '50%', left: '70%', isGate: false },
-  { id: 'Zone E (Food Court)', top: '20%', left: '70%', isGate: false },
+  { id: 'Zone A (Gate 1)', top: '20%', left: '20%', isGate: true, label: 'ENTRY 1 (NORTH)' },
+  { id: 'Zone B (Gate 2)', top: '50%', left: '20%', isGate: true, label: 'ENTRY 2 (WEST)' },
+  { id: 'Zone C (Gate 3)', top: '80%', left: '50%', isGate: true, label: 'ENTRY 3 (SOUTH)' },
+  { id: 'Zone D (Main Stage)', top: '50%', left: '70%', isGate: false, label: 'MAIN STAGE' },
+  { id: 'Zone E (Food Court)', top: '20%', left: '70%', isGate: false, label: 'FOOD COURT' },
+  { id: 'Zone F (Exit)', top: '80%', left: '20%', isGate: true, label: 'EMERGENCY EXIT' },
 ];
 
 function HeatZone({ zone }: { zone: typeof ZONES[0] }) {
@@ -62,7 +63,10 @@ function ZoneMarker({ zone }: { zone: typeof ZONES[0] }) {
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center backdrop-blur-md shadow-lg border transition-all duration-300 group-hover:scale-110 ${bgColor} ${borderColor}`}>
         <Icon className={`w-6 h-6 ${textColor}`} />
       </div>
-      <div className="px-2 py-1 bg-zinc-900/80 backdrop-blur rounded border border-zinc-700 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="mt-1 px-2 py-0.5 bg-black/60 backdrop-blur border border-white/10 rounded">
+        <span className="text-[10px] font-bold text-white tracking-widest">{zone.label}</span>
+      </div>
+      <div className="absolute top-14 px-2 py-1 bg-zinc-900/90 backdrop-blur rounded border border-zinc-700 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
         <p className="text-xs font-bold text-white">{zone.id}</p>
         <p className={`text-[10px] font-semibold ${textColor}`}>{level} RISK</p>
       </div>
@@ -71,6 +75,9 @@ function ZoneMarker({ zone }: { zone: typeof ZONES[0] }) {
 }
 
 export function DigitalTwinMap({ role = 'authority' }: DigitalTwinMapProps) {
+  const routeCoords = useMapStore(s => s.routeCoordinates);
+  const showCitizenRoute = role === 'citizen' && routeCoords && routeCoords.length > 0;
+
   return (
     <div className="h-full w-full relative bg-[#111] overflow-hidden rounded-xl border border-white/5 shadow-2xl">
       {/* Grid Pattern Background */}
@@ -98,7 +105,31 @@ export function DigitalTwinMap({ role = 'authority' }: DigitalTwinMapProps) {
         <line x1="70%" y1="50%" x2="50%" y2="50%" stroke="white" strokeWidth="2" strokeDasharray="5 5" />
         <line x1="20%" y1="50%" x2="50%" y2="50%" stroke="white" strokeWidth="2" strokeDasharray="5 5" />
         <line x1="50%" y1="80%" x2="50%" y2="50%" stroke="white" strokeWidth="2" strokeDasharray="5 5" />
+        <line x1="20%" y1="80%" x2="50%" y2="50%" stroke="white" strokeWidth="2" strokeDasharray="5 5" />
       </svg>
+
+      {/* Citizen Safe Route */}
+      {showCitizenRoute && (
+        <svg className="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible">
+          <defs>
+            <linearGradient id="routeGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#10b981" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#34d399" stopOpacity="1" />
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <g filter="url(#glow)">
+            <line x1="20%" y1="80%" x2="50%" y2="50%" stroke="url(#routeGrad)" strokeWidth="6" strokeDasharray="12 12" className="animate-[dash_1s_linear_infinite]" />
+            <line x1="50%" y1="50%" x2="70%" y2="20%" stroke="url(#routeGrad)" strokeWidth="6" strokeDasharray="12 12" className="animate-[dash_1s_linear_infinite]" />
+          </g>
+        </svg>
+      )}
 
       {/* Heat Zones & Markers */}
       <div className="absolute inset-0 z-10">
@@ -109,6 +140,16 @@ export function DigitalTwinMap({ role = 'authority' }: DigitalTwinMapProps) {
           </React.Fragment>
         ))}
       </div>
+
+      {/* Citizen Current Location */}
+      {role === 'citizen' && (
+        <div className="absolute top-[80%] left-[20%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center z-50">
+          <div className="w-6 h-6 bg-blue-500 rounded-full border-4 border-white shadow-[0_0_20px_rgba(59,130,246,1)] animate-bounce" />
+          <div className="mt-1 px-2 py-0.5 bg-blue-600 rounded text-[9px] font-bold text-white tracking-wider whitespace-nowrap shadow-lg">
+            YOU ARE HERE
+          </div>
+        </div>
+      )}
 
       {/* UI Controls */}
       <MapOverlayControls role={role} />

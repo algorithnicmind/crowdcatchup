@@ -32,24 +32,37 @@ export function SafeRoutePanel() {
   const [isNavigating, setIsNavigating] = useState(false);
   const [navInstruction, setNavInstruction] = useState('Head North towards Gate G5');
   const [distanceRemaining, setDistanceRemaining] = useState(450);
-  const [destination, setDestination] = useState('Maha Kumbh Mela');
-  const [destPredictions, setDestPredictions] = useState<any[]>([]);
-  const [destCoords, setDestCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [destination, setDestination] = useState('');
+  const [groupSize, setGroupSize] = useState(4);
   const [showDestDropdown, setShowDestDropdown] = useState(false);
-  const destDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    // Google Maps places removed for offline SVG map.
-  }, []);
+  const DEMO_DESTINATIONS = [
+    { id: 'gate1', main_text: 'Gate 1 (North Entry)', secondary_text: 'Main Entrance' },
+    { id: 'gate2', main_text: 'Gate 2 (East Entry)', secondary_text: 'VIP & Staff Entrance' },
+    { id: 'gate3', main_text: 'Gate 3 (South Entry)', secondary_text: 'General Admission' },
+    { id: 'mainstage', main_text: 'Main Stage (Zone D)', secondary_text: 'Center Area' },
+    { id: 'foodcourt', main_text: 'Food Court (Zone E)', secondary_text: 'North East Area' },
+    { id: 'exit1', main_text: 'Nearest Exit', secondary_text: 'Emergency / Fast Exit' },
+  ];
+
+  const [destPredictions, setDestPredictions] = useState(DEMO_DESTINATIONS);
 
   const handleDestInput = (value: string) => {
     setDestination(value);
-    setDestCoords(null);
-    setShowDestDropdown(false);
+    setShowDestDropdown(true);
+    if (!value) {
+      setDestPredictions(DEMO_DESTINATIONS);
+      return;
+    }
+    const filtered = DEMO_DESTINATIONS.filter(d => 
+      d.main_text.toLowerCase().includes(value.toLowerCase()) || 
+      d.secondary_text.toLowerCase().includes(value.toLowerCase())
+    );
+    setDestPredictions(filtered);
   };
 
   const handleDestSelect = (pred: any) => {
-    setDestination(pred.description || pred.structured_formatting?.main_text || 'Unknown');
+    setDestination(pred.main_text);
     setShowDestDropdown(false);
   };
 
@@ -195,17 +208,17 @@ export function SafeRoutePanel() {
                       className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-9 pr-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 transition-colors"
                     />
                     {showDestDropdown && destPredictions.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-zinc-900 border border-white/10 rounded-lg overflow-hidden shadow-2xl z-50">
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-zinc-900 border border-white/10 rounded-lg overflow-hidden shadow-2xl z-50 max-h-48 overflow-y-auto">
                         {destPredictions.map(pred => (
                           <button
-                            key={pred.place_id}
+                            key={pred.id}
                             onMouseDown={() => handleDestSelect(pred)}
                             className="w-full text-left px-3 py-2.5 hover:bg-white/10 border-b border-white/5 last:border-0 flex items-start gap-2"
                           >
                             <MapPin className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0" />
                             <div>
-                              <p className="text-xs font-medium text-white truncate">{pred.structured_formatting.main_text}</p>
-                              <p className="text-[11px] text-gray-500 truncate">{pred.structured_formatting.secondary_text}</p>
+                              <p className="text-xs font-medium text-white truncate">{pred.main_text}</p>
+                              <p className="text-[11px] text-gray-500 truncate">{pred.secondary_text}</p>
                             </div>
                           </button>
                         ))}
@@ -219,10 +232,21 @@ export function SafeRoutePanel() {
                         <Users className="w-4 h-4 text-gray-400" />
                         <span className="text-sm text-gray-300">Group Size</span>
                       </div>
-                      <span className="text-white font-bold">4</span>
-                    </div>
-                    <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-2 flex items-center justify-center w-12 cursor-pointer hover:bg-emerald-500/20">
-                      <HeartPulse className="w-4 h-4 text-emerald-400" />
+                      <div className="flex items-center gap-3">
+                        <button 
+                          onClick={() => setGroupSize(Math.max(1, groupSize - 1))}
+                          className="w-6 h-6 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white font-bold"
+                        >
+                          -
+                        </button>
+                        <span className="text-white font-bold w-4 text-center">{groupSize}</span>
+                        <button 
+                          onClick={() => setGroupSize(Math.min(15, groupSize + 1))}
+                          className="w-6 h-6 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white font-bold"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

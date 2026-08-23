@@ -54,11 +54,13 @@ export async function apiClient<T>(
     headers,
   };
 
-  if (!token || token === 'demo-token' || token.startsWith('mock_')) {
+  if (!token || token === 'demo-token' || token?.startsWith('mock_')) {
     // --- HACKATHON DEMO MODE INTERCEPTOR ---
-    // If the frontend is running in Demo Mode (or with mock tokens), intercept API calls
-    // so the presentation doesn't crash on empty screens.
-    if (cleanEndpoint === '/auth/users') {
+    // Allow actual auth endpoints to hit the real backend so login works
+    if (cleanEndpoint === '/auth/login' || cleanEndpoint === '/auth/register' || cleanEndpoint === '/auth/me') {
+      // Do nothing, let it fall through to the real fetch below
+    } else {
+      if (cleanEndpoint === '/auth/users') {
       return [
         { id: 'demo-user-1', full_name: 'John Officer', email: 'police@test.com', phone_number: '+1-555-0101', role: 'POLICE' },
         { id: 'demo-user-2', full_name: 'Sarah Medic', email: 'medic@test.com', phone_number: '+1-555-0102', role: 'AUTHORITY' },
@@ -84,6 +86,7 @@ export async function apiClient<T>(
       return { success: true, message: 'Mock action successful' } as any;
     }
     return [] as any;
+    }
   }
 
   try {

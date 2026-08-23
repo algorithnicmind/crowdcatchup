@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "CrowdShield",
   description: "AI-Powered Multi-Source Early Warning System",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icons/icon.svg",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

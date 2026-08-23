@@ -1,11 +1,33 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 
 function HeroSplineBackground() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        if (width > 0 && height > 0) {
+          setIsReady(true);
+          observer.disconnect();
+          break;
+        }
+      }
+    });
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div style={{
+    <div ref={containerRef} style={{
       position: 'relative',
       width: '100%',
       height: '100vh',
@@ -18,11 +40,13 @@ function HeroSplineBackground() {
           display: none !important;
         }
       `}} />
-      {/* @ts-ignore - custom web component */}
-      <spline-viewer 
-        url="https://prod.spline.design/dJqTIQ-tE3ULUPMi/scene.splinecode" 
-        style={{ width: '100%', height: '100vh' }}
-      ></spline-viewer>
+      {isReady && (
+        /* @ts-ignore - custom web component */
+        <spline-viewer
+          url="https://prod.spline.design/dJqTIQ-tE3ULUPMi/scene.splinecode"
+          style={{ width: '100%', height: '100vh' }}
+        ></spline-viewer>
+      )}
       <div
         style={{
           position: 'absolute',
