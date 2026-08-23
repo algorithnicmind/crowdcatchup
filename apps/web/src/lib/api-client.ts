@@ -28,6 +28,12 @@ export function getWsBaseUrl(): string {
   return wsUrl;
 }
 
+// Global state for Demo Mode so created events actually appear in the UI
+const MOCK_EVENTS = [
+  { id: 'demo-evt-1', name: 'Tomorrowland Main Stage', location: 'Boom, Belgium', status: 'ACTIVE', start_time: new Date().toISOString(), owner_id: 'demo-user-3' },
+  { id: 'demo-evt-2', name: 'Global Tech Summit 2026', location: 'San Francisco', status: 'UPCOMING', start_time: new Date().toISOString(), owner_id: 'demo-user-3' }
+];
+
 export async function apiClient<T>(
   endpoint: string,
   options: RequestInit = {}
@@ -61,7 +67,7 @@ export async function apiClient<T>(
       // Do nothing, let it fall through to the real fetch below
     } else {
       if (cleanEndpoint === '/auth/users') {
-      return [
+        return [
         { id: 'demo-user-1', full_name: 'John Officer', email: 'police@test.com', phone_number: '+1-555-0101', role: 'POLICE' },
         { id: 'demo-user-2', full_name: 'Sarah Medic', email: 'medic@test.com', phone_number: '+1-555-0102', role: 'AUTHORITY' },
         { id: 'demo-user-3', full_name: 'Event Owner', email: 'owner@test.com', phone_number: '+1-555-0103', role: 'EVENT_OWNER' }
@@ -69,12 +75,21 @@ export async function apiClient<T>(
     }
     if (cleanEndpoint === '/events') {
       if (options.method === 'POST') {
-        return { success: true, message: 'Event created successfully', id: 'demo-evt-new' } as any;
+        const body = options.body ? JSON.parse(options.body as string) : {};
+        const newEvent = {
+          id: `demo-evt-${Date.now()}`,
+          name: body.name || 'Custom Demo Event',
+          location: 'Custom Location',
+          status: 'UPCOMING',
+          start_time: body.start_date || new Date().toISOString(),
+          owner_id: 'demo-user-3',
+          expected_attendance: body.expected_attendance || 0,
+          max_capacity: body.max_capacity || 0
+        };
+        MOCK_EVENTS.push(newEvent);
+        return { success: true, message: 'Event created successfully', id: newEvent.id } as any;
       }
-      return [
-        { id: 'demo-evt-1', name: 'Tomorrowland Main Stage', location: 'Boom, Belgium', status: 'ACTIVE', start_time: new Date().toISOString(), owner_id: 'demo-user-3' },
-        { id: 'demo-evt-2', name: 'Global Tech Summit 2026', location: 'San Francisco', status: 'UPCOMING', start_time: new Date().toISOString(), owner_id: 'demo-user-3' }
-      ] as any;
+      return [...MOCK_EVENTS] as any;
     }
     if (cleanEndpoint === '/zones') {
       return [
