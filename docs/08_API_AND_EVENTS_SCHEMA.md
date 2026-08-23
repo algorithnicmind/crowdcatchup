@@ -389,6 +389,31 @@ Smart Gate:
 
 ---
 
+## 10. Staff Management APIs
+
+### 10.1 `POST /api/v1/auth/users`
+Creates a new staff user (Event Owner or Police). Requires Authority token.
+```json
+{
+  "email": "police1@crowdshield.local",
+  "full_name": "Officer Sharma",
+  "password": "securepassword",
+  "role": "POLICE"
+}
+```
+
+### 10.2 `POST /api/v1/events/{event_id}/assign-staff`
+Assigns a user to a specific event with a specific role.
+```json
+{
+  "user_id": "usr_9a8b7c6d",
+  "role": "POLICE",
+  "zone_id": "zone_123"
+}
+```
+
+---
+
 ## 27. EVENT ISOLATION
 
 Every observation must contain an event identifier.

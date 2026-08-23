@@ -56,7 +56,7 @@
   `manifest.json`, theme colors, icons, service worker, installability, meta tags, offline shell.
   → After: 1.8 · ✅ Done when: app is installable and offline shell loads.
 - [x] **1.8 Frontend foundation**
-  Install shadcn/ui, zustand, @vis.gl/react-google-maps, i18next. `shared/lib/api-client.ts`, `ws-client.ts`, `useWebSocket`. Stores (auth/event/ui). Login + register pages. Role-based route guard `(dashboard)/authority|police|citizen|event-owner`.
+  Install shadcn/ui, zustand, i18next. `shared/lib/api-client.ts`, `ws-client.ts`, `useWebSocket`. Stores (auth/event/ui). Login + register pages. Role-based route guard `(dashboard)/authority|police|citizen|event-owner`.
   → After: 1.9 · ✅ Done when: login as each of the 4 roles lands on the correct dashboard route.
 - [x] **1.9 Frontend events UI**
   Event list + create event + status change screens for the Event Owner role.
@@ -76,7 +76,7 @@
 
 # PHASE 2 — EVENT MAP (docs/11 §7–11, docs/06, docs/04 §3)
 
-- [x] **2.1 Google Maps feature**
+- [x] **2.1 SVG Digital Twin Map feature**
   `EventMap.tsx` + ZoneLayer, GateLayer, RouteLayer, HeatmapLayer, CrowdOverlay; `useMapEngine`, `useMapLayers`, `geo-utils.ts`.
   → After: 2.2 · ✅ Done when: map renders with base tiles.
 - [x] **2.2 Venue boundary**
@@ -269,7 +269,7 @@
 # PHASE 9 — PRODUCTION & DELIVERABLES (docs/07, docs/09, PRD §2 & §51)
 
 - [x] **9.1 Security hardening**
-  RBAC audit, rate limiting, security headers, CORS lockdown, audit logging, input validation, secrets via env only (PRD §51).
+  RBAC audit, rate limiting, security headers, CORS lockdown, input validation, secrets via env only (PRD §51).
   → After: 9.2 · ✅ Done when: security checklist from PRD §51 complete.
 - [x] **9.2 Backend tests**
   Pytest unit/integration/e2e for all features; fusion accuracy tests + chaos playbooks (doc 09). Fix the currently failing Pytest suite (there are validation errors on Auth routes and KeyErrors on Event routes). Ensure 100% passing tests for the core Fusion and Risk pipelines.

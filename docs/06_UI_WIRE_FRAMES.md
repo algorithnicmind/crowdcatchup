@@ -14,13 +14,13 @@ CrowdShield emphasizes **Rich Aesthetics and Dynamic Design** using Next.js, Tai
 * 🟡 **Surge Warning (Amber):** `#f59e0b`. Developing queue congestion.
 * 🟠 **High Risk (Orange):** `#f97316`. Elevated risk, action needed.
 * 🔴 **Critical Hazard (Crimson):** `#ef4444`. Immediate danger/bottleneck.
-* 🗺️ **Premium Map Engine:** The Google Maps instance (`@vis.gl/react-google-maps`) is the hero component for every view. It **MUST** be styled to deliver a premium experience, utilizing custom dark map styling, smooth fly-to animations, custom dynamic markers, and interactive glassmorphism detail panels.
+* 🗺️ **Premium Map Engine:** The Custom SVG Digital Twin Map is the hero component for every view. It **MUST** be styled to deliver a premium experience, utilizing custom dark map styling, smooth animations, custom dynamic markers, and interactive glassmorphism detail panels.
 
 ---
 
 ## 2. Role-Based Wireframes (Unified Global Sidebar Architecture)
 
-All user roles (Authority, Police, Citizen, Organizer) now share a unified **Global Sidebar** on the left, featuring a high-tech `DotPattern` background, with the interactive Google Map occupying the main right-hand canvas. This eliminates floating panels and maximizes map visibility.
+All user roles (Authority, Police, Citizen, Organizer) now share a unified **Global Sidebar** on the left, featuring a high-tech `DotPattern` background, with the interactive SVG Digital Twin Map occupying the main right-hand canvas. This eliminates floating panels and maximizes map visibility.
 
 ### 2.1 Authority Command Center (Desktop PWA)
 
@@ -29,6 +29,7 @@ All user roles (Authority, Police, Citizen, Organizer) now share a unified **Glo
 | CROWDSHIELD (Cmdr)      |  [Search venue, gates, zones...]                                [Alerts] [U]  |
 | . . . . . . . . . . .   +-------------------------------------------------------------------------------+
 | [ ] Command Center      |                                                                               |
+| [ ] Staff Management    |                                                                               |
 | [ ] Live Map            |                                                                               |
 | . . . . . . . . . . .   |                                LIVE VENUE MAP                                 |
 | MAP CONTROLS            |                                                                               |
@@ -70,6 +71,7 @@ All user roles (Authority, Police, Citizen, Organizer) now share a unified **Glo
 | CROWDSHIELD (Citizen)   |  [Search venue, gates, zones...]                                [Alerts] [U]  |
 | . . . . . . . . . . .   +-------------------------------------------------------------------------------+
 | PUBLIC DASHBOARD        |                                                                               |
+| [ ] Event Selector      |                                                                               |
 | [ ] Live Map            |                                                                               |
 | [ ] Alerts              |                                                                               |
 | [ ] Profile             |                                LIVE VENUE MAP                                 |
@@ -92,6 +94,7 @@ All user roles (Authority, Police, Citizen, Organizer) now share a unified **Glo
 | . . . . . . . . . . .   +-------------------------------------------------------------------------------+
 | ORGANIZER DASHBOARD     |                                                                               |
 | [ ] Event Management    |                                                                               |
+|     - Create Event      |                                                                               |
 | . . . . . . . . . . .   |                                LIVE VENUE MAP                                 |
 | BUILDER TOOLS           |                                                                               |
 | [ ] Venue Boundary      |                                                                               |

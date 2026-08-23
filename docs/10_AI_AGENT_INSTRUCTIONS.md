@@ -15,7 +15,7 @@ This specification is designed for automated AI Coding Assistants and human coll
 ## 2. Mandatory Architectural Constraints (Never Violate)
 
 ### 2.1 Rule 1: Monorepo Boundary Enforcement
-* **Frontend UI Code:** `/apps/web/` — Next.js App Router, Tailwind CSS, `shadcn/ui`, Zustand, `@vis.gl/react-google-maps`.
+* **Frontend UI Code:** `/apps/web/` — Next.js App Router, Tailwind CSS, `shadcn/ui`, Zustand, SVG Map Engine.
 * **Backend API Code:** `/apps/api/` — FastAPI, Pydantic, SQLAlchemy, PostgreSQL/PostGIS, Redis.
 * **AI Pipelines:** `/ai/` — YOLOv8, BoT-SORT, XGBoost, OpenCV.
 

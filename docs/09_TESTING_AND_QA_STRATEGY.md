@@ -40,7 +40,7 @@ Located in `/apps/web/e2e/`.
 | **Smart Gate Status UI** | Gate status colors update correctly (GREEN/AMBER/RED). |
 | **Source Health Panel** | Shows ONLINE/DELAYED/OFFLINE per source. |
 | **Offline Mode** | Service Worker serves cached map when offline. |
-| **Map Rendering** | Event boundary, zones, gates, routes render on Google Maps. |
+| **Map Rendering** | Event boundary, zones, gates, routes render on SVG Digital Twin Map. |
 
 ### 2.3 Machine Learning Pipeline Testing
 Located in `/ai/tests/`.

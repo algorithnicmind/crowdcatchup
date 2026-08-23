@@ -305,6 +305,19 @@ A Police Officer has an extended profile for tactical settings:
 
 ---
 
+## 17.5 EVENT ASSIGNMENT
+
+The `EventAssignment` model links a User to a specific Event with a specific role, enabling the dynamic Multi-Event Architecture.
+
+* `id`: Unique identifier
+* `user_id`: Reference to User
+* `event_id`: Reference to Event
+* `role`: Assigned role (e.g., "POLICE", "EVENT_OWNER", "AUTHORITY")
+* `assigned_zone_id`: (Optional) Specific zone assignment for localized duties
+* `created_at`: Timestamp
+
+---
+
 ## 44. MAP REQUIREMENTS
 
 The map is a core system component.

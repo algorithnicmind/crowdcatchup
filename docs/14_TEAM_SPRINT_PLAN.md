@@ -5,18 +5,18 @@ This document breaks down the high-level delegation plan into a **highly detaile
 ---
 
 ## 👨‍💻 Member 1: Frontend & UI Lead (The Pixel Perfecter)
-**Focus:** Next.js, TailwindCSS, shadcn/ui, Google Maps, User Experience.
+**Focus:** Next.js, TailwindCSS, shadcn/ui, SVG Maps, User Experience.
 
 ### Day 1: Frontend Foundation & Auth Wiring
 - [x] **Step 1.7:** Initialize Next.js app with `next-pwa` and manifest.
-- [x] **Step 1.8 (Part 1):** Install `shadcn/ui`, `zustand`, `@vis.gl/react-google-maps`, `lucide-react`.
+- [x] **Step 1.8 (Part 1):** Install `shadcn/ui`, `zustand`, `lucide-react`.
 - [x] **Step 1.8 (Part 2):** Build Login and Register Pages.
 - [x] **Step 1.8 (Part 3):** Implement the `useAuthStore` to handle JWTs and Role-based redirects (Authority, Police, Citizen, Event Owner).
 
 ### Day 2: Premium Event Map Foundation (Phase 2)
 - [x] **Step 1.10:** Build the Base Dashboard Layout (Header, Sidebar, Navigation).
-- [x] **Step 2.1:** Implement the hero `EventMap.tsx` component using `@vis.gl/react-google-maps`.
-- [x] **Step 2.1 (Aesthetic):** Configure dark mode styling for the premium Google Maps look.
+- [x] **Step 2.1:** Implement the hero `EventMap.tsx` component using custom SVG Digital Twin.
+- [x] **Step 2.1 (Aesthetic):** Configure dark mode styling for the premium SVG Digital Twin look.
 - [x] **Step 2.1 (Interactivity):** Add smooth fly-to animations and zoom controls.
 
 ### Day 3: Map Builders & Visuals

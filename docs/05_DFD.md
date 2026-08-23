@@ -20,8 +20,8 @@ graph LR
     API -->|Task Assignments| E7[Police PWA]
     API -->|Safe Routes & Warnings| E8[Citizen PWA]
     API -->|Event Config & Analytics| E9[Event Owner PWA]
-    E6 -->|Approval Commands| API
-    E9 -->|Event Setup| API
+    E6 -->|Approval Commands & Staff Assignments| API
+    E9 -->|Event Setup & Digital Twin Creation| API
 ```
 
 ---

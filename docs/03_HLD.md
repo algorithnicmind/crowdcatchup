@@ -84,7 +84,7 @@ The core principle:
 | :--- | :--- |
 | **auth** | Authentication, JWT, session management |
 | **users** | User profiles, role assignment |
-| **organizations** | Multi-tenant organization management |
+
 | **events** | Event lifecycle (8 statuses), event CRUD |
 | **venues** | Venue geometry, boundaries |
 | **zones** | Zone builder, capacity, thresholds |
@@ -107,7 +107,7 @@ The core principle:
 | **simulation** | Pre-event scenario simulation, Digital Twin |
 | **digital_twin** | Event digital representation |
 | **reports** | Post-event analytics, historical reports |
-| **audit** | Audit logging, security trail |
+
 
 ---
 
@@ -220,7 +220,7 @@ Recommended initial stack:
 * TypeScript
 * Tailwind CSS
 * PWA support
-* Google Maps API (`@vis.gl/react-google-maps`) mapping architecture
+* Custom SVG Digital Twin mapping architecture (offline-capable)
 * Recharts/ECharts for analytics
 
 ## Backend

@@ -723,7 +723,6 @@ RULES:
 │                                                              │
 │  InterventionApproved ──→ NotificationService ──→ WebSocket │
 │                                                              │
-│  EventCreated ──→ AuditService                              │
 │  IncidentCreated ──→ NotificationService                    │
 │                                                              │
 └─────────────────────────────────────────────────────────────┘

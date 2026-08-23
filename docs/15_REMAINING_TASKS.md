@@ -29,7 +29,7 @@ As of the current project state, Phase 1 through Phase 5 have been implemented. 
 - **Detail:** Implement the core pathfinding logic in `features/navigation/route_engine.py`. This involves an A* (A-Star) search algorithm that calculates routes based on distance, but adds penalty weights for crowded zones (based on live density data). It must also account for the user's `GroupSize` (solo vs. large group) when recommending gates.
 
 **7.7 Citizen Journey Navigation — Frontend**
-- **Detail:** Build the citizen navigation interfaces: `JourneyPlanner`, `GroupSizeSelector`, and `NavigationPanel`. This UI will consume the backend navigation API, display the recommended "Safe Route" (green line) on the Google Maps UI, and guide the user turn-by-turn.
+- **Detail:** Build the citizen navigation interfaces: `JourneyPlanner`, `GroupSizeSelector`, and `NavigationPanel`. This UI will consume the backend navigation API, display the recommended "Safe Route" (green line) on the SVG Map UI, and guide the user turn-by-turn.
 
 **7.8 PWA Polish**
 - **Detail:** Finalize the Progressive Web App features for the Citizen app. This includes registering the Service Worker, configuring IndexedDB to cache the static venue map for offline use, and ensuring web push notifications are functional.

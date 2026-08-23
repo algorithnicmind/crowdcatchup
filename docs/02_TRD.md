@@ -14,7 +14,7 @@ CrowdShield is engineered as a highly scalable, decoupled Monorepo architecture 
 * **Application Foundation:** Next.js (React) operating as a unified Progressive Web App (PWA).
 * **Language & Styling:** TypeScript for strict type safety. Tailwind CSS and `shadcn/ui` for rapid, accessible, and responsive component design.
 * **State Management:** Zustand for lightweight, fast state management across the application.
-* **Map Engine:** Google Maps API (via `@vis.gl/react-google-maps`) for rendering live geospatial crowd telemetry.
+* **Map Engine:** Custom SVG Digital Twin Interface for rendering live geospatial crowd telemetry in an isolated, offline-capable canvas (replacing Google Maps API).
 * **Analytics Charts:** Recharts/ECharts for analytics dashboards.
 * **Offline Resilience:** Service Workers and IndexedDB are utilized to cache venue maps, emergency instructions, and offline reporting schemas when cellular networks fail.
 
@@ -162,11 +162,11 @@ Live risk updates are pushed from FastAPI to the Next.js PWA clients via WebSock
 Recommended modules (modular monolith):
 
 ```text
-auth, users, organizations, events, venues, zones, gates, routes,
+auth, users, events, venues, zones, gates, routes,
 sensors, data_ingestion, data_normalization, data_validation,
 source_health, sensor_fusion, crowd_state, analytics, risk_engine,
 recommendations, incidents, alerts, notifications, police,
-simulation, digital_twin, reports, audit
+simulation, digital_twin, reports
 ```
 
 ---
@@ -189,7 +189,6 @@ Recommended modules:
 ```text
 auth
 users
-organizations
 events
 venues
 zones
@@ -212,7 +211,6 @@ police
 simulation
 digital_twin
 reports
-audit
 ```
 
 Keep business logic separated.
@@ -277,20 +275,15 @@ def check_reroute_needed(current_route, live_crowd_state, group_profile):
 
 ---
 
-## 65. GOOGLE MAPS INTEGRATION
+## 65. CUSTOM SVG DIGITAL TWIN MAP
 
-### Road Network Data
-- Use Google Maps API for road network routing calculation
-- Integrate Google Maps Directions API where needed
-- Store key coordinates in PostgreSQL/PostGIS for custom paths
-- Calculate distances securely using PostGIS spatial functions
-- Ensure generated route stays strictly within safe event zones
-- Avoid intersecting with high-risk or congested polygons
-- Use Google Places Autocomplete API for address → coordinate conversion
-- Use reverse geocoding for coordinate → address display
-
-### Map Tiles
-- Use Google Maps API for rendering map tiles and geometry.
+### Polygon Network Data
+- Use a Custom SVG rendering engine for the digital twin view.
+- Provide distinct visual rendering of Zones and Gates using vector layers.
+- Calculate routes and distances securely using PostGIS spatial functions on the backend.
+- Ensure generated route displays dynamically overlay onto the SVG grid.
+- Avoid external map API dependencies to allow for fully isolated intranet deployments in high-security events.
+- Enhance performance by eliminating external map tile fetching.
 
 ---
 

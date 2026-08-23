@@ -86,7 +86,7 @@ CrowdShield utilizes a **Role-Based Access Control (RBAC)** architecture. All us
 
 ### Persona C: Citizen / Festival Attendee
 * **Goal:** Navigate safely through massive gatherings.
-* **Interface:** Simplified mobile PWA with premium Google Maps experience.
+* **Interface:** Simplified mobile PWA with premium SVG Digital Twin map experience.
 * **Authentication:** Requires self-registration (Phone number, Email, Password) and standard login.
 * **Navigation Flow:** Current GPS location detection → Select Destination Event → View multiple paths with explicitly highlighted **shortest/safest route** → View available Entry/Exit gates dynamically. **No panic-inducing metrics.**
 * **Key Question:** "Where should I go, and what should I avoid?"
@@ -94,7 +94,7 @@ CrowdShield utilizes a **Role-Based Access Control (RBAC)** architecture. All us
 ### Persona D: Event Organizer / Admin
 * **Goal:** Create events, configure venue topology, manage infrastructure, run simulations.
 * **Interface:** Venue configuration tools (draw zones, gates, routes, cameras, Smart Gates), pre-event simulation.
-* **Custom Routing (Innovation):** Ability to manually draw/define **Custom Routes** (e.g., dirt paths, temporary shortcuts) that do not exist on standard Google Maps. These custom polylines are seamlessly overlaid onto the citizen map.
+* **Custom Routing (Innovation):** Ability to manually draw/define **Custom Routes** (e.g., dirt paths, temporary shortcuts) that do not exist on standard geographic maps. These custom polylines are seamlessly overlaid onto the citizen map.
 * **Key Question:** "How do I configure this event for the AI Engine?"
 
 ---
