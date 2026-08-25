@@ -11,11 +11,27 @@ MODEL_PATH = os.path.join(MODEL_DIR, "bottleneck_model.json")
 
 
 class RiskService:
+    """
+    [ARCHITECTURAL DECISION: AI RISK ENGINE]
+    
+    Why this exists:
+    Evaluates real-time crowd metrics (density, flow, speed) against trained ML models 
+    to predict the likelihood of a dangerous bottleneck forming in the next 15 minutes.
+    
+    How it works:
+    Uses an XGBoost Regressor for rapid inference. If the model file is missing 
+    (e.g., during local dev without ML training), it gracefully degrades to a 
+    rule-based mathematical heuristic.
+    """
     def __init__(self):
         self.model = None
         self._load_model()
 
     def _load_model(self):
+        """
+        Attempts to load the pre-trained XGBoost model from the local infrastructure directory.
+        Falls back to rule-based execution if the model file is not found.
+        """
         try:
             if os.path.exists(MODEL_PATH):
                 self.model = xgb.XGBRegressor()

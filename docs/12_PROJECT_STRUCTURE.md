@@ -748,6 +748,11 @@ Each feature module has clear boundaries. To split into microservices later:
 | `features/risk` | Risk Service | Kafka events |
 | `features/recommendations` | Decision Service | Kafka events |
 | `features/incidents` | Incident Service | Kafka events |
+| `features/navigation` | Navigation Service | Kafka events |
+| `features/police` | Police & Dispatch Service | Kafka events |
+| `features/reports` | Analytics & Reporting Service | HTTP/Kafka |
+| `features/simulation` | Digital Twin / Simulation Service | HTTP |
+| `features/contact` | Comms / CRM Service | HTTP |
 
 The in-process event bus makes it trivial to swap to Kafka/Redis later.
 

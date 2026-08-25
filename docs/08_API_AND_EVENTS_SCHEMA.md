@@ -412,9 +412,45 @@ Assigns a user to a specific event with a specific role.
 }
 ```
 
+## 11. Incidents API (SOS Reporting)
+
+### 11.1 `POST /api/v1/incidents`
+Creates a new incident from a Citizen SOS report or Authority manual entry.
+```json
+{
+  "event_id": "EVT-001",
+  "zone_id": "ZONE-B",
+  "type": "medical",
+  "description": "Citizen reported medical emergency near Gate 3",
+  "location": { "lat": 28.6145, "lng": 77.2085 }
+}
+```
+
 ---
 
-## 27. EVENT ISOLATION
+## 12. Police & Task Dispatch API
+
+### 12.1 `POST /api/v1/police/tasks`
+Creates a new security task for police officers on the ground.
+```json
+{
+  "event_id": "EVT-001",
+  "zone_id": "ZONE-C",
+  "instructions": "Investigate crowding at Gate 4",
+  "risk_level": "HIGH",
+  "required_officers": 2
+}
+```
+
+### 12.2 `POST /api/v1/police/tasks/{task_id}/accept`
+Police officer accepts a task on their mobile PWA.
+
+### 12.3 `POST /api/v1/police/tasks/{task_id}/resolve`
+Police officer marks a task as completed.
+
+---
+
+## 13. EVENT ISOLATION
 
 Every observation must contain an event identifier.
 
@@ -436,7 +472,7 @@ This is a fundamental data-integrity rule.
 
 ---
 
-## 64. CITIZEN NAVIGATION API SCHEMAS
+## 14. CITIZEN NAVIGATION API SCHEMAS
 
 ### Journey Plan Request
 

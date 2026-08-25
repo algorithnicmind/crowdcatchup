@@ -121,6 +121,8 @@ All structural and architectural details are strictly governed by our `docs/` su
 | **09** | **[Testing](./docs/09_TESTING_AND_QA_STRATEGY.md)** | QA Engineers | Pytest, Playwright, ML eval, multi-source testing. |
 | **10** | **[AI Agent Rules](./docs/10_AI_AGENT_INSTRUCTIONS.md)** | AI Assistants | Monorepo boundaries, event-first rules, adapter pattern. |
 | **11** | **[Domain Model](./docs/11_DOMAIN_MODEL.md)** | Database Designers | Domain entities, Event map layers, zones, custom routes. |
+| **12** | **[Project Structure](./docs/12_PROJECT_STRUCTURE.md)** | Core Engineers | Complete backend feature breakdown, directory structures. |
+| **13** | **[Master TODO](./docs/13_MASTER_TODO.md)** | Project Managers | Full phase-by-phase hackathon progression and checklist. |
 
 ---
 

@@ -399,7 +399,66 @@ The simulation should show:
 
 ---
 
-## 64. CITIZEN NAVIGATION DOMAIN MODEL
+## 18. POLICE TASK DOMAIN MODEL
+
+### Task Entity
+
+```python
+class Task:
+    id: str
+    event_id: str
+    zone_id: str
+    instructions: str
+    risk_level: str  # "LOW" | "MODERATE" | "HIGH" | "CRITICAL"
+    required_officers: int
+    assigned_officers: int
+    status: str  # "PENDING" | "IN_PROGRESS" | "RESOLVED"
+    created_at: datetime
+    updated_at: datetime
+```
+
+---
+
+## 19. INCIDENT DOMAIN MODEL (SOS)
+
+### Incident Entity
+
+```python
+class Incident:
+    id: str
+    event_id: str
+    zone_id: str
+    type: str  # "medical" | "overcrowding" | "blockage" | "panic"
+    description: str
+    location_lat: float
+    location_lng: float
+    status: str  # "REPORTED" | "INVESTIGATING" | "RESOLVED"
+    created_at: datetime
+    resolved_at: datetime | None
+```
+
+---
+
+## 20. RECOMMENDATION DOMAIN MODEL
+
+### Recommendation Entity
+
+```python
+class Recommendation:
+    id: str
+    event_id: str
+    zone_id: str
+    risk_level: str
+    primary_reason: str
+    supporting_factors: list[str]
+    confidence_score: float
+    status: str  # "PROPOSED" | "APPROVED" | "REJECTED" | "EXECUTED"
+    created_at: datetime
+```
+
+---
+
+## 21. CITIZEN NAVIGATION DOMAIN MODEL
 
 ### Group Entity
 

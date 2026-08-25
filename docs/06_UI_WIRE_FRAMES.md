@@ -160,7 +160,7 @@ Messages are short and safety-focused: "Please avoid Gate 3. Use Gate 5."
 
 ---
 
-## 40. POLICE DASHBOARD
+## 6. POLICE DASHBOARD
 
 Police interface should show:
 
@@ -179,7 +179,7 @@ Police interface should show:
 
 ---
 
-## 41. AUTHORITY DASHBOARD
+## 7. AUTHORITY DASHBOARD
 
 Authority dashboard should show:
 
@@ -197,9 +197,29 @@ Authority dashboard should show:
 * System health
 * Data source health
 
+### 7.1 Authority Intervention Modal (Explainability & Approval)
+When the AI Risk Engine generates a recommendation, the Authority sees this modal:
+```text
++-------------------------------------------------------------+
+| ⚠️ AI RECOMMENDATION: CRITICAL RISK IN ZONE B              |
++-------------------------------------------------------------+
+| Action: [ RESTRICT GATE 3 ]                                 |
+|                                                             |
+| 🧠 Why is this recommended?                                 |
+| Primary Reason: Flow conflict detected at Gate 3 entry.     |
+| Supporting Factors:                                         |
+|  • Zone B density approaching critical threshold (3.8 p/m2) |
+|  • Sudden influx of 400 people detected via CCTV-02         |
+|                                                             |
+| Confidence: 94% | Based on 3 active sources                 |
+|                                                             |
+| [ DECLINE ]                             [ APPROVE ACTION ]  |
++-------------------------------------------------------------+
+```
+
 ---
 
-## 42. EVENT OWNER DASHBOARD
+## 8. EVENT OWNER DASHBOARD
 
 Event Owner should see:
 
@@ -216,7 +236,7 @@ Event Owner should see:
 
 ---
 
-## 43. CITIZEN PWA
+## 9. CITIZEN PWA
 
 Citizen interface should remain simple.
 
@@ -234,7 +254,7 @@ Do not expose sensitive operational information.
 
 ---
 
-## 64. CITIZEN JOURNEY PLANNER WIREFRAME (Sidebar Integrated)
+## 10. CITIZEN JOURNEY PLANNER WIREFRAME (Sidebar Integrated)
 
 ### Journey Input State (Inside Global Sidebar)
 ```text

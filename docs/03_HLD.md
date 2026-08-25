@@ -101,6 +101,8 @@ graph TD
 | **simulation** | Pre-event scenario simulation, Digital Twin |
 | **digital_twin** | Event digital representation |
 | **reports** | Post-event analytics, historical reports |
+| **navigation** | Citizen safe-route calculation (A*), group routing |
+| **contact** | External communication and CRM integrations |
 
 
 ---
