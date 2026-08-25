@@ -119,7 +119,7 @@ export function SlidingAuth({ initialMode = 'login' }: SlidingAuthProps) {
     setIsLoading(true);
 
     try {
-      if (true) { // Demo mode bypass
+      if (userOtp === '123456') { // Demo mode bypass
         const { apiClient } = await import('@/lib/api-client');
         
         // 1. Register User in Backend
@@ -127,7 +127,7 @@ export function SlidingAuth({ initialMode = 'login' }: SlidingAuthProps) {
           method: 'POST',
           body: JSON.stringify({
             email,
-            phone_number: phone || "+15550000000",
+            phone_number: phone,
             password: registerPassword,
             full_name: name,
             role: 'CITIZEN'
@@ -149,6 +149,8 @@ export function SlidingAuth({ initialMode = 'login' }: SlidingAuthProps) {
 
         setAuth(validUser, 'CITIZEN', loginData.access_token);
         router.push('/citizen');
+      } else {
+        toast.error('Invalid OTP. Use 123456 for the demo.');
       }
     } catch {
       toast.error('Failed to connect to backend.');
@@ -177,6 +179,10 @@ export function SlidingAuth({ initialMode = 'login' }: SlidingAuthProps) {
               <div className="relative w-full">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <Input required type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-white/10 border border-white/10 h-11 pl-10 rounded-lg text-sm text-white placeholder:text-gray-400" />
+              </div>
+              <div className="relative w-full">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input required type="tel" placeholder="Mobile Number" value={phone} onChange={(e) => setPhone(e.target.value)} className="bg-white/10 border border-white/10 h-11 pl-10 rounded-lg text-sm text-white placeholder:text-gray-400" />
               </div>
               <div className="relative w-full">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
