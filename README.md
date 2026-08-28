@@ -79,9 +79,16 @@ graph TD
 
 ---
 
-## ⚙️ Quick Start
+## 🔐 Evaluator / Demo Credentials
 
-CrowdShield is built as a modern monorepo. Follow these steps to spin up the local environment.
+For hackathon evaluators testing the platform's login and signup processes, use the following pre-seeded Super Admin credentials to access the Authority Command Center and manage other roles:
+
+- **Email:** `admin@crowdshield.local`
+- **Password:** `SuperAdmin123!`
+
+---
+
+## ⚙️ Quick Start
 
 ### 1️⃣ Start the FastAPI Backend
 ```bash
